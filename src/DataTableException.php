@@ -5,13 +5,13 @@
  * and open the template in the editor.
  */
 
-namespace ACFBentveld\DataTables;
+namespace SingleQuote\DataTables;
 
 /**
  * Description of DataTablesException
  *
  * @author Wim Pruiksma <wim@acfbentveld.nl>
  */
-class DataTablesException extends \Exception
+class DataTableException extends \Exception
 {
 }

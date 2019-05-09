@@ -1,10 +1,10 @@
 <?php
 
-namespace ACFBentveld\DataTables;
+namespace SingleQuote\DataTables;
 
 use Illuminate\Support\ServiceProvider;
 
-class DataTablesServiceProvider extends ServiceProvider
+class DataTableServiceProvider extends ServiceProvider
 {
     /**
      * Bootstrap the application services.
@@ -19,6 +19,6 @@ class DataTablesServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->bind('DataTables', 'ACFBentveld\DataTables\DataTables');
+        $this->app->bind('DataTable', 'SingleQuote\DataTables\DataTable');
     }
 }

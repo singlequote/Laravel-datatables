@@ -1,10 +1,10 @@
 <?php
 
-namespace ACFBentveld\DataTables;
+namespace SingleQuote\DataTables;
 
 use Illuminate\Support\Facades\Facade;
 
-class DataTablesFacade extends Facade
+class DataTableFacade extends Facade
 {
     /**
      * Get the registered name of the component.
@@ -13,6 +13,6 @@ class DataTablesFacade extends Facade
      */
     protected static function getFacadeAccessor()
     {
-        return 'DataTables';
+        return 'DataTable';
     }
 }

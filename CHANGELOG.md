@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to `DataTables` will be documented in this file
+
+# Version 3
+
+
+
 # Version 2
 
 ## 2.0.18

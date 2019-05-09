@@ -13,7 +13,7 @@
     "authors": [
         {
             "name": "Wim Pruiksma",
-            "email": "wim@acfbentveld.nl",
+            "email": "wim@quotec.nl",
             "homepage": "https://www.quotec.nl/",
             "role": "CEO"
         }
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "singlequote\\DataTables\\": "src"
+            "SingleQuote\\DataTables\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "singlequote\\DataTables\\Tests\\": "tests"
+            "SingleQuote\\DataTables\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -45,10 +45,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "singlequote\\DataTables\\DataTablesServiceProvider"
+                "SingleQuote\\DataTables\\DataTableServiceProvider"
             ],
             "aliases": {
-                "DataTable": "singlequote\\DataTables\\DataTablesFacade"
+                "DataTable": "SingleQuote\\DataTables\\DataTableFacade"
             }
         }
     }
