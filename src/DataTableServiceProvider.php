@@ -20,5 +20,8 @@ class DataTableServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('DataTable', 'SingleQuote\DataTables\DataTable');
+
+        //where the views are
+        $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-datatables');
     }
 }
