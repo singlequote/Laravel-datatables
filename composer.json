@@ -1,5 +1,5 @@
 {
-    "name": "acfbentveld/laravel-datatables",
+    "name": "singlequote/laravel-datatables",
     "description": "Datatables that supports pagination and recursive searching in relations",
     "keywords": [
         "Datatables",
@@ -7,15 +7,15 @@
 		"Pagination",
 		"Models"
     ],
-    "homepage": "https://github.com/ACFBentveld/Laravel-datatables",
+    "homepage": "https://github.com/singlequote/Laravel-datatables",
     "license": "MIT",
-    "version": "2.0.25",
+    "version": "3.0.0",
     "authors": [
         {
             "name": "Wim Pruiksma",
             "email": "wim@acfbentveld.nl",
-            "homepage": "https://acfbentveld.nl/",
-            "role": "Lead developer"
+            "homepage": "https://www.quotec.nl/",
+            "role": "CEO"
         }
     ],
     "require": {
@@ -26,12 +26,12 @@
     },
     "autoload": {
         "psr-4": {
-            "ACFBentveld\\DataTables\\": "src"
+            "singlequote\\DataTables\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "ACFBentveld\\DataTables\\Tests\\": "tests"
+            "singlequote\\DataTables\\Tests\\": "tests"
         }
     },
     "scripts": {
@@ -45,10 +45,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ACFBentveld\\DataTables\\DataTablesServiceProvider"
+                "singlequote\\DataTables\\DataTablesServiceProvider"
             ],
             "aliases": {
-                "DataTables": "ACFBentveld\\DataTables\\DataTablesFacade"
+                "DataTable": "singlequote\\DataTables\\DataTablesFacade"
             }
         }
     }
