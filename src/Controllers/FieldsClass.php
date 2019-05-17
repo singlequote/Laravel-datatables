@@ -28,6 +28,14 @@ abstract class FieldsClass
      */
     public $column;
 
+    /**
+     * Return when the value is empty
+     *
+     * @var mixed
+     */
+    public $returnWhenEmpty;
+
+    
     protected static abstract function make(string $column);
 
     /**
@@ -37,9 +45,24 @@ abstract class FieldsClass
      */
     public function build()
     {
+        $this->column       = $this->toLower($this->column);
+
         $class = $this;
+
         return view("laravel-datatables::fields.$this->view")
             ->with(compact('class'))
             ->render();
+    }
+
+    /**
+     * Translate someVariable to some_variable
+     * Needed for relations
+     *
+     * @param string $string
+     * @return string
+     */
+    private function toLower(string $string) : string
+    {
+        return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
     }
 }

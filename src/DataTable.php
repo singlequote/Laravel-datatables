@@ -1,6 +1,7 @@
 <?php
 namespace SingleQuote\DataTables;
 
+use SingleQuote\DataTables\Controllers\DataTable as ServerSide;
 use SingleQuote\DataTables\DataTableException;
 use SingleQuote\DataTables\Fields\Label;
 use Illuminate\Support\Str;
@@ -13,11 +14,21 @@ use Request;
  */
 class DataTable
 {
-
+    /**
+     * Constructor
+     *
+     */
     public function __construct()
     {
         //
     }
+
+    /**
+     * The columns
+     *
+     * @var array
+     */
+    protected $columns = [];
 
     /**
      * Set the model
@@ -30,15 +41,32 @@ class DataTable
     {
         if($model instanceof \Illuminate\Database\Eloquent\Model){
             $this->model = $model;
+
             return $this;
         }
         throw new DataTableException("$model must be an an instance of \Illuminate\Database\Eloquent\Model");
     }
 
-    public function tableModel($class)
+    /**
+     * Create the tbale model
+     *
+     * @param TableModel $class
+     * @param mixed $params
+     * @return $this
+     */
+    public function tableModel($class, ... $params)
     {
-        $this->view = new $class;
-        $this->view->make();
+        $reflection = new \ReflectionClass($class);
+        $this->view = $reflection->newInstanceArgs($params);
+        $this->view->id = base64_encode($class);
+        $this->view->make($this->model, $params);
+
+        $this->checkColumns();
+
+        if(Request::filled('laravel-datatables')){
+            return new ServerSide($this->view->query, $this->view);
+        }
+        
         return $this->build();
     }
 
@@ -49,12 +77,9 @@ class DataTable
      */
     private function build()
     {
-        $this->checkColumns();
         $this->checkDefs();
-
         $this->generateTable();
         $this->generateScripts();
-
 
         return $this;
     }
@@ -68,15 +93,29 @@ class DataTable
     {
         foreach($this->view->columns as $index => $column){
 
-            $name = is_array($column) ? isset($column['name']) ? $column['name'] : null  : $column;
-            $data = is_array($column) ? isset($column['data']) ? $column['data'] : null  : $column;
+            $name       = is_array($column) ? isset($column['name']) ? $column['name'] : null  : $column;
+            $data       = is_array($column) ? isset($column['data']) ? $column['data'] : null  : $column;
+            $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true  : true;
+            $orderable  = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true  : true;
+            $class      = is_array($column) ? isset($column['class']) ? $column['class'] : null  : null;
+
+            if(Str::contains($data, '.')){
+                $this->view->query = $this->view->query->with(Str::before($data, '.'));
+            }
 
             $this->view->columns[$index] = [
-                'data' => $data ?? $name,
-                'name' => $name ?? $data
+                'data'          => $this->toLower($data ?? $name),
+                'name'          => $this->toLower($name ?? $data),
+                'original'      => $data,
+                'searchable'    => $searchable,
+                'orderable'     => $orderable ?? true,
+                'class'         => $class
             ];
-            
+
+            $this->columns[] = $data ?? $name;
+
             $this->view->defs[$data] = [
+                'class'     => $class,
                 'id'        => uniqid('function'),
                 'target'    => $index,
                 'def'       => []
@@ -86,14 +125,29 @@ class DataTable
     }
 
     /**
+     * Translate someVariable to some_variable
+     * Needed for relations
+     *
+     * @param string $string
+     * @return string
+     */
+    private function toLower(string $string) : string
+    {
+        return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
+    }
+
+    /**
      * Fill in the fields defs
      * Fill the defs when there is no field set
+     * Check if the column does exist in the column array
      *
      */
     private function checkDefs()
     {
         foreach($this->view->fields as $field){
-            $this->view->defs[$field->column]['def'][] = $field;
+            if(array_search($field->column, $this->columns)){
+                $this->view->defs[$field->column]['def'][] = $field;
+            }
         }
         
         $this->buildDef();
@@ -141,7 +195,7 @@ class DataTable
     private function generateTable()
     {
         $view = $this->view;
-        $this->generatedTable = view("laravel-datatables::table")
+        return view("laravel-datatables::table")
             ->with(compact('view'))
             ->render();
     }
@@ -151,12 +205,32 @@ class DataTable
      * The scripts are generated in a view
      *
      */
-    public function generateScripts()
+    private function generateScripts()
     {
         $view = $this->view;
-        $this->generatedScript = view("laravel-datatables::scripts")
+        return view("laravel-datatables::scripts")
             ->with(compact('view'))
             ->render();
+    }
+
+    /**
+     * Return the generated table
+     *
+     * @return string
+     */
+    public function table()
+    {
+        return $this->generateTable();
+    }
+
+    /**
+     * return the generated script
+     *
+     * @return string
+     */
+    public function script()
+    {
+        return $this->generateScripts();
     }
 
 }

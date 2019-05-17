@@ -1,6 +1,6 @@
 
 <!--
-Everything between the < script > tags will be replaced with the datatbales render method like below
+Everything between the < script > tags will be replaced with the datatables render method like below
 The script methods will be replaced with
 
 "render": function ( data, type, row ) {
@@ -13,7 +13,9 @@ you can use the variables data, type and row
 
 
 <script>
+    if(!data){
+        return "{{ $class->returnWhenEmpty }}";
+    }
 
     return data;
-
 </script>
