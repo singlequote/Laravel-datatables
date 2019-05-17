@@ -12,7 +12,7 @@ namespace SingleQuote\DataTables\Controllers;
  *
  * @author Wim Pruiksma <wim.pruiksma@nugtr.nl>
  */
-abstract class FieldsClass
+abstract class Field
 {
     /**
      * Set the column to be searchable
@@ -36,7 +36,7 @@ abstract class FieldsClass
     public $returnWhenEmpty;
 
     
-    protected static abstract function make(string $column);
+    public static abstract function make(string $column);
 
     /**
      * Render the Field class
@@ -49,9 +49,36 @@ abstract class FieldsClass
 
         $class = $this;
 
-        return view("laravel-datatables::fields.$this->view")
+        return view($this->getView())
             ->with(compact('class'))
             ->render();
+    }
+
+    /**
+     * Return the custom view when it exists.
+     * If not return the default package view from the vendor
+     *
+     * @return string
+     */
+    private function getView()
+    {
+        if(view()->exists("$this->view")){
+            return $this->view;
+        }
+        return "laravel-datatables::fields.$this->view";
+    }
+
+    /**
+     * Set the empty response for when the value is 0, null or false
+     *
+     * @param mixed $returnWhenEmpty
+     * @return $this
+     */
+    public function returnWhenEmpty($returnWhenEmpty)
+    {
+        $this->returnWhenEmpty = $returnWhenEmpty;
+        
+        return $this;
     }
 
     /**
@@ -61,7 +88,7 @@ abstract class FieldsClass
      * @param string $string
      * @return string
      */
-    private function toLower(string $string) : string
+    public function toLower(string $string) : string
     {
         return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
     }

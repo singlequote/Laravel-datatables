@@ -186,7 +186,6 @@ class DataTable
 
         $build = $this->model->skip($this->start)->take($this->length);
         $model = $build->orderBy($this->order['column'], $this->order['dir'])->get();
-            
 
         return $model;
     }

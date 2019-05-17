@@ -1,14 +1,14 @@
 <?php
 namespace SingleQuote\DataTables\Fields;
 
-use SingleQuote\DataTables\Controllers\FieldsClass;
+use SingleQuote\DataTables\Controllers\Field;
 
 /**
  * Description of Date
  *
  * @author Wim Pruiksma <wim.pruiksma@nugtr.nl>
  */
-class Date extends FieldsClass
+class Date extends Field
 {
     /**
      * The date view

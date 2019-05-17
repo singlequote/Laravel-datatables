@@ -10,12 +10,15 @@
       return new URLSearchParams(window.location.search).get(param);
     }
 
+    let uri = location.href;
+    let mark = uri.includes('?') ? '&' : '?';
+
     let Json{{ $view->tableId }} = {
         "paging": true,
         "processing": true,
         "serverSide": true,
         "dom" : "{!! $view->dom !!}",
-        "ajax": location.origin+location.pathname+"?laravel-datatables=active&id={{ $view->id }}",
+        "ajax": `${uri}${mark}laravel-datatables=active&id={{ $view->id }}`,
         "pageLength" : {{ $view->pageLength }},
         "columns": [
             @foreach($view->columns as $column)

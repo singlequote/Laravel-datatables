@@ -2,14 +2,14 @@
 
 namespace SingleQuote\DataTables\Fields;
 
-use SingleQuote\DataTables\Controllers\FieldsClass;
+use SingleQuote\DataTables\Controllers\Field;
 
 /**
  * Description of Label
  *
  * @author Wim Pruiksma <wim.pruiksma@nugtr.nl>
  */
-class Button extends FieldsClass
+class Button extends Field
 {
     /**
      * The date view

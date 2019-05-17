@@ -1,12 +1,12 @@
 # Eloquent datatables
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
-[![Total Downloads](https://img.shields.io/packagist/dt/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/acfbentveld/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
+[![Total Downloads](https://img.shields.io/packagist/dt/acfbentveld/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
 
 This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination and recursive searching in relations.
 
 ## Note
-Users who want to use the older version of this package, go to the [early version repo](https://github.com/singlequote/Laravel-datatables). The ACFBentveld group is transferd to a new group called SingleQuote.
+Users who want to use the older version of this package, go to the [early version repo](https://github.com/ACFBentveld/Laravel-datatables). The ACFBentveld group is transferd to a new group called SingleQuote.
 
 ## Installation
 
@@ -100,12 +100,6 @@ Now when everything is set we can display the table inside our view.
 ```
 Thats it. You table is all done and set. You are probably thinking, how can i change the behaviour of the columns like changing the format of the created_at column. 
 
-### Passing arguments to the TableModel
-When calling the TableModel from your controller you can pass arguments to the class constructor.
-```php
-\DataTable::model(new User)->tableModel(\App\TableModels\Users::class, $argument1, $argument2, $argument3);
-```
-
 ### Changing the behaviour of the columns
 Yes you can change the behaviour of the columns with `Field classes`. Inside your `TableModel` find the method `fields`.
 Inside the `return [];` you can define the behaviour of the columns. For example we are going to change the format of the `created_at` column to the format `d-m-Y H:i`
@@ -146,13 +140,6 @@ use as | `Number::make(column_name)`
 |--------|-----------|-------------|-------------|
 | asCurrency | `int` $decimals, `string` $dec_point, `string` $thousands_sep | `Number::make(column_name)->asCurrency(2, ',', '.')` | Format column as Number in currency format |
 ---
-**Button**
-use as | `Button::make(column_name)`
-full example : `Button::make('id')->icon("material-icons", "edit")->class('btn btn-warning')->route('users.edit', 'id'),`
-| Method | parameter | Example     | Description |
-|--------|-----------|-------------|-------------|
-| asCurrency |  |  |  |
----
 
 ### TableModel behaviour
 The TableModel behaviour is by default simple and fast but you can change this like adding a query tot the model or translate the headers of the table.
@@ -188,12 +175,7 @@ public $encrypt = [
     'id'
 ];
 ```
-___
-**Page Length**
-The default page length for the datatable is `10`. You can change this by editing the `pageLength` property
-```php
-public $pageLength = 100; //set page length to 100
-```
+
 ___
 **Table ID**
 For every table a unique id is rendered but if you want to add a custom ID you can use the `tableId` property.
@@ -205,12 +187,6 @@ ___
 When you are using bootstrap you propably want to add the `table` class to your tables. You can use the `tableClass` property to add classes.
 ```php
 public $tableClass = "table myTableClass someOtherClass";
-```
-___
-**Remember page**
-Whenever you are clicking through the pagination items and refresh the browser, the pagination starts at 1 again. To prevent this and remember wich page you are, use the `rememberPage` property. Default is `true`
-```php
-public $rememberPage = true;
 ```
 ___
 **Header translation**
