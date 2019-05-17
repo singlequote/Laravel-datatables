@@ -84,7 +84,7 @@ class Button extends Field
      */
     public function icon(string $class, string $name = "")
     {
-        $this->icon = "<i class=$class>$name</i>";
+        $this->icon = "<i class=\"$class\">$name</i>";
 
         return $this;
     }

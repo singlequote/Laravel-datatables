@@ -50,11 +50,11 @@ class DataTable
     /**
      * Create the tbale model
      *
-     * @param TableModel $class
+     * @param string $class
      * @param mixed $params
      * @return $this
      */
-    public function tableModel($class, ... $params)
+    public function tableModel(string $class, ... $params)
     {
         $reflection = new \ReflectionClass($class);
         $this->view = $reflection->newInstanceArgs($params);
