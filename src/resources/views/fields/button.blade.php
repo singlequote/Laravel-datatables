@@ -12,10 +12,6 @@ you can use the variables data, type and row
 -->
 
 <script>
-    if(!data){
-        return "{{ $class->returnWhenEmpty }}";
-    }
-
     let route;
     @if($class->route)
     let url = "{{ $class->route }}";
@@ -39,5 +35,5 @@ you can use the variables data, type and row
     `;
     @endif
 
-    return template;
+    return `{!! $class->before !!} ${template} {!! $class->after !!}`;
 </script>

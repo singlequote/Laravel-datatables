@@ -14,6 +14,7 @@ namespace SingleQuote\DataTables\Controllers;
  */
 abstract class Field
 {
+
     /**
      * Set the column to be searchable
      *
@@ -35,7 +36,53 @@ abstract class Field
      */
     public $returnWhenEmpty;
 
-    
+    /**
+     * Set a condition
+     *
+     * @var mixed
+     */
+    public $condition;
+
+    /**
+     * The fields dom class
+     *
+     * @var string
+     */
+    public $class;
+
+    /**
+     *The name to oevrwrite the column name
+     *
+     * @var string 
+     */
+    public $overwrite;
+
+    /**
+     * Before string
+     *
+     * @var string
+     */
+    public $before;
+
+    /**
+     * After string
+     *
+     * @var string
+     */
+    public $after;
+
+    /**
+     * Set to true to check if a column is empty
+     *
+     * @var bool
+     */
+    public $emptyCheck = true;
+
+    /**
+     * Required function to every field class
+     * This is needed to call the classes
+     *
+     */
     public static abstract function make(string $column);
 
     /**
@@ -45,13 +92,79 @@ abstract class Field
      */
     public function build()
     {
-        $this->column       = $this->toLower($this->column);
+        $this->column = $this->toLower($this->column);
 
         $class = $this;
 
         return view($this->getView())
             ->with(compact('class'))
             ->render();
+    }
+
+    /**
+     * Get the column path for example relation.name becomes relation
+     *
+     * @return string
+     */
+    public function columnPath(string $string = null) : string
+    {
+        $explode = explode('.', $this->column);
+        array_pop($explode);
+        $add = $string ? ".$string": "";
+
+        if(count($explode) === 0){
+            return $string ?? "";
+        }
+        return implode('.', $explode).$add;
+    }
+
+    /**
+     * Return the column name for example relation.name becomes name
+     *
+     * @return string
+     */
+    public function columnName() : string
+    {
+        $explode = explode('.', $this->column);
+        return array_pop($explode) ?? "";
+    }
+
+    /**
+     * Overwrite the make column to show diffrent data
+     *
+     * @param string $column
+     * @return $this
+     */
+    public function column(string $column)
+    {
+        $this->overwrite = $column;
+        return $this;
+    }
+    
+    /**
+     * Set a condition
+     *
+     * @param mixed $condition
+     * @return $this
+     */
+    public function condition($condition)
+    {
+        $this->condition = $condition;
+
+        return $this;
+    }
+
+    /**
+     * Set the class for the button
+     *
+     * @param string $class
+     * @return $this
+     */
+    public function class(string $class)
+    {
+        $this->class = $class;
+
+        return $this;
     }
 
     /**
@@ -92,4 +205,31 @@ abstract class Field
     {
         return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
     }
+
+    /**
+     * Set a string to display before the output
+     *
+     * @param string $before
+     * @return $this
+     */
+    public function before(string $before)
+    {
+        $this->before = $before;
+
+        return $this;
+    }
+
+    /**
+     * Set a string to display after the output
+     *
+     * @param string $after
+     * @return $this
+     */
+    public function after(string $after)
+    {
+        $this->after = $after;
+
+        return $this;
+    }
+
 }

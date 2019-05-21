@@ -33,13 +33,6 @@ class Button extends Field
     public $icon;
 
     /**
-     * Set the icon
-     *
-     * @var string
-     */
-    public $class;
-
-    /**
      * THe route url for when the user clicks the button
      *
      * @var string
@@ -90,20 +83,7 @@ class Button extends Field
     }
 
     /**
-     * Set the class for the button
-     *
-     * @param string $class
-     * @return $this
-     */
-    public function class(string $class)
-    {
-        $this->class = $class;
-
-        return $this;
-    }
-
-    /**
-     * Set the route to rediretc the user to when the button is clicked
+     * Set the route to redirect the user to when the button is clicked
      *
      * @param string $route
      * @param mixed $parameters
@@ -114,10 +94,10 @@ class Button extends Field
         $params = is_array($parameters) ? $parameters : [$parameters];
 
         foreach($params as $index => $param){
-            $this->routeReplace["*$param*"] = $param;
-            $params[$index]                 = "*$param*";
+            $this->routeReplace["*$param*"] = $this->columnPath($param);
+            $params[$index] = "*$param*";
         }
-        
+
         $this->route = route($route, $params);
 
         return $this;

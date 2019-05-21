@@ -13,8 +13,7 @@ you can use the variables data, type and row inside the script tags
 
 
 <script>
-
-    let value = data;
+    let value = {{ !is_null($class->startAt) ? "parseFloat($class->startAt)" : 'data' }};
 
     @if($class->sum)
         value = 0;
@@ -23,9 +22,17 @@ you can use the variables data, type and row inside the script tags
         @endforeach
     @endif
 
-    if(!value || value === 0){
-    return "{{ $class->returnWhenEmpty }}";
-    }
+    @if($class->sumEach)
+        $.each(data, (index, item) => {
+            @foreach($class->sumEach as $sum)
+                value += parseFloat(item.{{ $sum }});
+            @endforeach
+        });
+    @endif
+
+    @if($class->raw)
+    return value;
+    @endif
 
     @if($class->format)
     return parseFloat(value).toFixed({{ $class->decimals }});
@@ -33,8 +40,9 @@ you can use the variables data, type and row inside the script tags
     
     @if($class->asCurrency)
     var p = parseFloat(value).toFixed({{ $class->decimals }}).split(".");
-    return p[0].split("").reverse().reduce(function(acc, num, i, orig) {
+
+    return `{!! $class->before !!} <label class="{{ $class->class }}">${p[0].split("").reverse().reduce(function(acc, num, i, orig) {
         return  num=="-" ? acc : num + (i && !(i % 3) ? '{{ $class->thousands_sep }}' : "") + acc;
-    }, "") + '{{ $class->dec_point }}' + p[1];
+    }, "") + '{{ $class->dec_point }}' + p[1]}</label> {!! $class->after !!}`;
     @endif
 </script>

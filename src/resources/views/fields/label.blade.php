@@ -13,9 +13,5 @@ you can use the variables data, type and row
 
 
 <script>
-    if(!data){
-        return "{{ $class->returnWhenEmpty }}";
-    }
-
-    return data;
+    return `{!! $class->before !!} <label class="{{ $class->class }}">${data}</label> {!! $class->after !!}`;
 </script>

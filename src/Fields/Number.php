@@ -40,6 +40,13 @@ class Number extends Field
     public $format = false;
 
     /**
+     * Render as raw output
+     *
+     * @var bool
+     */
+    public $raw = false;
+
+    /**
      * Decimals
      *
      * @var int
@@ -68,6 +75,22 @@ class Number extends Field
     public $sum;
 
     /**
+     * Sum columns from an object
+     * Loop through relation fields and sum the selected columns
+     *
+     * @var mixed
+     */
+    public $sumEach;
+
+    /**
+     * Set the start number. Counting starts from this number when set.
+     * This overrides the data value
+     *
+     * @var mixed
+     */
+    public $startAt;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -79,6 +102,18 @@ class Number extends Field
         $class->column = $column;
         $class->id = uniqid('Number');
         return $class;
+    }
+
+    /**
+     *
+     * @param float $number
+     * @return $this
+     */
+    public function startAt(float $number)
+    {
+        $this->startAt = $number;
+
+        return $this;
     }
 
     /**
@@ -114,6 +149,18 @@ class Number extends Field
     }
 
     /**
+     * Return value as raw count
+     *
+     * @return $this
+     */
+    public function raw()
+    {
+        $this->raw      = true;
+
+        return $this;
+    }
+
+    /**
      * Set the sum columns
      *
      * @param array $sum
@@ -121,8 +168,23 @@ class Number extends Field
      */
     public function sum(... $sum)
     {
+        $this->startAt = $this->startAt ?? 0;
         $this->sum = $sum;
         
+        return $this;
+    }
+
+    /**
+     * Set the sum columns
+     *
+     * @param array $sum
+     * @return $this
+     */
+    public function sumEach(... $sum)
+    {
+        $this->startAt = $this->startAt ?? 0;
+        $this->sumEach = $sum;
+
         return $this;
     }
 

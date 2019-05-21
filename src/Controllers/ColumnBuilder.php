@@ -71,6 +71,13 @@ abstract class ColumnBuilder
     public $pageLength = 10;
 
     /**
+     * Set order
+     *
+     * @var mixed
+     */
+    public $order;
+
+    /**
      * Set the dom
      *
      * @var string
@@ -106,9 +113,11 @@ abstract class ColumnBuilder
      */
     public function make(... $params)
     {
+        
         $this->fields       = $this->fields();
         $this->tableId      = $this->tableId ?? uniqid('laravelDataTable');
         $this->query        = call_user_func_array([$this, 'query'], $params);
+        $this->order        = $this->order ?? [[ 0, "asc" ]];
 
         foreach($this->translate() as $index => $translate){
             $this->translate[$this->toLower($index)] = $translate;

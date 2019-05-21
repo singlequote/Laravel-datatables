@@ -41,8 +41,8 @@ class DataTable
      */
     public function __construct($model, $tableModel)
     {
-        $this->model = $model;
-        $this->tableModel = $tableModel;
+        $this->model        = $model;
+        $this->tableModel   = $tableModel;
         return $this->build();
     }
 
@@ -59,7 +59,7 @@ class DataTable
         $col = $this->column[Request::get('order')[0]['column']];
 
         $this->order  = [
-            'column' => isset($col['name']) ? $col['name'] : $col['data'],
+            'column' => $col['data'],
             'dir' => Request::get('order')[0]['dir']
         ];
 
@@ -69,7 +69,7 @@ class DataTable
         $this->id           = Request::get('id');
         
         $this->searchable($this->tableModel->searchable ?? $this->tableModel->columns);
-        
+
         return $this->get();
     }
 
@@ -120,7 +120,7 @@ class DataTable
     public function get()
     {
         if($this->id !== $this->tableModel->id){
-            return false;
+            dd('stp[p');
         }
 
         $data = $this->execute();

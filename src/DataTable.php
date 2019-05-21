@@ -40,8 +40,8 @@ class DataTable
     public function model($model)
     {
         if($model instanceof \Illuminate\Database\Eloquent\Model){
-            $this->model = $model;
-
+            $this->model            = $model;
+            $this->originalModel    = $model;
             return $this;
         }
         throw new DataTableException("$model must be an an instance of \Illuminate\Database\Eloquent\Model");
@@ -60,13 +60,12 @@ class DataTable
         $this->view = $reflection->newInstanceArgs($params);
         $this->view->id = base64_encode($class);
         $this->view->make($this->model, $params);
-
+        
         $this->checkColumns();
-
         if(Request::filled('laravel-datatables')){
             return new ServerSide($this->view->query, $this->view);
         }
-        
+
         return $this->build();
     }
 
@@ -92,36 +91,71 @@ class DataTable
     private function checkColumns()
     {
         foreach($this->view->columns as $index => $column){
-
-            $name       = is_array($column) ? isset($column['name']) ? $column['name'] : null  : $column;
+            
             $data       = is_array($column) ? isset($column['data']) ? $column['data'] : null  : $column;
+            $original   = $data;
+            $name       = is_array($column) ? isset($column['name']) ? $column['name'] : null  : null;
             $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true  : true;
             $orderable  = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true  : true;
             $class      = is_array($column) ? isset($column['class']) ? $column['class'] : null  : null;
 
-            if(Str::contains($data, '.')){
-                $this->view->query = $this->view->query->with(Str::before($data, '.'));
+            if(Str::contains($data, ' as ')){
+                $name = $name ?? Str::after($data, ' as ');
+                $data = Str::before($data, ' as ');
             }
 
-            $this->view->columns[$index] = [
-                'data'          => $this->toLower($data ?? $name),
-                'name'          => $this->toLower($name ?? $data),
-                'original'      => $data,
-                'searchable'    => $searchable,
-                'orderable'     => $orderable ?? true,
-                'class'         => $class
-            ];
+            if(Str::contains($data, '.')){
+                $explode = explode('.', $data);
+                array_pop($explode);
+                $this->view->query = $this->view->query->with(implode('.', $explode));
+            }
 
-            $this->columns[] = $data ?? $name;
+            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class);
 
-            $this->view->defs[$data] = [
-                'class'     => $class,
-                'id'        => uniqid('function'),
-                'target'    => $index,
-                'def'       => []
-            ];
+            $this->columns[] = $name ?? $data;
 
+            $this->buildColumnsDef($index, $name ?? $data, $class);
         }
+    }
+
+
+    /**
+     * BUild the columns list
+     *
+     * @param int $index
+     * @param string $data
+     * @param string $name
+     * @param bool $searchable
+     * @param bool $orderable
+     * @param string $class
+     */
+    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null)
+    {
+        $this->view->columns[$index] = [
+            'data'          => $this->toLower($data),
+            'name'          => $this->toLower($name),
+            'original'      => $original,
+            'searchable'    => $searchable,
+            'orderable'     => $orderable ?? true,
+            'class'         => $class
+        ];
+    }
+
+    /**
+     * Build the columns def
+     *
+     * @param int $index
+     * @param string $data
+     * @param string $class
+     */
+    private function buildColumnsDef(int $index, string $data, string $class = null)
+    {
+        $this->view->defs[$data] = [
+            'class'     => $class,
+            'id'        => uniqid('column'),
+            'target'    => $index,
+            'def'       => []
+        ];
     }
 
     /**
@@ -144,12 +178,21 @@ class DataTable
      */
     private function checkDefs()
     {
+        foreach($this->view->fields as $index => $field){
+            if(is_array($field)){
+                foreach($field as $item){
+                   $this->view->fields[] = $item;
+                }
+                unset($this->view->fields[$index]);
+            }
+        }
+
         foreach($this->view->fields as $field){
-            if(array_search($field->column, $this->columns)){
+            if(array_search($field->column, $this->columns) !== false){
                 $this->view->defs[$field->column]['def'][] = $field;
             }
         }
-        
+
         $this->buildDef();
     }
 
@@ -184,6 +227,7 @@ class DataTable
     private function getBetweenTags(string $string, string $tagname) : string
     {
         $after = Str::after($string, "<$tagname>");
+        
         return Str::before($after, "</$tagname>");
     }
 
@@ -195,6 +239,7 @@ class DataTable
     private function generateTable()
     {
         $view = $this->view;
+        
         return view("laravel-datatables::table")
             ->with(compact('view'))
             ->render();
@@ -208,6 +253,7 @@ class DataTable
     private function generateScripts()
     {
         $view = $this->view;
+
         return view("laravel-datatables::scripts")
             ->with(compact('view'))
             ->render();
