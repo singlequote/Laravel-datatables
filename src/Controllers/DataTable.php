@@ -258,6 +258,7 @@ class DataTable
                 return $view['original'];
             }
         }
+        return $column;
     }
 
     /**

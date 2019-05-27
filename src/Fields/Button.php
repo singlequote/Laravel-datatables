@@ -54,6 +54,13 @@ class Button extends Field
     public $method = "GET";
 
     /**
+     * The route target
+     *
+     * @var array
+     */
+    public $target;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -112,6 +119,19 @@ class Button extends Field
     public function method(string $method)
     {
         $this->method = strtoupper($method);
+
+        return $this;
+    }
+
+    /**
+     * Set the route target
+     *
+     * @param string $target
+     * @return $this
+     */
+    public function target(string $target)
+    {
+        $this->target = $target;
 
         return $this;
     }

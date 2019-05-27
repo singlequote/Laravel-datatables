@@ -23,7 +23,13 @@ you can use the variables data, type and row
 
     @if($class->method === 'GET')
     $(document).on('click', '#{{ $class->id }}',  (e) => {
-        location.href = $(e.currentTarget).data('route');
+
+        @if($class->target === 'blank')
+            window.open($(e.currentTarget).data('route'), '_blank');
+        @else
+            location.href = $(e.currentTarget).data('route');
+        @endif
+        
     });
     let template = `
         <button type="button" ${route} id="{{ $class->id }}" class="{{ $class->class }}">{!! $class->icon !!}</button>
