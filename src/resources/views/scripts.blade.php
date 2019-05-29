@@ -6,8 +6,20 @@
      * @param {type} param
      * @returns {unresolved}
      */
-    function getParameterFromUrl(param){
-      return new URLSearchParams(window.location.search).get(param);
+    function getParameterFromUrl(param)
+    {
+        return new URLSearchParams(window.location.search).get(param);
+    }
+
+    /**
+     * Genrate unique ID
+     *
+     * @param {String} prefix
+     * @returns {String}
+     */
+    function uniqueId(prefix = "_")
+    {
+        return prefix + Math.random().toString(36).substr(2, 9);
     }
 
     let uri = location.href;

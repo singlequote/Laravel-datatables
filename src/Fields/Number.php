@@ -168,6 +168,7 @@ class Number extends Field
      */
     public function sum(... $sum)
     {
+        $this->emptyCheck = false;
         $this->startAt = $this->startAt ?? 0;
         $this->sum = $sum;
         

@@ -12,6 +12,9 @@ you can use the variables data, type and row
 -->
 
 <script>
+
+    let id = uniqueId("button_");
+
     let route;
     @if($class->route)
     let url = "{{ $class->route }}";
@@ -22,7 +25,7 @@ you can use the variables data, type and row
     @endif
 
     @if($class->method === 'GET')
-    $(document).on('click', '#{{ $class->id }}',  (e) => {
+    $(document).on('click', `#${id}`,  (e) => {
 
         @if($class->target === 'blank')
             window.open($(e.currentTarget).data('route'), '_blank');
@@ -32,12 +35,12 @@ you can use the variables data, type and row
         
     });
     let template = `
-        <button type="button" ${route} id="{{ $class->id }}" class="{{ $class->class }}">{!! $class->icon !!}</button>
+        <button type="button" ${route} id="${id}" class="{{ $class->class }}">{!! $class->icon !!}</button>
     `;
     @elseif(in_array($class->method, ['POST', 'DELETE', 'PUT', 'PATCH']))
     let template = `
-        <button onclick="$('#form{{ $class->id }}').submit()" type="button" id="{{ $class->id }}" class="{{ $class->class }}">{!! $class->icon !!}</button>
-        <form class="laravel-datatable-form-{{ strtolower($class->method) }}" style="display:none;" method="post" id="form{{ $class->id }}" action="${url}">@csrf @method($class->method)</form>
+        <button onclick="$('#form${id}').submit()" type="button" id="${id}" class="{{ $class->class }}">{!! $class->icon !!}</button>
+        <form class="laravel-datatable-form-{{ strtolower($class->method) }}" style="display:none;" method="post" id="form${id}" action="${url}">@csrf @method($class->method)</form>
     `;
     @endif
 
