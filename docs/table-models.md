@@ -7,13 +7,8 @@ You can use the `artisan` command to generate a new `TableModel`. Where `Users` 
 php artisan make:table-model Users
 ```
 
-| First Header  | Second Header |
-| ------------- | ------------- |
-| Content Cell  | Content Cell  |
-| Content Cell  | Content Cell  |
-
 This command also has some options you can use to easily create a new table model.
-| Option        | Description           | Demo  |
+| Option | Description | Demo |
 | ------------- |:-------------:|:-----:|
 | --route={value}      | Set the route for the 3 demo buttons | `php artisan make:table-model Name --route=my-route` |
 | --class={value}      | Set the table class      | `php artisan make:table-model Name --class=table` |
