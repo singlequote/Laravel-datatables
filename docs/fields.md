@@ -77,9 +77,117 @@ Label::make('temperature')->after('degrees') // 19 degrees
 ## Field classes
 
 ### Label (default)
-This is the default field class. When there is no field class specified for a column, the package will use this class to show the data.
+This is the default field class. When there is no field class specified for a column, the package will use this class to display the data.
 ```php
 Label::make('...')
 ```
+
+### Date
+Can change the format of a date string, from php format to javascript format.
+```php
+Date::make('...')->format('d-m-Y H:i:s')
+```
+
+### Button
+Can place buttons inside your table. For example edit or delete buttons.
+```
+Button::make('...');
+```
+The following options can be used with this class
+
+|Options|Description|Example|
+|---|---|---|
+|icon (class, name)|Place an icon inside the button|`Button::make('...')->icon('fa fa-edit')`|
+|route|Make the button clickable|`Button::make('...')->route('users.edit', 'id')`|
+|method|Change the route method of the button|`Button::make('...')->route('users.destroy', 'id')->method('delete')`|
+|target|Change the target of the route|`Button::make('...')->route('users.edit', 'id')->target('blank')`|
+
+### Icon
+Insert an icon
+```php
+Icon::make('...')->feather('edit') //insert feather icon
+-
+Icon::make('...')->material('edit') //insert material icon
+-
+Icon::make('...')->fa('edit') //insert font awesome icon
+```
+
+### Image
+Insert an image
+```php
+Image::make('...')->src("https://www.w3schools.com/howto/img_forest.jpg")
+- 
+//or if you use image routes
+Image::make('...')->route("media", params)
+```
+
+### Multiple
+The multiple field class let't you insert multiple field classes in one column or use a simple counter over relations.
+**Implode**
+Use the implode method on for example relations.
+```php
+Multiple::make('roles')->implode('name', ', '); //admin, employee, etc..
+```
+**Each**
+It is also possible to use multiple field classes in one column. For example, the creation date of every role a user haves.
+```php
+Multiple::make('...')->each('roles', function(){
+    return [
+        Label::make('name')->after(', <br>'),
+    ];
+})
+//will look like
+//  Admin,
+//  Maintainer,
+//  etc..
+```
+**Counter**
+Counting numbers or prices, sometimes you want to count a few numbers and display them. The counter method accepts an clusore function and requires fields to be returned
+```php
+Multiple::make('...')->count(function(){
+    return [
+        Number::make('...')->raw(), //return raw number
+    ];
+});
+ ```
+ 
+### Number
+The number field class can be used to format numbers or to count numbers. It can also be formatted as currency.
+```php
+Number::make('...')->format(2) //default 2 decimals, returns number formatted as 2 decimals
+-
+Number::make('...')->raw() //returns the number as a raw format
+- 
+Number::make('...')->asCurrency(2, '.', ',') //default values, formatted as currency
+```
+
+**Sum**
+Using the sum method, you can count the numbers and return as a formatted or raw number.
+```php
+Number::make('...')->sum('column1', 'column2', 'etc...')->format() //return formatted number
+```
+
+**Sum Each**
+This can be used to sum columns of relations
+```php
+Number::make('products')->sumEach('price', 'tax')->asCurrency() //sum all given columns of the relation products
+```
+
+### Custom fields
+Yes you can create custom fields classes, and yes we would love to use your field classes as a default field for this package. 
+**Command**
+Run the command `php artisan make:table-field {name}` to generate a new Field class.
+This will create a new Field class in `App\TableModels\Fields` and a resource view in `resources/views/vendor/laravel-datatables/fields`.
+
+You can now call your custom field class as `Fields\MyCustomField::make('...')`
+
+
+
+
+
+
+
+
+
 
 
