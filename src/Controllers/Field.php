@@ -108,10 +108,9 @@ abstract class Field
      */
     public function columnPath(string $string = null) : string
     {
-        $explode = explode('.', $this->column);
+        $explode = explode('.', $this->overwrite ?? $this->column);
         array_pop($explode);
         $add = $string ? ".$string": "";
-
         if(count($explode) === 0){
             return $string ?? "";
         }

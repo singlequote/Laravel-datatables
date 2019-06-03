@@ -18,14 +18,13 @@ you can use the variables data, type and row
     @if($class->route)
     let url = "{{ $class->route }}";
     @foreach($class->routeReplace as $key => $replace)
-//    if(!row.{{ $replace }}){
-//        url = url.replace("{{ $key }}", "{{ str_replace('*', '', $key) }}");
-//    }else{
         url = url.replace("{{ $key }}", row.{{ $replace }});
-//    }
-    
     @endforeach
     route = `${url}`;
+    @endif
+
+    @if($class->src)
+        let route = "{{ $class->src }}";
     @endif
 
     return `{!! $class->before !!} <img class="{{ $class->class }}" src="${route}" /> {!! $class->after !!}`;

@@ -57,7 +57,7 @@ abstract class ColumnBuilder
     public $encrypt = [];
 
     /**
-     * Remember which data page the user is
+     * Remember which data page the user is on
      *
      * @var bool
      */

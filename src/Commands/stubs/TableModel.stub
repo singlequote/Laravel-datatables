@@ -1,0 +1,44 @@
+<?php
+namespace App\TableModels;
+
+use SingleQuote\DataTables\Controllers\ColumnBuilder;
+<stub>button namespace</stub>
+
+/**
+ * TableModel for SingleQuote\DataTable
+ * See the full focs here for the table models https://singlequote.github.io/Laravel-datatables/table-models
+ *
+ */
+class <stub>name</stub> extends ColumnBuilder
+{
+    <stub>class</stub>
+
+    /**
+     * Set the columns for your table
+     * These are also your header, searchable and filter columns
+     *
+     * @var array
+     */
+    public $columns = [
+        'name',
+        <stub>button column</stub>
+    ];
+
+    <stub>translations</stub>
+    <stub>query</stub>
+
+    /**
+     * Alter the fields displayed by the resource.
+     *
+     * @return array
+     */
+    public function fields() : array
+    {
+        return [
+            <stub>show-button</stub>
+            <stub>edit-button</stub>
+            <stub>destroy-button</stub>
+        ];
+    }
+
+}

@@ -26,8 +26,8 @@ you can use the variables data, type and row
         icon = `<i class="material-icons {{ $class->class }}">{{ $class->material }}</i>`;
     @endif
 
-    @if($class->custom)
-        icon =  `{{ $class->custom }}`;
+    @if($class->fa)
+        icon =  `<i class="fa fa-{{ $class->fa }}"></i>`;
     @endif
 
     return `{!! $class->before !!} ${icon} {!! $class->after !!}`;

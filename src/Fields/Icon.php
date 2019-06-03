@@ -18,11 +18,11 @@ class Icon extends Field
     protected $view = "icon";
 
     /**
-     * Custom icon
+     * Font awesome icon
      *
      * @var mixed
      */
-    public $custom;
+    public $fa;
 
     /**
      * Material icon
@@ -64,9 +64,28 @@ class Icon extends Field
         return $this;
     }
 
+    /**
+     * Set a feather icon
+     *
+     * @param string $icon
+     * @return $this
+     */
     public function feather(string $icon)
     {
         $this->feather = $icon;
+
+        return $this;
+    }
+
+    /**
+     * Set the class
+     *
+     * @param string $class
+     * @return $this
+     */
+    public function fa(string $fa)
+    {
+        $this->fa = $fa;
 
         return $this;
     }

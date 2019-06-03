@@ -39,7 +39,12 @@ class DataTable
      */
     public function model($model)
     {
-        if($model instanceof \Illuminate\Database\Eloquent\Model){
+        if($model instanceof \Illuminate\Database\Eloquent\Model || is_string($model)){
+
+            if(is_string($model)){
+                $model = new $model;
+            }
+
             $this->model            = $model;
             $this->originalModel    = $model;
             return $this;
@@ -60,7 +65,7 @@ class DataTable
         $this->view = $reflection->newInstanceArgs($params);
         $this->view->id = base64_encode($class);
         $this->view->make($this->model, $params);
-        
+
         $this->checkColumns();
         if(Request::filled('laravel-datatables')){
             return new ServerSide($this->view->query, $this->view);
@@ -91,7 +96,6 @@ class DataTable
     private function checkColumns()
     {
         foreach($this->view->columns as $index => $column){
-            
             $data       = is_array($column) ? isset($column['data']) ? $column['data'] : null  : $column;
             $original   = $data;
             $name       = is_array($column) ? isset($column['name']) ? $column['name'] : null  : null;
@@ -208,7 +212,7 @@ class DataTable
                 $this->view->defs[$column]['def'] = [Label::make($column)];
             }
         }
-        
+
         foreach($this->view->defs as $column => $def){
             foreach($def['def'] as $index => $field){
                 $rendered = $this->getBetweenTags($field->build(), 'script');
@@ -227,7 +231,7 @@ class DataTable
     private function getBetweenTags(string $string, string $tagname) : string
     {
         $after = Str::after($string, "<$tagname>");
-        
+
         return Str::before($after, "</$tagname>");
     }
 
@@ -239,7 +243,7 @@ class DataTable
     private function generateTable()
     {
         $view = $this->view;
-        
+
         return view("laravel-datatables::table")
             ->with(compact('view'))
             ->render();
@@ -278,5 +282,33 @@ class DataTable
     {
         return $this->generateScripts();
     }
+
+
+    /**
+     * Get the column path for example relation.name becomes relation
+     *
+     * @return string
+     */
+    public function getPath(string $string = null) : string
+    {
+        $explode = explode('.', $string);
+        array_pop($explode);
+        if(count($explode) === 0){
+            return "";
+        }
+        return implode('.', $explode);
+    }
+
+    /**
+     * Return the column name for example relation.name becomes name
+     *
+     * @return string
+     */
+    public function getName(string $string) : string
+    {
+        $explode = explode('.', $string);
+        return array_pop($explode) ?? "";
+    }
+
 
 }

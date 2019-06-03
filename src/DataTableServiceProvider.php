@@ -6,6 +6,17 @@ use Illuminate\Support\ServiceProvider;
 
 class DataTableServiceProvider extends ServiceProvider
 {
+
+    /**
+     * Commands
+     *
+     * @var array
+     */
+    protected $commands = [
+        \SingleQuote\DataTables\Commands\MakeModel::class,
+        \SingleQuote\DataTables\Commands\MakeField::class,
+    ];
+
     /**
      * Bootstrap the application services.
      */
@@ -23,5 +34,8 @@ class DataTableServiceProvider extends ServiceProvider
 
         //where the views are
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-datatables');
+
+        //register the commands
+        $this->commands($this->commands);
     }
 }

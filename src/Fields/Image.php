@@ -18,6 +18,20 @@ class Image extends Field
     protected $view = "image";
 
     /**
+     * Image route
+     *
+     * @var string
+     */
+    public $route;
+
+    /**
+     * Image source
+     *
+     * @var string
+     */
+    public $src;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -50,6 +64,19 @@ class Image extends Field
         }
 
         $this->route = route($route, $params);
+
+        return $this;
+    }
+
+    /**
+     * Set the source for the image
+     *
+     * @param string $src
+     * @return $this
+     */
+    public function src(string $src)
+    {
+        $this->src = $src;
 
         return $this;
     }

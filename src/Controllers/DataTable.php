@@ -2,6 +2,7 @@
 
 namespace SingleQuote\DataTables\Controllers;
 
+use SingleQuote\DataTables\DataTable as ParentClass;
 use Illuminate\Support\Str;
 use Request;
 
@@ -10,7 +11,7 @@ use Request;
  *
  * @author Wim Pruiksma
  */
-class DataTable
+class DataTable extends ParentClass
 {
     /**
      * The collection model
@@ -27,6 +28,13 @@ class DataTable
     protected $tableModel;
 
     /**
+     * The original collection model
+     *
+     * @var mixed
+     */
+    protected $originalModel;
+
+    /**
      * Set the search keys
      *
      * @var array
@@ -41,8 +49,15 @@ class DataTable
      */
     public function __construct($model, $tableModel)
     {
-        $this->model        = $model;
-        $this->tableModel   = $tableModel;
+        $this->model            = $model;
+        $this->cacheName        = "datatables::{$tableModel->id}";
+        
+        $this->originalModel    = cache()->rememberForever("{$this->cacheName}originalModel", function() use($model){
+            return $model->get()->first();
+        });
+
+        $this->tableModel       = $tableModel;
+        
         return $this->build();
     }
 
@@ -56,12 +71,15 @@ class DataTable
     {
         $this->draw   = Request::get('draw');
         $this->column = $this->filterColumns(Request::get('columns'));
-        $col = $this->column[Request::get('order')[0]['column']];
 
-        $this->order  = [
-            'column' => $col['data'],
-            'dir' => Request::get('order')[0]['dir']
-        ];
+        foreach(Request::get('order') as $index => $order){
+            $col = $this->column[$order['column']];
+
+            $this->order[$index]  = [
+                'column' => $col['data'],
+                'dir' => $order['dir']
+            ];
+        }
 
         $this->start        = Request::get('start');
         $this->length       = Request::get('length');
@@ -119,10 +137,6 @@ class DataTable
      */
     public function get()
     {
-        if($this->id !== $this->tableModel->id){
-            dd('stp[p');
-        }
-
         $data = $this->execute();
 
         $data['draw'] = $this->draw;
@@ -169,26 +183,47 @@ class DataTable
     }
 
     /**
-     * Order the model
+     * Order the model, check if it's a relation or not
      *
      * @return \Illuminate\Database\Eloquent\Collection
      */
     private function sortModel()
     {
-        if(str_contains($this->order['column'], '.')){
+        $model = $this->model->skip($this->start)->take($this->length);
 
-            $build = $this->model->get();
+        foreach($this->order as $order){
 
-            $original = $this->findOriginalColumn($this->order['column']);
-            
-            return  $this->order['dir'] === 'asc' ? $build->sortBy($original)->slice($this->start, $this->length) : $build->sortByDesc($original)->slice($this->start, $this->length);
+            $model = $this->runOrderBuild($model, $order);
+
+        }
+        
+        return $model->get();
+    }
+
+    /**
+     * Run the builder for the order method
+     *
+     * @param Builder $model
+     * @param array $order
+     * @return Builder
+     */
+    private function runOrderBuild($model, array $order)
+    {
+        if(str_contains($order['column'], '.')){
+            $relation   = $this->getPath($this->findOriginalColumn($order['column']));
+            $name       = $this->getName($this->findOriginalColumn($order['column']));
+
+            $foreignName    = $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
+            $ownerName      = $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+            $relationName   = $this->getPath($ownerName);
+
+            return $model->leftJoin($relationName, $foreignName, '=', $ownerName)
+                ->orderBy("$relationName.$name", $order['dir']);
         }
 
-        $build = $this->model->skip($this->start)->take($this->length);
-        $model = $build->orderBy($this->order['column'], $this->order['dir'])->get();
-
-        return $model;
+        return $model->orderBy($order['column'], $order['dir']);
     }
+
 
     /**
      * Search on the model

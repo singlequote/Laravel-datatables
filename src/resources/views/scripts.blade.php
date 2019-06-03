@@ -37,7 +37,7 @@
             [
                 {{ $order[0] }},
                 "{{ $order[1] }}"
-            ]
+            ],
             @endforeach
         ],
         "columns": [
@@ -58,12 +58,18 @@
                         @endphp
 
                         function {{$def['id']}}{{ $index }}(data, type, row) {
-
                             @if($class->overwrite)
+                                @if(strlen($class->columnPath())> 0)
+                                if(!row.{{ $class->columnPath() }}){
+                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
+                                }
+                                @endif
                                 data = row.{{ $class->overwrite }};
                             @endif
+                            //empty check
                             @if($class->emptyCheck)
-                            if(!data){
+                            
+                            if(!data @if(strlen($class->columnPath())> 0) || !row.{{ $class->columnPath() }} @endif){
                                 return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
                             }
                             @endif
