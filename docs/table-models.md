@@ -8,6 +8,7 @@ php artisan make:table-model Users
 ```
 
 This command also has some options you can use to easily create a new table model.
+
 | Option | Description | Demo |
 | ------------- | ------------- | ------------- |
 | --route={value} | Set the route for the 3 demo buttons | `php artisan make:table-model Name --route=my-route` |
