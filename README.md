@@ -41,7 +41,6 @@ Our address is: ACF Bentveld, Ecu 2 8305 BA, Emmeloord, Netherlands.
 ## Credits
 
 - [Wim Pruiksma](https://github.com/wimurk)
-- [Amando Vledder](https://github.com/AmandoVledder)
 - [All Contributors](../../contributors)
 
 ## License
