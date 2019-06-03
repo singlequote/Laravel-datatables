@@ -1,3 +1,7 @@
+# Docs
+* [Table models](https://singlequote.github.io/Laravel-datatables/table-models)
+* [Fields](https://singlequote.github.io/Laravel-datatables/fields)
+
 # Quick start
 In the demo below we will render a table for the users. 
 
