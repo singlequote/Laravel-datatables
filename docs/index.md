@@ -11,6 +11,8 @@ use App\User;
 
 public function index()
 {
+    $datatable = \DataTable::model(User::class)->tableModel(\App\TableModels\Users::class);
+    //or
     $datatable = \DataTable::model(new User)->tableModel(\App\TableModels\Users::class);
     
     return view('users.index')->with(compact('datatable'));
