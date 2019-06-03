@@ -1,6 +1,9 @@
 # Table Models
 Table models are the controllers for your tables. Inside this file you can configure the behaviour of the tables
 
+<= [Go back](https://singlequote.github.io/Laravel-datatables/)
+-------------------------------------------------------------------
+
 ## Create
 You can use the `artisan` command to generate a new `TableModel`. Where `Users` is the name of the table model.
 ```php
@@ -16,7 +19,11 @@ This command also has some options you can use to easily create a new table mode
 | --buttons | Set a default amount of buttons (show, edit, destroy) | `php artisan make:table-model Name --buttons` |
 | --translations | Set a translations method | `php artisan make:table-model Name --translations` | 
 
-## Options property
+
+## Fields
+Almost every table has buttons or date values that you want to format or add classses to. With datatables you can use Field classes. The field classes create the buttons or format the date, currency etc. for you. See the full docs on how to use the Fields. [See docs for fields](https://singlequote.github.io/Laravel-datatables/fields)
+
+## Methods and properties
 Below is a list of methods and properties
 
 ### Remember paging property
