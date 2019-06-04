@@ -17,9 +17,12 @@ you can use the variables data, type and row
     let output = "";
 
     @if($class->fields)
-    
-    @foreach($class->fields as $field)
 
+        let values = [];
+
+    @foreach($class->fields as $field)
+    output = "";
+    
      @php
          $id = uniqid("closure");
      @endphp
@@ -28,11 +31,28 @@ you can use the variables data, type and row
          {!! $field["rendered"] !!}
      }
 
-     $.each(row.{{ $field["path"] }}, (index, item) => {
-         output += {{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }});
-     });
+
+    $.each(row.{{ $field["path"] }}, (index, item) => {
+
+        if(!values[index]){
+            values[index] = [];
+        }
+
+         values[index].push({{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }}));
+    });
+     
+
+    $.each(values,  (index, items) => {
+        $.each(items, (key, item) => {
+            output += item;
+        });
+    });
+
+
+
 
     @endforeach
+
     @endif
 
     @if($class->count)

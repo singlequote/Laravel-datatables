@@ -22,7 +22,8 @@ class DataTableServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //translations
+        $this->loadTranslationsFrom(__DIR__.'/resources/lang', 'datatables');
     }
 
     /**

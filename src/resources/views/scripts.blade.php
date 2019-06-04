@@ -1,5 +1,5 @@
 <script type="text/javascript">
-    
+
     /**
      * Get a parameter from the url
      * 
@@ -24,8 +24,11 @@
 
     let uri = location.href;
     let mark = uri.includes('?') ? '&' : '?';
+    
+
 
     let Json{{ $view->tableId }} = {
+        "language" : @json(__("datatables")),
         "paging": true,
         "processing": true,
         "serverSide": true,
@@ -99,9 +102,34 @@
         Json{{ $view->tableId }}.displayStart = (getParameterFromUrl('datatables-page') -1) * Json{{ $view->tableId }}.pageLength;
     }
     @endif
-    
+
+    /**
+     * Init the datatable
+     *
+     */
+    function initDatatable{{ $view->tableId }}()
+    {
+        let table = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
+        @if($view->rememberPage)
+        $(document).on('click', '#{{ $view->tableId }}_wrapper .paginate_button', () => {
+           window.history.pushState('page2', 'Title', `${location.origin}${location.pathname}?datatables-page=${table.page.info().page + 1}`);
+        });
+        @endif
+    }
+
+    /**
+     * On document ready
+     *
+     */
     $(document).ready(() => {
-        let Data{{ $view->tableId }} = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
+        if(!$.fn.DataTable){
+            $(`head`).append(`<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/fh-3.1.4/datatables.min.css" />`);
+            $.getScript(`https://cdn.datatables.net/v/bs4/dt-1.10.18/fh-3.1.4/datatables.min.js`, () => {
+                initDatatable{{ $view->tableId }}();
+            });
+        }else{
+            initDatatable{{ $view->tableId }}();
+        }
     });
 
 </script>
