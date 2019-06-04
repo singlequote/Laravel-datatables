@@ -22,7 +22,7 @@ Yes, we live in a time where everything is automated. So in this version we intr
 In this version the html and the script is created for you. Also this version is based on how laravel nova works.
 
 ## Let's start
-We wanted our code as clean as possible and use the same code more than once. SO let's start with creating a `TableModel`. This `TableModel` controls your table. In the example below we are going to create a table with users.
+We wanted our code as clean as possible and use the same code more than once.
 
 [See the Quick start docs here](https://singlequote.github.io/Laravel-datatables/)
 
