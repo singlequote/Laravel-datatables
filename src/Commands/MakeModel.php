@@ -30,7 +30,7 @@ class MakeModel extends Command
      *
      * @var string
      */
-    protected $path = "TableModels/Fields";
+    protected $path = "TableModels";
     
     /**
      * Set the stub file
@@ -94,7 +94,7 @@ class MakeModel extends Command
         
         $this->replaceValues('class', "
     // @var array
-    public \$tableClass = \"{$this->option('route')}\";
+    public \$tableClass = \"{$this->option('class')}\";
         ", $this->option('route'));
         
         if($this->option('buttons')){
