@@ -87,7 +87,7 @@ class DataTable extends ParentClass
         $this->id           = Request::get('id');
         
         $this->searchable($this->tableModel->searchable ?? $this->tableModel->columns);
-
+        
         return $this->get();
     }
 
@@ -138,7 +138,7 @@ class DataTable extends ParentClass
     public function get()
     {
         $data = $this->execute();
-
+        
         $data['draw'] = $this->draw;
 
         $response = response()->json($data);
@@ -173,15 +173,73 @@ class DataTable extends ParentClass
             $build->put($key+$this->start, $item);
         });
 
-        $collection  = $this->encryptKeys($build->unique()->values()->toArray());
-
+        $middlewared = Request::user() ? $this->runMiddleware($build) : $build;
+        
+        $collection  = $this->encryptKeys($middlewared->unique()->values()->toArray());
+       
+        
         $data['recordsTotal']    = $count;
         $data['recordsFiltered'] = $count;
         $data['data']            = $collection ?? [];
 
         return $data;
     }
+    
+    /**
+     * Run the middleware checks
+     * 
+     * @param object $collection
+     * @return object
+     */
+    private function runMiddleware(object $collection) : object
+    {
+        $middlewares = array_filter($this->tableModel->fields, function($field){
+            return get_class($field) === 'SingleQuote\DataTables\Fields\Middleware';
+        });
 
+        foreach($middlewares as $middleware){
+            $collection = $this->filterResultsOnMiddleware($middleware, $collection, $middleware->middleware);
+        }
+        
+        return $collection;
+    }
+    
+    /**
+     * Filter the results when a middleware has failed
+     * 
+     * @param object $middleware
+     * @param object $collection
+     * @param array $restrictions
+     * @return object
+     */
+    private function filterResultsOnMiddleware(object $middleware, object $collection, array $restrictions) : object
+    {
+        $proceedRole = !count($restrictions['roles']) > 0;
+        $proceedPermission = !count($restrictions['permissions']) > 0;
+
+        foreach($restrictions['roles'] as $roles){
+            $check = array_filter($roles, function($role){
+                return Request::user()->hasRole($role);
+            });
+            $proceedRole = count($roles) === count($check);
+        }
+
+        foreach($restrictions['permissions'] as $permissions){
+            $check = array_filter($permissions, function($permission){
+                return Request::user()->can($permission);
+            });
+            $proceedPermission = count($permissions) === count($check);
+        }
+        
+        if(!$proceedPermission && !$proceedRole){
+            $collection->each(function($model) use($middleware){
+                $model->{$middleware->column} = null;
+            });
+        }
+        
+        return $collection;
+    }
+    
     /**
      * Order the model, check if it's a relation or not
      *

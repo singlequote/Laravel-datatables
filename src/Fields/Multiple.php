@@ -2,7 +2,6 @@
 namespace SingleQuote\DataTables\Fields;
 
 use SingleQuote\DataTables\Controllers\Field;
-use Illuminate\Support\Str;
 
 /**
  * Description of Label
@@ -91,7 +90,6 @@ class Multiple extends Field
         return $this;
     }
 
-
     /**
      * Set the implode fields
      *
@@ -111,22 +109,6 @@ class Multiple extends Field
         $this->implode['seperate'] = $separate;
 
         return $this;
-    }
-    
-    /**
-     * Return the string inside the tags
-     *
-     * @param string $string
-     * @param string $tagname
-     * @return string
-     */
-    private function getBetweenTags(string $string, string $tagname) : string
-    {
-        $after = Str::after($string, "<$tagname>");
-        return Str::before($after, "</$tagname>");
-    }
-
-
-    
+    }  
 
 }

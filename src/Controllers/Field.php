@@ -1,11 +1,7 @@
 <?php
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 namespace SingleQuote\DataTables\Controllers;
+
+use Illuminate\Support\Str;
 
 /**
  * Description of FieldsClass
@@ -14,7 +10,19 @@ namespace SingleQuote\DataTables\Controllers;
  */
 abstract class Field
 {
-
+    /**
+     * Set the required permissions for this field
+     *
+     * @var array
+     */
+    public $permissions = [];
+    /**
+     * Set the required roles for this field
+     *
+     * @var array
+     */
+    public $roles = [];
+    
     /**
      * Set the column to be searchable
      *
@@ -86,6 +94,42 @@ abstract class Field
     public static abstract function make(string $column);
 
     /**
+     * Set the required permissions
+     * 
+     * @param string $required
+     * @return $this
+     */
+    public function permission(string $permissions)
+    {
+        $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $permissions);
+        $else = explode('|', $required);
+
+        foreach($else as $key => $item){
+            $this->permissions[] = explode(',', $item);
+        }
+        
+        return $this;
+    }
+
+    /**
+     * Set the required permissions
+     * 
+     * @param string $required
+     * @return $this
+     */
+    public function role(string $roles)
+    {
+        $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $roles);
+        $else = explode('|', $required);
+
+        foreach($else as $key => $item){
+            $this->roles[] = explode(',', $item);
+        }
+        
+        return $this;
+    }
+    
+    /**
      * Render the Field class
      *
      * @return \Illuminate\View\View|\Illuminate\Contracts\View\Factory
@@ -93,7 +137,7 @@ abstract class Field
     public function build()
     {
         $this->column = $this->toLower($this->column);
-
+        
         $class = $this;
 
         return view($this->getView())
@@ -229,6 +273,19 @@ abstract class Field
         $this->after = $after;
 
         return $this;
+    }
+    
+    /**
+     * Return the string inside the tags
+     *
+     * @param string $string
+     * @param string $tagname
+     * @return string
+     */
+    public function getBetweenTags(string $string, string $tagname) : string
+    {
+        $after = Str::after($string, "<$tagname>");
+        return Str::before($after, "</$tagname>");
     }
 
 }

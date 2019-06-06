@@ -2,6 +2,7 @@
 * [Table models](https://singlequote.github.io/Laravel-datatables/table-models)
 * [Fields](https://singlequote.github.io/Laravel-datatables/fields)
 * [Translations](https://singlequote.github.io/Laravel-datatables/translations)
+* [Middleware, permissions and roles](https://singlequote.github.io/Laravel-datatables/middleware)
 
 # Quick start
 In the demo below we will render a table for the users. 

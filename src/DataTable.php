@@ -216,9 +216,47 @@ class DataTable
         foreach($this->view->defs as $column => $def){
             foreach($def['def'] as $index => $field){
                 $rendered = $this->getBetweenTags($field->build(), 'script');
+                if($field->permissions || $field->roles){
+                    $rendered = $this->checkMiddlewares($field, $rendered);
+                }
+                
                 $this->view->defs[$column]['rendered'][$index] = $rendered;
             }
         }
+    }
+    
+    /**
+     * Run the middleware checks
+     * Remove the complete code output of a field when the middleware fails
+     * 
+     * @param object $field
+     * @param string $rendered
+     * @return string
+     */
+    private function checkMiddlewares(object $field, string $rendered)
+    {
+        $proceedRole = !count($field->roles) > 0;
+        $proceedPermission = !count($field->permissions) > 0;
+
+        foreach($field->roles as $roles){
+            $check = array_filter($roles, function($role){
+                return Request::user()->hasRole($role);
+            });
+            $proceedRole = count($roles) === count($check);
+        }
+
+        foreach($field->permissions as $permissions){
+            $check = array_filter($permissions, function($permission){
+                return Request::user()->can($permission);
+            });
+            $proceedPermission = count($permissions) === count($check);
+        }
+
+        if(!$proceedPermission && !$proceedRole){
+            return "";
+        }
+
+        return $rendered;
     }
 
     /**
