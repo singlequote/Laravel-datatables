@@ -194,7 +194,7 @@ class DataTable extends ParentClass
     private function runMiddleware(object $collection) : object
     {
         $middlewares = array_filter($this->tableModel->fields, function($field){
-            return get_class($field) === 'SingleQuote\DataTables\Fields\Middleware';
+            return is_object($field) && get_class($field) === 'SingleQuote\DataTables\Fields\Middleware';
         });
 
         foreach($middlewares as $middleware){
