@@ -235,9 +235,9 @@ class DataTable
      */
     private function checkMiddlewares(object $field, string $rendered)
     {
-        $proceedRole = !count($field->roles) > 0;
-        $proceedPermission = !count($field->permissions) > 0;
-
+        $proceedRole = count($field->roles) > 0;
+        $proceedPermission = count($field->permissions) > 0;
+        
         foreach($field->roles as $roles){
             $check = array_filter($roles, function($role){
                 return Request::user()->hasRole($role);
@@ -251,9 +251,8 @@ class DataTable
             });
             $proceedPermission = count($permissions) === count($check);
         }
-
         if(!$proceedPermission && !$proceedRole){
-            return "";
+            return "return '';";
         }
 
         return $rendered;
