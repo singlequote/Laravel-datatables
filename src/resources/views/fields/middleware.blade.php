@@ -30,5 +30,5 @@ you can use the variables data, type and row
      
     @endforeach
     
-    return `{!! $class->before !!} <label class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>

@@ -254,7 +254,7 @@ class DataTable extends ParentClass
             $model = $this->runOrderBuild($model, $order);
 
         }
-        
+
         return $model->get();
     }
 

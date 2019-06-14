@@ -13,5 +13,5 @@ you can use the variables data, type and row
 
 
 <script>
-    return `{!! $class->before !!} <label class="{{ $class->class }}">${data}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${data}</label> {!! $class->after !!}`;
 </script>

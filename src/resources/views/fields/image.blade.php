@@ -27,5 +27,5 @@ you can use the variables data, type and row
         let route = "{{ $class->src }}";
     @endif
 
-    return `{!! $class->before !!} <img class="{{ $class->class }}" src="${route}" /> {!! $class->after !!}`;
+    return `{!! $class->before !!} <img title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${route}" /> {!! $class->after !!}`;
 </script>

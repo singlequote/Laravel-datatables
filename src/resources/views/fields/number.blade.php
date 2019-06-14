@@ -42,7 +42,7 @@ you can use the variables data, type and row inside the script tags
     var p = parseFloat(value).toFixed({{ $class->decimals }}).split(".");
 
     return `{!! $class->before !!} 
-            <label class="{{ $class->class }}">
+            <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">
                 ${p[0].split("").reverse().reduce(function(acc, num, i, orig) {
                     return  num=="." ? acc : num + (i && !(i % 3) ? '{{ $class->thousands_sep }}' : "") + acc;
                 }, "") + '{{ $class->dec_point }}' + p[1]}

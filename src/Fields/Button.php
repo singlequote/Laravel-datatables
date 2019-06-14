@@ -59,7 +59,14 @@ class Button extends Field
      * @var array
      */
     public $target;
-
+    
+    /**
+     * Set the button label
+     *
+     * @var string
+     */
+    public $label;
+    
     /**
      * Init the fields class
      *
@@ -133,6 +140,19 @@ class Button extends Field
     {
         $this->target = $target;
 
+        return $this;
+    }
+    
+    /**
+     * Set the button label
+     * 
+     * @param string $label
+     * @return $this
+     */
+    public function label(string $label)
+    {
+        $this->label = $label;
+        
         return $this;
     }
 }

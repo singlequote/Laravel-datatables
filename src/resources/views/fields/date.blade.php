@@ -42,5 +42,5 @@ you can use the variables data, type and row
     format = format.replace('H', hours);
     format = format.replace('i', minutes);
     format = format.replace('s', seconds);
-    return `{!! $class->before !!} <label class="{{ $class->class }}">${format}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${format}</label> {!! $class->after !!}`;
 </script>

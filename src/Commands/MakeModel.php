@@ -121,7 +121,7 @@ class MakeModel extends Command
     *
     * @return array
     */
-    public function translate() : array
+    public function translations() : array
     {
         return [
             'name' => trans('Name'),

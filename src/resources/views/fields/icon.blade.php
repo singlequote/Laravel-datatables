@@ -16,18 +16,18 @@ you can use the variables data, type and row
     let icon;
 
     @if($class->feather)
-        icon = `<i class="{{ $class->class }}" data-feather="{{ $class->feather }}"></i>`;
+        icon = `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" data-feather="{{ $class->feather }}"></i>`;
         $(document).ready(() => {
            feather.replace();
         });
     @endif
 
     @if($class->material)
-        icon = `<i class="material-icons {{ $class->class }}">{{ $class->material }}</i>`;
+        icon = `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="material-icons {{ $class->class }}">{{ $class->material }}</i>`;
     @endif
 
     @if($class->fa)
-        icon =  `<i class="fa fa-{{ $class->fa }}"></i>`;
+        icon =  `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="fa fa-{{ $class->fa }}"></i>`;
     @endif
 
     return `{!! $class->before !!} ${icon} {!! $class->after !!}`;

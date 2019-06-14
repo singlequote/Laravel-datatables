@@ -79,5 +79,5 @@ you can use the variables data, type and row
         }).join("{!! $class->implode['seperate'] !!}");
     @endif
 
-    return `{!! $class->before !!} <label class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>

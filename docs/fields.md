@@ -74,6 +74,13 @@ The before method can be used to display text or icons before the value is displ
 Label::make('temperature')->after('degrees') // 19 degrees
 ```
 
+### Title
+The title method can be user for tooltips or just the title element.
+```php
+Label::make('name')->title('Name of the user', optional 'tooltip') // 19 degrees
+//<label title="Name of the user" data-toggle="tooltip">John Doe</label>
+```
+
 ## Field classes
 
 ### Label (default)
@@ -97,6 +104,7 @@ The following options can be used with this class
 
 |Options|Description|Example|
 |---|---|---|
+|label (string)|Place label inside the button|`Button::make('...')->label('edit user')`|
 |icon (class, name)|Place an icon inside the button|`Button::make('...')->icon('fa fa-edit')`|
 |route|Make the button clickable|`Button::make('...')->route('users.edit', 'id')`|
 |method|Change the route method of the button|`Button::make('...')->route('users.destroy', 'id')->method('delete')`|

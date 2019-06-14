@@ -35,11 +35,11 @@ you can use the variables data, type and row
         
     });
     let template = `
-        <button type="button" ${route} id="${id}" class="{{ $class->class }}">{!! $class->icon !!}</button>
+        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" type="button" ${route} id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
     `;
     @elseif(in_array($class->method, ['POST', 'DELETE', 'PUT', 'PATCH']))
     let template = `
-        <button onclick="$('#form${id}').submit()" type="button" id="${id}" class="{{ $class->class }}">{!! $class->icon !!}</button>
+        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="$('#form${id}').submit()" type="button" id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
         <form class="laravel-datatable-form-{{ strtolower($class->method) }}" style="display:none;" method="post" id="form${id}" action="${url}">@csrf @method($class->method)</form>
     `;
     @endif

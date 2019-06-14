@@ -85,6 +85,16 @@ abstract class Field
      * @var bool
      */
     public $emptyCheck = true;
+    
+    /**
+     * Set the title and toggle
+     *
+     * @var array
+     */
+    public $title = [
+        'title' => "",
+        'toggle' => ""
+    ];
 
     /**
      * Required function to every field class
@@ -287,5 +297,23 @@ abstract class Field
         $after = Str::after($string, "<$tagname>");
         return Str::before($after, "</$tagname>");
     }
-
+    
+    /**
+     * Set a dom element title title="..."
+     * Use the toggle property to set data-toggle="..."
+     * 
+     * @param string $title
+     * @param string $toggle
+     * @return $this
+     */
+    public function title(string $title, string $toggle = "tooltip")
+    {
+        $this->title = [
+            'title' => $title,
+            'toggle' => $toggle
+        ];
+        
+        return $this;
+    }
+    
 }
