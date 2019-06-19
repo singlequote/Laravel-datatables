@@ -134,7 +134,7 @@ The multiple field class let't you insert multiple field classes in one column o
 **Implode**
 Use the implode method on for example relations.
 ```php
-Multiple::make('roles')->implode('name', ', '); //admin, employee, etc..
+Multiple::make('roles')->column('roles.name')->implode(', '); //admin, employee, etc..
 ```
 **Each**
 It is also possible to use multiple field classes in one column. For example, the creation date of every role a user haves.
