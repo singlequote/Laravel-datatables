@@ -67,8 +67,15 @@
         table{{ $view->tableId }}.ajax.reload( null, false );
     },10000);
     
+    @if(__("datatables") === 'datatables')
+        const locale = @json(__("datatables::datatables"));
+    @else
+        const locale = @json(__("datatables"));
+    @endif
+    
+    
     let Json{{ $view->tableId }} = {
-        "language" : @json(__("datatables::datatables")),
+        "language" : locale,
         "paging": true,
         "processing": true,
         "serverSide": true,

@@ -39,6 +39,20 @@ class Icon extends Field
     public $feather;
 
     /**
+     * Custom icon
+     *
+     * @var mixed
+     */
+    public $custom;
+
+    /**
+     * Custom name icon
+     *
+     * @var mixed
+     */
+    public $customName;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -86,6 +100,20 @@ class Icon extends Field
     public function fa(string $fa)
     {
         $this->fa = $fa;
+
+        return $this;
+    }
+    
+    /**
+     * Set the class
+     *
+     * @param string $class
+     * @return $this
+     */
+    public function custom(string $custom, string $name = null)
+    {
+        $this->custom       = $custom;
+        $this->customName   = $name;
 
         return $this;
     }

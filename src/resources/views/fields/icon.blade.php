@@ -30,6 +30,10 @@ you can use the variables data, type and row
         icon =  `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="fa fa-{{ $class->fa }}"></i>`;
     @endif
 
+    @if($class->custom)
+        icon =  `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->custom }}">{{ $class->customName }}</i>`;
+    @endif
+
     return `{!! $class->before !!} ${icon} {!! $class->after !!}`;
 
 </script>

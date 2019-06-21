@@ -19,6 +19,7 @@ Below is a simple example on how to use fields inside your [tableModel](https://
 
 In this example we are going to add an edit button and format a date string.
 Always add the field classes to the `fields` method inside your [tableModel](https://singlequote.github.io/Laravel-datatables/table-models).
+
 ```php
 public $columns = [
     'id',
@@ -38,29 +39,43 @@ public function fields() : array
 ```
 
 ## Default options
-Every field class has the same default options. For example every field class can have an custom class and ID.
-You can use the default options on every field class. In the examples below we will use the Label class.
+Field classes share a few default methods that can be used to extend the elements with attributes. 
+
+
 ```php
 Label::make('...')->class('class1 class2')
 //or
 Date::make('...')->class('class1 class2')
+
+//<label class="class1 class2">...</label>
 ```
 
 ### Class
-Add a class to an field class. 
+Extends element with classes
+
 ```php
 Label::make()->class('class1 class2 class3')
+
+//<label class="class1 class2 class3">...</label>
 ```
 
 ### Column
 By default the value of the `make` method is used to display the data. You can overwrite this to show other data.
 In the example below, we will display the `updated_at` value in the `created_at` column row.
+
 ```php
+Label::make('created_at')
+
+//<label>`created_at` 2019-01-31 ....</label>
+
 Label::make('created_at')->column('updated_at')
+
+//<label>`updated_at` 2019-01-31 ....</label>
 ```
 
 ### Conditions
-When using permissions, sometimes you want to hide data from certain users. You can use a filter for this or use the condition method on your field class.
+When using permissions, sometimes you want to hide data from certain users. You can use a filter for this or use the condition method.
+
 ```php
 //Display the created_at value if the updated_at value is not null
 Label::make('created_at')->condition('updated_at !== null')
@@ -68,24 +83,28 @@ Label::make('created_at')->condition('updated_at !== null')
 
 ### returnWhenEmpty
 By default when a value or relation is missing, the response will be null (white space).
+
 ```php
 Label::make('role.name')->returnWhenEmpty("Role not found")
 ```
 
 ### Before
 The before method can be used to display text or icons before the value is displayed.
+
 ```php
 Label::make('role.name')->before('Role : ') // Role : Administrator
 ```
 
 ### After
 The before method can be used to display text or icons before the value is displayed.
+
 ```php
 Label::make('temperature')->after('degrees') // 19 degrees
 ```
 
 ### Title
-The title method can be user for tooltips or just the title element.
+The title method can be used for tooltips or just the title element.
+
 ```php
 Label::make('name')->title('Name of the user', optional 'tooltip')
 //<label title="Name of the user" data-toggle="tooltip">John Doe</label>
