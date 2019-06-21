@@ -28,9 +28,7 @@
     let table{{ $view->tableId }};
     
     @foreach($view->filters as $filter)
-    @if($loop->first)
-//    $(`#{{ $view->tableId }}datatable-filters`).before(`<label>{{ __("datatables::datatables.filter") }}</label>`);
-    @endif
+
     $(`#{{ $view->tableId }}datatable-filters`).append(`{!! $filter->build !!}`);
     
     $(document).on('{{ $filter->getTrigger() }}', `#{{ $filter->getID() }}`, () => {
@@ -63,7 +61,7 @@
         table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}`).load();
     }
     
-    setTimeout(() => {
+    setInterval(() => {
         table{{ $view->tableId }}.ajax.reload( null, false );
     },10000);
     
@@ -125,9 +123,11 @@
                             @endif
 
                             @if($class->condition)
-                                if(!row.{{ $class->condition }}){
-                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
-                                }
+                            let condition = row.{{ $class->condition }};
+
+                            if(!condition){
+                                return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
+                            }
                             @endif
                             
 
