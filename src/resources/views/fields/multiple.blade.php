@@ -13,18 +13,18 @@ you can use the variables data, type and row
 
 
 <script>
-
     let output = "";
+    
+    @if($class->eachFields)
+    //EACH FIELDS
 
-    @if($class->fields)
+    let values = [];
 
-        let values = [];
-
-    @foreach($class->fields as $field)
+    @foreach($class->eachFields as $field)
     output = "";
     
      @php
-         $id = uniqid("closure");
+         $id = uniqid("eachFields");
      @endphp
 
      function {{ $id }}(data, type, row){
@@ -47,37 +47,56 @@ you can use the variables data, type and row
             output += item;
         });
     });
+    
+    @endforeach
+    //EACH FIELDS==============================================================
+    @endif
+    
+    @if($class->fields)
+        
+    //SINGLE FIELDS
+    @foreach($class->fields as $field)
+    
+    @php
+        $fieldID = uniqid("fieldExtra");
+    @endphp
+    
+    function {{ $fieldID }}(data, type, row){
+        {!! $field["rendered"] !!}
+    }
+    output += {{ $fieldID }}(row.{{$field['column']}}, type, row);
+    @endforeach
+    //SINGLE FIELDS==============================================================
+    @endif
+    
+    
+    @if($class->count)
+    //FIELD COUNTER
+    output = 0;
+    @foreach($class->count as $field)
 
+    @php
+        $id = uniqid("closure");
+    @endphp
 
+    function {{ $id }}(data, type, row){
+        {!! $field["rendered"] !!}
+    }
 
+    output += {{ $id }}(row.{{ $field["column"] }}, type, row);
 
     @endforeach
-
-    @endif
-
-    @if($class->count)
-        output = 0;
-        @foreach($class->count as $field)
-
-        @php
-            $id = uniqid("closure");
-        @endphp
-
-        function {{ $id }}(data, type, row){
-            {!! $field["rendered"] !!}
-        }
-
-        output += {{ $id }}(row.{{ $field["column"] }}, type, row);
-
-        @endforeach
+    //FIELD COUNTER==============================================================
     @endif
 
 
     @if($class->implode)
+    //IMPLODE FIELD
         output = row.{{ $class->implode['path'] }}.map((elem) => {
             return elem.{{ $class->implode['name'] }};
         }).join("{!! $class->implode['seperate'] !!}");
+    //IMPLODE FIELD==============================================================
     @endif
-
-    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    
+    return `{!! $class->before !!} <div title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</div> {!! $class->after !!}`;
 </script>
