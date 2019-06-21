@@ -1,4 +1,4 @@
-<div id="{{ $view->tableId }}datatable-filters" class="row datatable-filters"></div>
+<div id="{{ $view->tableId }}datatable-filters" class="row"></div>
 <table id="{{ $view->tableId }}" class="laravel-datatable {{ $view->tableClass }}">
     <thead>
         <tr>
