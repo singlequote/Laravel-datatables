@@ -48,7 +48,7 @@ abstract class Filter
      *
      * @var string
      */
-    protected $class;
+    protected $class = '';
     
     /**
      * The data items for the filter
