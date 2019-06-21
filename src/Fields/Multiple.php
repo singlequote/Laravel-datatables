@@ -25,6 +25,13 @@ class Multiple extends Field
     public $fields;
 
     /**
+     * Set the closure fields
+     *
+     * @var array
+     */
+    public $eachFields;
+
+    /**
      * Set the closure counters
      *
      * @var array
@@ -53,6 +60,7 @@ class Multiple extends Field
 
     /**
      * Loop closure fields and render output
+     * Is used for relations with multiple results
      *
      * @param \Closure $closure
      * @return $this
@@ -60,13 +68,31 @@ class Multiple extends Field
     public function each(string $column, \Closure $closure)
     {
         foreach($closure() as $field){
-            $this->fields[] = [
+            $this->eachFields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "path" => $column,
                 "column" => $field->columnPath($field->columnName())
             ];
         }
 
+        return $this;
+    }
+    
+    /**
+     * Loop closre fields and render output
+     * 
+     * @param \Closure $closure
+     */
+    public function fields(\Closure $closure)
+    {
+        $this->emptyCheck = false;
+        foreach($closure() as $field){
+            $this->fields[] = [
+                "rendered" => $this->getBetweenTags($field->build(), 'script'),
+                "column" => $field->columnPath($field->columnName())
+            ];
+        }
+        
         return $this;
     }
 
