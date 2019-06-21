@@ -159,12 +159,16 @@ abstract class ColumnBuilder
      */
     public function getFilter(string $name)
     {
-        foreach($this->filtered as $key => $filter){
-            if($filter->name === $name){
-                return strlen($filter->value) > 0 ? $filter->value : null;
-            }
+        if(!isset($this->filtered[$name])){
+            return null;
         }
         
-        return null;
+        $filter = $this->filtered[$name];
+        
+        if($filter->multiple){
+            return explode(',', $filter->value);
+        }
+        
+        return $filter->value;
     }
 }

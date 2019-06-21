@@ -94,11 +94,12 @@ class DataTable
         $filters = [];
         
         foreach($explode as $index => $value){
-            $name = Str::before($value, '*');
+            $name = Str::before($value, ';');
+            $multiple = Str::contains($value, ';m*');
             $value = Str::after($value, '*');
-            $filters[] = (object)['name' => $name, 'value' => $value];
+            $filters[$name] = (object)['name' => $name, 'value' => $value, 'multiple' => $multiple];
         }
-        
+                
         return $filters;
     }
 

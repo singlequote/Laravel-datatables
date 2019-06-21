@@ -1,8 +1,7 @@
-<div id="filter{{ $class->getID() }}" class="datatable-filters {{ $class->getSize() }}">
+<div id="filter{{ $class->getID() }}" class="{{ $class->getSize() }}">
+    <label>{{ $class->getLabel() }}</label>
     <select {{ $class->getString() }} name="{{ $class->getName() }}" class="datatable-filter {{ $class->getClass() }}" id="{{ $class->getID() }}" >
-        @if(strlen($class->getLabel()) > 0)
-        <option value="lfalse">{{ $class->getLabel() }}</option>
-        @endif
+        <option selected disabled value='**'>{{ $class->getLabel() }}</option>
         @foreach($class->getData() as $data)
         <option value="{{ $data['value'] }}">{{ $data['label'] }}</option>
         @endforeach

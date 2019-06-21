@@ -21,34 +21,43 @@
     {
         return prefix + Math.random().toString(36).substr(2, 9);
     }
-
+    
+    //CONFIGS
     let uri = location.href;
     let mark = uri.includes('?') ? '&' : '?';
     let filters = ``;
     let table{{ $view->tableId }};
+    //END CONFIGS
     
+    //FILTERS
     @foreach($view->filters as $filter)
 
     $(`#{{ $view->tableId }}datatable-filters`).append(`{!! $filter->build !!}`);
     
     $(document).on('{{ $filter->getTrigger() }}', `#{{ $filter->getID() }}`, () => {
-        triggerFilters();
+        triggerFilters({{ $filter->getMultiple() }});
     });
+    
     @endforeach
+    //END FILTERS
     
     /**
      * Trigger the filters
      * 
      */
-    function triggerFilters()
+    function triggerFilters(multiple = false)
     {
         filters = `&filter=`;
         $(`.datatable-filter`).each((index, e) => {
-            if($(e).val() === 'lfalse'){
+            if($(e).val() === '**' || !$(e).attr('id')){
                 return;
             }
-            filters += `${$(e).attr('name')}*${$(e).val()}|`;
+            
+            let type = multiple ? 'm' : 's';
+            
+            filters += `${$(e).attr('name')};${type}*${$(e).val()}|`;
         });
+        
         reloadTable();
     }
     

@@ -1,6 +1,8 @@
 <?php
 namespace SingleQuote\DataTables\Controllers;
 
+use Illuminate\Support\Str;
+
 /**
  * Description of FieldsClass
  *
@@ -148,6 +150,16 @@ abstract class Filter
     public function getLabel() : string
     {
         return $this->label;
+    }
+    
+    /**
+     * Return true if the element is multiple
+     * 
+     * @return bool
+     */
+    public function getMultiple() : bool
+    {
+        return Str::contains($this->string, 'multiple');
     }
     
     /**
