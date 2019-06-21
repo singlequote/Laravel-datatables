@@ -13,15 +13,6 @@ Field classes can be used to change the behaviour of the columns.
 - [Middleware](https://singlequote.github.io/Laravel-datatables/fields/middleware)
 - [Number](https://singlequote.github.io/Laravel-datatables/fields/number)
 
-### How does it work
-The datatable parses values as field classes. The field classes determine how the column should behave.
-
-```mermaid
-graph LR
-A[Table model] --> B((Field class))
-B --> D{output}
-
-
 
 ### Example
 Below is a simple example on how to use fields inside your [tableModel](https://singlequote.github.io/Laravel-datatables/table-models). 
