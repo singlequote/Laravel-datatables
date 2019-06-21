@@ -46,10 +46,11 @@ To filter the table with roles you can use the `role method`
 ```
 
 ## Field wrapper
-If you really want to prevent users from ready data that they are not allowed to see, you can use the Field wrapper.
-This class removes the data completely from the data output.
+If you really want to prevent users from reading data that they are not allowed to see, you can use the Middleare field.
+It removes the data completely from the data source.
 
 You can use the exact same filters as shown above
+
 ```php
 Middleware::make('id')->permission('edit users')->role('admin')->wrap(function(){
     return [
@@ -57,12 +58,13 @@ Middleware::make('id')->permission('edit users')->role('admin')->wrap(function()
     ];
 });
 ```
-When the user does not have the permission `edit users` the data output in will look like this
+
+When the user does not have the permission `edit users` the ID column will be removed from the source
+
 ```json
 {
-    id : null, //The ID column is null
+    id : null, //The ID column is removed
     name : 'John Doe',
     email : hello@world.com,
-    etc
 }
 ```
