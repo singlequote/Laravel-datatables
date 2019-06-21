@@ -64,14 +64,42 @@ class DataTable
         $reflection = new \ReflectionClass($class);
         $this->view = $reflection->newInstanceArgs($params);
         $this->view->id = base64_encode($class);
+        
+        if(Request::filled('laravel-datatables') && Request::filled('filter')){
+            $filters = $this->parseFilters(Request::get('filter'));
+            $this->view->filtered = $filters;
+        }
+        
         $this->view->make($this->model, $params);
 
         $this->checkColumns();
+        
         if(Request::filled('laravel-datatables')){
             return new ServerSide($this->view->query, $this->view);
         }
 
         return $this->build();
+    }
+    
+    /**
+     * Parse the filters
+     * 
+     * @param string $encoded
+     * @return array
+     */
+    private function parseFilters(string $encoded) : array
+    {
+        $explode = explode('|', rtrim($encoded, '|'));
+        
+        $filters = [];
+        
+        foreach($explode as $index => $value){
+            $name = Str::before($value, '*');
+            $value = Str::after($value, '*');
+            $filters[] = (object)['name' => $name, 'value' => $value];
+        }
+        
+        return $filters;
     }
 
     /**
@@ -81,11 +109,23 @@ class DataTable
      */
     private function build()
     {
+        $this->checkFilters();
         $this->checkDefs();
         $this->generateTable();
         $this->generateScripts();
 
         return $this;
+    }
+    
+    /**
+     * Build the filters
+     * 
+     */
+    private function checkFilters()
+    {
+        foreach($this->view->filters  as $index => $filter){
+            $this->view->filters[$index]->build = $filter->build();
+        }
     }
 
     /**

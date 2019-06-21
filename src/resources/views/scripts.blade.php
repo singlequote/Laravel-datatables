@@ -12,7 +12,7 @@
     }
 
     /**
-     * Genrate unique ID
+     * Generate unique ID
      *
      * @param {String} prefix
      * @returns {String}
@@ -24,16 +24,56 @@
 
     let uri = location.href;
     let mark = uri.includes('?') ? '&' : '?';
+    let filters = ``;
+    let table{{ $view->tableId }};
     
-
-
+    @foreach($view->filters as $filter)
+    @if($loop->first)
+//    $(`#{{ $view->tableId }}datatable-filters`).before(`<label>{{ __("datatables::datatables.filter") }}</label>`);
+    @endif
+    $(`#{{ $view->tableId }}datatable-filters`).append(`{!! $filter->build !!}`);
+    
+    $(document).on('{{ $filter->getTrigger() }}', `#{{ $filter->getID() }}`, () => {
+        triggerFilters();
+    });
+    @endforeach
+    
+    /**
+     * Trigger the filters
+     * 
+     */
+    function triggerFilters()
+    {
+        filters = `&filter=`;
+        $(`.datatable-filter`).each((index, e) => {
+            if($(e).val() === 'lfalse'){
+                return;
+            }
+            filters += `${$(e).attr('name')}*${$(e).val()}|`;
+        });
+        reloadTable();
+    }
+    
+    /**
+     * Reload the table
+     * 
+     */
+    function reloadTable()
+    {
+        table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}`).load();
+    }
+    
+    setTimeout(() => {
+        table{{ $view->tableId }}.ajax.reload( null, false );
+    },10000);
+    
     let Json{{ $view->tableId }} = {
-        "language" : @json(__("datatables")),
+        "language" : @json(__("datatables::datatables")),
         "paging": true,
         "processing": true,
         "serverSide": true,
         "dom" : "{!! $view->dom !!}",
-        "ajax": `${uri}${mark}laravel-datatables=active&id={{ $view->id }}`,
+        "ajax": `${uri}${mark}laravel-datatables=active&id={{ $view->id }}${filters}`,
         "pageLength" : {{ $view->pageLength }},
         "order" : [
             @foreach($view->order as $order)
@@ -98,9 +138,9 @@
         ]
     };
     @if($view->rememberPage)
-    if(getParameterFromUrl('datatables-page')){
-        Json{{ $view->tableId }}.displayStart = (getParameterFromUrl('datatables-page') -1) * Json{{ $view->tableId }}.pageLength;
-    }
+        if(getParameterFromUrl('datatables-page')){
+            Json{{ $view->tableId }}.displayStart = (getParameterFromUrl('datatables-page') -1) * Json{{ $view->tableId }}.pageLength;
+        }
     @endif
 
     /**
@@ -109,10 +149,10 @@
      */
     function initDatatable{{ $view->tableId }}()
     {
-        let table = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
+        table{{ $view->tableId }} = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
         @if($view->rememberPage)
         $(document).on('click', '#{{ $view->tableId }}_wrapper .paginate_button', () => {
-           window.history.pushState('page2', 'Title', `${location.origin}${location.pathname}?datatables-page=${table.page.info().page + 1}`);
+           window.history.pushState('laravel-datatable', 'pagination', `${location.origin}${location.pathname}?datatables-page=${table.page.info().page + 1}`);
         });
         @endif
     }

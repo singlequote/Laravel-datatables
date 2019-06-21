@@ -1,5 +1,7 @@
 <?php
+
 return [
+    "filter" => "Filter",
     "sProcessing" => "Bezig...",
     "sLengthMenu" => "_MENU_ resultaten weergeven",
     "sZeroRecords" => "Geen resultaten gevonden",

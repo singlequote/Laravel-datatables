@@ -13,7 +13,14 @@ abstract class ColumnBuilder
      *
      */
     abstract protected function fields();
-
+    
+    /**
+     * The filters parsed
+     *
+     * @var mixed
+     */
+    public $filtered = [];
+    
     /**
      * Set the table columns
      *
@@ -93,6 +100,11 @@ abstract class ColumnBuilder
     {
         return [];
     }
+    
+    public function filter() : array
+    {
+        return [];
+    }
 
     /**
      * Perform a query on the model resource
@@ -113,8 +125,8 @@ abstract class ColumnBuilder
      */
     public function make(... $params)
     {
-        
         $this->fields       = $this->fields();
+        $this->filters      = $this->filter();
         $this->tableId      = $this->tableId ?? uniqid('laravelDataTable');
         $this->query        = call_user_func_array([$this, 'query'], $params);
         $this->order        = $this->order ?? [[ 0, "asc" ]];
@@ -136,5 +148,23 @@ abstract class ColumnBuilder
     private function toLower(string $string) : string
     {
         return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
+    }
+    
+    /**
+     * Find filter by name
+     * Returns null when not found
+     * 
+     * @param string $name
+     * @return mixed
+     */
+    public function getFilter(string $name)
+    {
+        foreach($this->filtered as $key => $filter){
+            if($filter->name === $name){
+                return strlen($filter->value) > 0 ? $filter->value : null;
+            }
+        }
+        
+        return null;
     }
 }
