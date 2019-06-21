@@ -202,7 +202,8 @@ abstract class Field
      */
     public function condition($condition)
     {
-        $this->condition = $condition;
+        $this->emptyCheck = false;
+        $this->condition  = $condition;
 
         return $this;
     }
