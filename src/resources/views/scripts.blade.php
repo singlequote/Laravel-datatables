@@ -132,7 +132,7 @@
                             @endif
 
                             @if($class->condition)
-                            let condition = row.{{ $class->condition }};
+                            let condition = row.{!! $class->condition !!};
 
                             if(!condition){
                                 return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
