@@ -97,6 +97,9 @@ class DataTable
             $name = Str::before($value, ';');
             $multiple = Str::contains($value, ';m*');
             $value = Str::after($value, '*');
+            if(!$value || strlen($value) === 0){
+                continue;
+            }
             $filters[$name] = (object)['name' => $name, 'value' => $value, 'multiple' => $multiple];
         }
                 
