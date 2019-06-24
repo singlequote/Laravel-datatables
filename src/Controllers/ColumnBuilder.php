@@ -71,6 +71,21 @@ abstract class ColumnBuilder
     public $rememberPage = true;
 
     /**
+     * When set to true. 
+     * The package will load the required files when datatables is not loaded.
+     *
+     * @var bool
+     */
+    public $autoLoadScripts = false;
+    
+    /**
+     * When set to true. 
+     * The package will auto reload the content of the current table page
+     * @var bool
+     */
+    public $autoReload = true;
+
+    /**
      * The default pagelength
      *
      * @var int
