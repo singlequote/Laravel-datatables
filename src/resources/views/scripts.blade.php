@@ -49,10 +49,9 @@
     {
         filters = `&filter=`;
         $(`.datatable-filter`).each((index, e) => {
-            if($(e).val() === '**' || !$(e).attr('id')){
+            if(!$(e).val() || $(e).val() === '**' || !$(e).attr('id')){
                 return;
             }
-            
             let type = multiple ? 'm' : 's';
             
             filters += `${$(e).attr('name')};${type}*${$(e).val()}|`;
