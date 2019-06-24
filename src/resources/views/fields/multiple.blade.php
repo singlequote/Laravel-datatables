@@ -98,5 +98,5 @@ you can use the variables data, type and row
     //IMPLODE FIELD==============================================================
     @endif
     
-    return `{!! $class->before !!} <div title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</div> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>
