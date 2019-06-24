@@ -70,9 +70,11 @@
         table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}`).load();
     }
     
+    @if($view->autoReload)
     setInterval(() => {
         table{{ $view->tableId }}.ajax.reload( null, false );
     },10000);
+    @endif
     
     @if(__("datatables") === 'datatables')
         const locale = @json(__("datatables::datatables"));
@@ -168,7 +170,7 @@
         table{{ $view->tableId }} = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
         @if($view->rememberPage)
         $(document).on('click', '#{{ $view->tableId }}_wrapper .paginate_button', () => {
-           window.history.pushState('laravel-datatable', 'pagination', `${location.origin}${location.pathname}?datatables-page=${table.page.info().page + 1}`);
+           window.history.pushState('laravel-datatable', 'pagination', `${location.origin}${location.pathname}?datatables-page=${table{{ $view->tableId }}.page.info().page + 1}`);
         });
         @endif
     }
@@ -178,14 +180,33 @@
      *
      */
     $(document).ready(() => {
+        @if($view->autoLoadScripts)
         if(!$.fn.DataTable){
-            $(`head`).append(`<link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.18/fh-3.1.4/datatables.min.css" />`);
-            $.getScript(`https://cdn.datatables.net/v/bs4/dt-1.10.18/fh-3.1.4/datatables.min.js`, () => {
-                initDatatable{{ $view->tableId }}();
-            });
+            
         }else{
             initDatatable{{ $view->tableId }}();
         }
+        
+        @else
+        beforeInit();
+    
+        function beforeInit(retry = 0)
+        {
+            if(!$.fn.DataTable){
+                if(retry >= 10){
+                    return console.error('Laravel Datatable could not be loaded!');
+                }
+                console.info('Laravel Datatable not loaded. Check again...');
+                setTimeout(() => {
+                    beforeInit(retry + 1);
+                },300);
+            }else{
+                console.info('Laravel Datatable loaded. Init table...');
+                initDatatable{{ $view->tableId }}();
+            }
+        }
+        
+        @endif
     });
 
 </script>
