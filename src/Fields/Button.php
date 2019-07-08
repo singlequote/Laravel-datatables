@@ -108,7 +108,13 @@ class Button extends Field
         $params = is_array($parameters) ? $parameters : [$parameters];
 
         foreach($params as $index => $param){
-            $this->routeReplace["*$param*"] = $this->columnPath($param);
+            
+            if(!Str::contains($param, '.')){
+                $this->routeReplace["*$param*"] = $this->columnPath($param);
+            }else{
+                $this->routeReplace["*$param*"] = $param;
+            }
+            
             $params[$index] = "*$param*";
         }
 
