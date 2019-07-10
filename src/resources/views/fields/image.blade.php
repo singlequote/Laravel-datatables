@@ -17,7 +17,6 @@ you can use the variables data, type and row
     @if($class->route)
     let url = "{{ $class->route }}";
     @foreach($class->routeReplace as $key => $replace)
-    console.log(row);
     url = url.replace("{{ $key }}", row.{{ $replace }});
     @endforeach
     @endif
