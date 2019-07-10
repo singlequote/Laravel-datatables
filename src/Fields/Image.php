@@ -59,8 +59,9 @@ class Image extends Field
             if(is_int($param)){
                 continue;
             }
-            $this->routeReplace["*$param*"] = $this->columnPath($param);
-            $params[$index] = "*$param*";
+            $this->routeReplace["Q{$param}Q"] = $param;
+            
+            $params[$index] = "Q{$param}Q";
         }
 
         $this->route = route($route, $params);
