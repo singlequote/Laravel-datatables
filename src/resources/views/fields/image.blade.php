@@ -13,6 +13,7 @@ you can use the variables data, type and row
 
 
 <script>
+    let url = "#";
     @if($class->route)
     let url = "{{ $class->route }}";
     @foreach($class->routeReplace as $key => $replace)
