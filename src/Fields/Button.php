@@ -3,6 +3,7 @@
 namespace SingleQuote\DataTables\Fields;
 
 use SingleQuote\DataTables\Controllers\Field;
+use Illuminate\Support\Str;
 
 /**
  * Description of Label
@@ -109,9 +110,9 @@ class Button extends Field
 
         foreach($params as $index => $param){
 
-            $this->routeReplace["*$param*"] = $param;
+            $this->routeReplace["Q{$param}Q"] = $param;
             
-            $params[$index] = "*$param*";
+            $params[$index] = "Q{$param}Q";
         }
         
         $this->route = route($route, $params);
