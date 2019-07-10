@@ -13,19 +13,17 @@ you can use the variables data, type and row
 
 
 <script>
-    let route = data;
-
     @if($class->route)
     let url = "{{ $class->route }}";
     @foreach($class->routeReplace as $key => $replace)
-        url = url.replace("{{ $key }}", row.{{ $replace }});
+    console.log(row);
+    url = url.replace("{{ $key }}", row.{{ $replace }});
     @endforeach
-    route = `${url}`;
     @endif
 
     @if($class->src)
         let route = "{{ $class->src }}";
     @endif
 
-    return `{!! $class->before !!} <img title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${route}" /> {!! $class->after !!}`;
+    return `{!! $class->before !!} <img title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${url}" /> {!! $class->after !!}`;
 </script>
