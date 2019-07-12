@@ -67,6 +67,7 @@ class Multiple extends Field
      */
     public function each(string $column, \Closure $closure)
     {
+        $this->emptyCheck = false;
         foreach($closure() as $field){
             $this->eachFields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
