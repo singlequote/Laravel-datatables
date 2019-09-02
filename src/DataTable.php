@@ -64,35 +64,35 @@ class DataTable
         $reflection = new \ReflectionClass($class);
         $this->view = $reflection->newInstanceArgs($params);
         $this->view->id = base64_encode($class);
-        
+
         if(Request::filled('laravel-datatables') && Request::filled('filter')){
             $filters = $this->parseFilters(Request::get('filter'));
             $this->view->filtered = $filters;
         }
-        
+
         $this->view->make($this->model, $params);
 
         $this->checkColumns();
-        
+
         if(Request::filled('laravel-datatables')){
             return new ServerSide($this->view->query, $this->view);
         }
 
         return $this->build();
     }
-    
+
     /**
      * Parse the filters
-     * 
+     *
      * @param string $encoded
      * @return array
      */
     private function parseFilters(string $encoded) : array
     {
         $explode = explode('|', rtrim($encoded, '|'));
-        
+
         $filters = [];
-        
+
         foreach($explode as $index => $value){
             $name = Str::before($value, ';');
             $multiple = Str::contains($value, ';m*');
@@ -102,7 +102,7 @@ class DataTable
             }
             $filters[$name] = (object)['name' => $name, 'value' => $value, 'multiple' => $multiple];
         }
-                
+
         return $filters;
     }
 
@@ -120,10 +120,10 @@ class DataTable
 
         return $this;
     }
-    
+
     /**
      * Build the filters
-     * 
+     *
      */
     private function checkFilters()
     {
@@ -146,6 +146,7 @@ class DataTable
             $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true  : true;
             $orderable  = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true  : true;
             $class      = is_array($column) ? isset($column['class']) ? $column['class'] : null  : null;
+            $columnSearch = is_array($column) ? isset($column['columnSearch']) ? $column['columnSearch'] : false  : null;
 
             if(Str::contains($data, ' as ')){
                 $name = $name ?? Str::after($data, ' as ');
@@ -158,7 +159,7 @@ class DataTable
                 $this->view->query = $this->view->query->with(implode('.', $explode));
             }
 
-            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class);
+            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class, $columnSearch);
 
             $this->columns[] = $name ?? $data;
 
@@ -177,7 +178,7 @@ class DataTable
      * @param bool $orderable
      * @param string $class
      */
-    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null)
+    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null, bool $columnSearch = false)
     {
         $this->view->columns[$index] = [
             'data'          => $this->toLower($data),
@@ -185,7 +186,8 @@ class DataTable
             'original'      => $original,
             'searchable'    => $searchable,
             'orderable'     => $orderable ?? true,
-            'class'         => $class
+            'class'         => $class,
+            'columnSearch' => $columnSearch,
         ];
     }
 
@@ -263,16 +265,16 @@ class DataTable
                 if($field->permissions || $field->roles){
                     $rendered = $this->checkMiddlewares($field, $rendered);
                 }
-                
+
                 $this->view->defs[$column]['rendered'][$index] = $rendered;
             }
         }
     }
-    
+
     /**
      * Run the middleware checks
      * Remove the complete code output of a field when the middleware fails
-     * 
+     *
      * @param object $field
      * @param string $rendered
      * @return string
@@ -281,7 +283,7 @@ class DataTable
     {
         $proceedRole = count($field->roles) > 0;
         $proceedPermission = count($field->permissions) > 0;
-        
+
         foreach($field->roles as $roles){
             $check = array_filter($roles, function($role){
                 return Request::user()->hasRole($role);

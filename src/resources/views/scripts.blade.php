@@ -1,8 +1,9 @@
+@section('pagespecificscripts')
 <script type="text/javascript">
 
     /**
      * Get a parameter from the url
-     * 
+     *
      * @param {type} param
      * @returns {unresolved}
      */
@@ -21,29 +22,29 @@
     {
         return prefix + Math.random().toString(36).substr(2, 9);
     }
-    
+
     //CONFIGS
     let uri = location.href;
     let mark = uri.includes('?') ? '&' : '?';
     let filters = ``;
     let table{{ $view->tableId }};
     //END CONFIGS
-    
+
     //FILTERS
     @foreach($view->filters as $filter)
 
     $(`#{{ $view->tableId }}datatable-filters`).append(`{!! $filter->build !!}`);
-    
+
     $(document).on('{{ $filter->getTrigger() }}', `#{{ $filter->getID() }}`, () => {
         triggerFilters({{ $filter->getMultiple() }});
     });
-    
+
     @endforeach
     //END FILTERS
-    
+
     /**
      * Trigger the filters
-     * 
+     *
      */
     function triggerFilters(multiple = false)
     {
@@ -53,35 +54,35 @@
                 return;
             }
             let type = multiple ? 'm' : 's';
-            
+
             filters += `${$(e).attr('name')};${type}*${$(e).val()}|`;
         });
-        
+
         reloadTable();
     }
-    
+
     /**
      * Reload the table
-     * 
+     *
      */
     function reloadTable()
     {
         table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}`).load();
     }
-    
+
     @if($view->autoReload)
     setInterval(() => {
         table{{ $view->tableId }}.ajax.reload( null, false );
     },10000);
     @endif
-    
+
     @if(__("datatables") === 'datatables')
         const locale = @json(__("datatables::datatables"));
     @else
         const locale = @json(__("datatables"));
     @endif
-    
-    
+
+
     let Json{{ $view->tableId }} = {
         "language" : locale,
         "paging": true,
@@ -126,7 +127,7 @@
                             @endif
                             //empty check
                             @if($class->emptyCheck)
-                            
+
                             if(!data @if(strlen($class->columnPath())> 0) || !row.{{ $class->columnPath() }} @endif){
                                 return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
                             }
@@ -139,7 +140,7 @@
                                 return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
                             }
                             @endif
-                            
+
 
                             {!! $render !!}
                         };
@@ -179,16 +180,61 @@
      *
      */
     $(document).ready(() => {
+
+        $('.search-filter').keyup(function(event){
+         // play with event
+         // use $(this) to determine which element triggers this event
+
+            var filters_array = [];
+            var inputs = $(".search-filter");
+
+            for(var i = 0; i < inputs.length; i++){
+                if($(inputs[i]).val() == ''){
+                    continue;
+                }
+
+                filters_array.push({
+                    filter:$(inputs[i]).data( "searchcolumn" ),
+                    value:$(inputs[i]).val(),
+                });
+
+
+            }
+            filters = `&filter=` + encodeURIComponent(JSON.stringify(filters_array));
+            reloadTable();
+        });
+
         @if($view->autoLoadScripts)
         if(!$.fn.DataTable){
-            
+
         }else{
             initDatatable{{ $view->tableId }}();
         }
-        
+
+        $('#id thead th').each( function () {
+            var title = $(this).text();
+            $(this).html( '<input type="text" placeholder="Search '+title+'" />' );
+        } );
+
+        // DataTable
+        var table = $('#id').DataTable();
+
+        // Apply the search
+        table.columns().every( function () {
+            var that = this;
+
+            $( 'input', this.footer() ).on( 'keyup change', function () {
+                if ( that.search() !== this.value ) {
+                    that
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+        } );
+
         @else
         beforeInit();
-    
+
         function beforeInit(retry = 0)
         {
             if(!$.fn.DataTable){
@@ -204,8 +250,10 @@
                 initDatatable{{ $view->tableId }}();
             }
         }
-        
+
         @endif
     });
 
 </script>
+
+@stop
