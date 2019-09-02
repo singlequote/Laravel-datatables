@@ -60,14 +60,21 @@ class Button extends Field
      * @var array
      */
     public $target;
-    
+
     /**
      * Set the button label
      *
      * @var string
      */
     public $label;
-    
+
+    /**
+     * Set onclick method
+     *
+     * @var string
+     */
+    public $onClick;
+
     /**
      * Init the fields class
      *
@@ -79,7 +86,7 @@ class Button extends Field
         $class         = new Button;
         $class->column = $column;
         $class->id     = uniqid('button_');
-        
+
         return $class;
     }
 
@@ -111,10 +118,10 @@ class Button extends Field
         foreach($params as $index => $param){
 
             $this->routeReplace["Q{$param}Q"] = $param;
-            
+
             $params[$index] = "Q{$param}Q";
         }
-        
+
         $this->route = route($route, $params);
 
         return $this;
@@ -145,17 +152,30 @@ class Button extends Field
 
         return $this;
     }
-    
+
     /**
      * Set the button label
-     * 
+     *
      * @param string $label
      * @return $this
      */
     public function label(string $label)
     {
         $this->label = $label;
-        
+
+        return $this;
+    }
+
+    /**
+     * Set the onclick method
+     *
+     * @param string $onClick
+     * @return $this
+     */
+    public function onclick(string $onClick)
+    {
+        $this->onClick = $onClick;
+
         return $this;
     }
 }
