@@ -1,6 +1,7 @@
 # Docs
 * [Table models](https://singlequote.github.io/Laravel-datatables/table-models)
 * [Fields](https://singlequote.github.io/Laravel-datatables/fields)
+* [Filters](https://singlequote.github.io/Laravel-datatables/filters)
 * [Translations](https://singlequote.github.io/Laravel-datatables/translations)
 * [Middleware, permissions and roles](https://singlequote.github.io/Laravel-datatables/middleware)
 

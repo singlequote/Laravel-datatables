@@ -18,8 +18,7 @@ composer require singlequote/laravel-datatables
 ```
 
 ## Whats new
-Yes, we live in a time where everything is automated. So in this version we introduce some very cool features.
-In this version the html and the script is created for you. Also this version is based on how laravel nova works.
+In this version we introduce a cool new feature. In this version you can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
 
 ## Let's start
 We wanted our code as clean as possible and use the same code more than once.
