@@ -171,11 +171,11 @@ abstract class Filter
      */
     public function data($data, \Closure $closure = null)
     {
-        foreach($data as $key => $item){
+        foreach($data as $item){
             if(!$closure){
                 $this->data[] = [
-                    'value' => $item->id,
-                    'label' => $item->name
+                    'value' => is_array($item) ? $item['id'] : $item->id,
+                    'label' => is_array($item) ? $item['name'] : $item->name
                 ];
             }else{
                 $this->data[] = $closure($item);

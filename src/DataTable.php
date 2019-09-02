@@ -63,7 +63,7 @@ class DataTable
     {
         $reflection = new \ReflectionClass($class);
         $this->view = $reflection->newInstanceArgs($params);
-        $this->view->id = base64_encode($class);
+        $this->view->id = md5($class);
 
         if(Request::filled('laravel-datatables') && Request::filled('filter')){
             $filters = $this->parseFilters(Request::get('filter'));
@@ -73,8 +73,8 @@ class DataTable
         $this->view->make($this->model, $params);
 
         $this->checkColumns();
-
-        if(Request::filled('laravel-datatables')){
+        
+        if(Request::filled('laravel-datatables') && Request::get('id') === $this->view->id){
             return new ServerSide($this->view->query, $this->view);
         }
 

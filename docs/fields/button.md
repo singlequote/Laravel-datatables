@@ -71,6 +71,15 @@ Button::make('id')->label('edit user'),
 // <button>edit user</button>
 ```
 
+### Add onclick
+The onclick method can be used to overwrite the onlick attribute. 
+
+```php
+Button::make('id')->onclick("$('form').submit()"),
+
+// <button onclick="$('form').submit()">edit user</button>
+```
+
 ### Full example
 ```php
 Button::make('id')->class('btn btn-warning')->icon('fa fa-edit')->label('Edit user')->route('users.edit', 'id')->target('blank');

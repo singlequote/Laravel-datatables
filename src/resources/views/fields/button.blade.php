@@ -32,14 +32,14 @@ you can use the variables data, type and row
         @else
             location.href = $(e.currentTarget).data('route');
         @endif
-        
+
     });
     let template = `
-        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" type="button" ${route} id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
+        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="{{ $class->onClick }}" type="button" ${route} id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
     `;
     @elseif(in_array($class->method, ['POST', 'DELETE', 'PUT', 'PATCH']))
     let template = `
-        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="$('#form${id}').submit()" type="button" id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
+        <button title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="{{ $class->onClick != "" ? $class->onClick : '$("#form${id}").submit();' }}" type="button" id="${id}" class="{{ $class->class }}">{{ $class->label }} {!! $class->icon !!}</button>
         <form class="laravel-datatable-form-{{ strtolower($class->method) }}" style="display:none;" method="post" id="form${id}" action="${url}">@csrf @method($class->method)</form>
     `;
     @endif

@@ -6,7 +6,7 @@
     {
         /**
          * Get a parameter from the url
-         *
+         * 
          * @param {type} param
          * @returns {unresolved}
          */
@@ -47,7 +47,7 @@
 
         /**
          * Trigger the filters
-         *
+         * 
          */
         function triggerFilters(multiple = false)
         {
@@ -66,7 +66,7 @@
 
         /**
          * Reload the table
-         *
+         * 
          */
         function reloadTable()
         {
@@ -257,6 +257,6 @@
             @endif
         });
     };
-
-
+    
+    
 </script>
