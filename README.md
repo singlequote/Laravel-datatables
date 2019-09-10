@@ -18,7 +18,8 @@ composer require singlequote/laravel-datatables
 ```
 
 ## Whats new
-In this version we introduce a cool new feature. In this version you can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
+* In this version we introduce a cool new feature. In this version you can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
+* Also in this version we added column search fields. This makes it easy to search on a single column. Check it out here [here](https://singlequote.github.io/Laravel-datatables/table-models)
 
 ## Let's start
 We wanted our code as clean as possible and use the same code more than once.
