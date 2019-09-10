@@ -67,7 +67,7 @@ class Multiple extends Field
      */
     public function each(string $column, \Closure $closure)
     {
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->eachFields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "path" => $column,
@@ -80,13 +80,13 @@ class Multiple extends Field
     
     /**
      * Loop closre fields and render output
-     * 
+     *
      * @param \Closure $closure
      */
     public function fields(\Closure $closure)
     {
         $this->emptyCheck = false;
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->fields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "column" => $field->columnPath($field->columnName())
@@ -106,7 +106,7 @@ class Multiple extends Field
      */
     public function count(\Closure $closure)
     {
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->count[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "column" => $field->columnPath($field->columnName())
@@ -135,6 +135,5 @@ class Multiple extends Field
         $this->implode['seperate'] = $separate;
 
         return $this;
-    }  
-
+    }
 }

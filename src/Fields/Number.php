@@ -188,7 +188,4 @@ class Number extends Field
 
         return $this;
     }
-
-    
-
 }

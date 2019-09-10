@@ -47,5 +47,4 @@ class Date extends Field
         $this->format = $format;
         return $this;
     }
-
 }

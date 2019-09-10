@@ -61,7 +61,7 @@ abstract class Field
     /**
      *The name to oevrwrite the column name
      *
-     * @var string 
+     * @var string
      */
     public $overwrite;
 
@@ -101,11 +101,11 @@ abstract class Field
      * This is needed to call the classes
      *
      */
-    public static abstract function make(string $column);
+    abstract public static function make(string $column);
 
     /**
      * Set the required permissions
-     * 
+     *
      * @param string $required
      * @return $this
      */
@@ -114,7 +114,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $permissions);
         $else = explode('|', $required);
 
-        foreach($else as $key => $item){
+        foreach ($else as $key => $item) {
             $this->permissions[] = explode(',', $item);
         }
         
@@ -123,7 +123,7 @@ abstract class Field
 
     /**
      * Set the required permissions
-     * 
+     *
      * @param string $required
      * @return $this
      */
@@ -132,7 +132,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $roles);
         $else = explode('|', $required);
 
-        foreach($else as $key => $item){
+        foreach ($else as $key => $item) {
             $this->roles[] = explode(',', $item);
         }
         
@@ -165,7 +165,7 @@ abstract class Field
         $explode = explode('.', $this->overwrite ?? $this->column);
         array_pop($explode);
         $add = $string ? ".$string": "";
-        if(count($explode) === 0){
+        if (count($explode) === 0) {
             return $string ?? "";
         }
         return implode('.', $explode).$add;
@@ -229,7 +229,7 @@ abstract class Field
      */
     private function getView()
     {
-        if(view()->exists("$this->view")){
+        if (view()->exists("$this->view")) {
             return $this->view;
         }
         return "laravel-datatables::fields.$this->view";
@@ -302,7 +302,7 @@ abstract class Field
     /**
      * Set a dom element title title="..."
      * Use the toggle property to set data-toggle="..."
-     * 
+     *
      * @param string $title
      * @param string $toggle
      * @return $this
@@ -316,5 +316,4 @@ abstract class Field
         
         return $this;
     }
-    
 }

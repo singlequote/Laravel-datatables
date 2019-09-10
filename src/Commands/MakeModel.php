@@ -71,14 +71,14 @@ class MakeModel extends Command
     {
         $make = true;
 
-        if(!File::isDirectory(app_path($this->path))){
+        if (!File::isDirectory(app_path($this->path))) {
             File::makeDirectory(app_path($this->path));
         }
-        if(File::exists(app_path("$this->path/{$this->argument('name')}.php"))){
+        if (File::exists(app_path("$this->path/{$this->argument('name')}.php"))) {
             $make = $this->confirm("The table model {$this->argument('name')} already exists. Do you want to replace it?");
         }
 
-        if($make){
+        if ($make) {
             File::put(app_path("$this->path/{$this->argument('name')}.php"), $this->stub);
             $this->info("TableModel created inside the folder ".app_path($this->path));
         }
@@ -97,24 +97,26 @@ class MakeModel extends Command
     public \$tableClass = \"{$this->option('class')}\";
         ", $this->option('route'));
         
-        if($this->option('buttons')){
+        if ($this->option('buttons')) {
             $this->replaceValues('button namespace', "use SingleQuote\DataTables\Fields\Button; //button field");
             
             $this->replaceValues('show-button', "Button::make('id')->class('my-button-class')->route('<stub>route</stub>.show', 'id'),");
             $this->replaceValues('edit-button', "Button::make('id')->class('my-button-class')->route('<stub>route</stub>.edit', 'id'),");
             $this->replaceValues('destroy-button', "Button::make('id')->class('my-button-class')->method('delete')->route('<stub>route</stub>.destroy', 'id'),");
 
-            $this->replaceValues('button column', 
+            $this->replaceValues(
+                'button column',
                 '[
             "data"          => "id",
             "name"          => "id",
             "class"         => "my-class",
             "orderable"     => false,
             "searchable"    => false
-        ]');
+        ]'
+            );
         }
 
-        if($this->option('translations')){
+        if ($this->option('translations')) {
             $this->replaceValues('translations', "
    /**
     * Set the translation columns for the headers
@@ -130,7 +132,7 @@ class MakeModel extends Command
             ");
         }
 
-        if($this->option('query')){
+        if ($this->option('query')) {
             $this->replaceValues('query', "
    /**
     * Run an elequent query
@@ -146,17 +148,16 @@ class MakeModel extends Command
         }
 
         $this->replaceValues('route', $this->option('route') ?? "my-route");
-
     }
 
     /**
      * Clean upt he stub file
-     * Removing all the option values 
+     * Removing all the option values
      *
      */
     private function cleanUpStub()
     {
-        $this->stub = preg_replace('#<stub[^>]*>.*?</stub>#si', '',  $this->stub);
+        $this->stub = preg_replace('#<stub[^>]*>.*?</stub>#si', '', $this->stub);
     }
 
     /**
@@ -167,7 +168,7 @@ class MakeModel extends Command
      */
     private function replaceValues(string $find, string $replace, $if = true)
     {
-        if($if){
+        if ($if) {
             $this->stub = str_replace("<stub>$find</stub>", $replace, $this->stub);
         }
     }

@@ -29,6 +29,4 @@ class Dropdown extends Filter
         $class->column = $column;
         return $class;
     }
-    
-
 }

@@ -29,7 +29,4 @@ class Label extends Field
         $class->column = $column;
         return $class;
     }
-
-    
-
 }

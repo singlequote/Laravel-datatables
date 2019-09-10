@@ -14,6 +14,7 @@ use Request;
  */
 class DataTable
 {
+
     /**
      * Constructor
      *
@@ -39,16 +40,17 @@ class DataTable
      */
     public function model($model)
     {
-        if($model instanceof \Illuminate\Database\Eloquent\Model || is_string($model)){
-
-            if(is_string($model)){
+        if ($model instanceof \Illuminate\Database\Eloquent\Model || is_string($model)) {
+            if (is_string($model)) {
                 $model = new $model;
             }
 
-            $this->model            = $model;
-            $this->originalModel    = $model;
+            $this->model = $model;
+            $this->originalModel = $model;
+            
             return $this;
         }
+        
         throw new DataTableException("$model must be an an instance of \Illuminate\Database\Eloquent\Model");
     }
 
@@ -64,45 +66,45 @@ class DataTable
         $reflection = new \ReflectionClass($class);
         $this->view = $reflection->newInstanceArgs($params);
         $this->view->id = md5($class);
-        
-        if(Request::filled('laravel-datatables') && Request::filled('filter')){
+
+        if (Request::filled('laravel-datatables') && Request::filled('filter')) {
             $filters = $this->parseFilters(Request::get('filter'));
             $this->view->filtered = $filters;
         }
-        
+
         $this->view->make($this->model, $params);
 
         $this->checkColumns();
-        
-        if(Request::filled('laravel-datatables') && Request::get('id') === $this->view->id){
+
+        if (Request::filled('laravel-datatables') && Request::get('id') === $this->view->id) {
             return new ServerSide($this->view->query, $this->view);
         }
 
         return $this->build();
     }
-    
+
     /**
      * Parse the filters
-     * 
+     *
      * @param string $encoded
      * @return array
      */
-    private function parseFilters(string $encoded) : array
+    private function parseFilters(string $encoded): array
     {
         $explode = explode('|', rtrim($encoded, '|'));
-        
+
         $filters = [];
-        
-        foreach($explode as $index => $value){
+
+        foreach ($explode as $index => $value) {
             $name = Str::before($value, ';');
             $multiple = Str::contains($value, ';m*');
             $value = Str::after($value, '*');
-            if(!$value || strlen($value) === 0){
+            if (!$value || strlen($value) === 0) {
                 continue;
             }
-            $filters[$name] = (object)['name' => $name, 'value' => $value, 'multiple' => $multiple];
+            $filters[$name] = (object) ['name' => $name, 'value' => $value, 'multiple' => $multiple];
         }
-                
+
         return $filters;
     }
 
@@ -120,14 +122,14 @@ class DataTable
 
         return $this;
     }
-    
+
     /**
      * Build the filters
-     * 
+     *
      */
     private function checkFilters()
     {
-        foreach($this->view->filters  as $index => $filter){
+        foreach ($this->view->filters as $index => $filter) {
             $this->view->filters[$index]->build = $filter->build();
         }
     }
@@ -139,33 +141,33 @@ class DataTable
      */
     private function checkColumns()
     {
-        foreach($this->view->columns as $index => $column){
-            $data       = is_array($column) ? isset($column['data']) ? $column['data'] : null  : $column;
-            $original   = $data;
-            $name       = is_array($column) ? isset($column['name']) ? $column['name'] : null  : null;
-            $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true  : true;
-            $orderable  = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true  : true;
-            $class      = is_array($column) ? isset($column['class']) ? $column['class'] : null  : null;
+        foreach ($this->view->columns as $index => $column) {
+            $data = is_array($column) ? isset($column['data']) ? $column['data'] : null : $column;
+            $original = $data;
+            $name = is_array($column) ? isset($column['name']) ? $column['name'] : null : null;
+            $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true : true;
+            $columnSearch = is_array($column) ? isset($column['columnSearch']) ? $column['columnSearch'] : false : false;
+            $orderable = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true : true;
+            $class = is_array($column) ? isset($column['class']) ? $column['class'] : null : null;
 
-            if(Str::contains($data, ' as ')){
+            if (Str::contains($data, ' as ')) {
                 $name = $name ?? Str::after($data, ' as ');
                 $data = Str::before($data, ' as ');
             }
 
-            if(Str::contains($data, '.')){
+            if (Str::contains($data, '.')) {
                 $explode = explode('.', $data);
                 array_pop($explode);
                 $this->view->query = $this->view->query->with(implode('.', $explode));
             }
 
-            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class);
+            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class, $columnSearch);
 
             $this->columns[] = $name ?? $data;
 
             $this->buildColumnsDef($index, $name ?? $data, $class);
         }
     }
-
 
     /**
      * BUild the columns list
@@ -177,15 +179,16 @@ class DataTable
      * @param bool $orderable
      * @param string $class
      */
-    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null)
+    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null, bool $columnSearch = false)
     {
         $this->view->columns[$index] = [
-            'data'          => $this->toLower($data),
-            'name'          => $this->toLower($name),
-            'original'      => $original,
-            'searchable'    => $searchable,
-            'orderable'     => $orderable ?? true,
-            'class'         => $class
+            'data' => $this->toLower($data),
+            'name' => $this->toLower($name),
+            'original' => $original,
+            'searchable' => $searchable,
+            'orderable' => $orderable ?? true,
+            'class' => $class,
+            'columnSearch' => $columnSearch
         ];
     }
 
@@ -199,10 +202,10 @@ class DataTable
     private function buildColumnsDef(int $index, string $data, string $class = null)
     {
         $this->view->defs[$data] = [
-            'class'     => $class,
-            'id'        => uniqid('column'),
-            'target'    => $index,
-            'def'       => []
+            'class' => $class,
+            'id' => uniqid('column'),
+            'target' => $index,
+            'def' => []
         ];
     }
 
@@ -213,7 +216,7 @@ class DataTable
      * @param string $string
      * @return string
      */
-    private function toLower(string $string) : string
+    private function toLower(string $string): string
     {
         return strtolower(preg_replace("/(?<=[a-zA-Z])(?=[A-Z])/", "_", $string));
     }
@@ -226,17 +229,20 @@ class DataTable
      */
     private function checkDefs()
     {
-        foreach($this->view->fields as $index => $field){
-            if(is_array($field)){
-                foreach($field as $item){
-                   $this->view->fields[] = $item;
-                }
-                unset($this->view->fields[$index]);
+        foreach ($this->view->fields as $index => $field) {
+            if (!is_array($field)) {
+                continue;
             }
+
+            foreach ($field as $item) {
+                $this->view->fields[] = $item;
+            }
+
+            unset($this->view->fields[$index]);
         }
 
-        foreach($this->view->fields as $field){
-            if(array_search($field->column, $this->columns) !== false){
+        foreach ($this->view->fields as $field) {
+            if (array_search($field->column, $this->columns) !== false) {
                 $this->view->defs[$field->column]['def'][] = $field;
             }
         }
@@ -251,28 +257,28 @@ class DataTable
      */
     private function buildDef()
     {
-        foreach($this->view->defs as $column => $def){
-            if(count($def['def']) === 0){
+        foreach ($this->view->defs as $column => $def) {
+            if (count($def['def']) === 0) {
                 $this->view->defs[$column]['def'] = [Label::make($column)];
             }
         }
 
-        foreach($this->view->defs as $column => $def){
-            foreach($def['def'] as $index => $field){
+        foreach ($this->view->defs as $column => $def) {
+            foreach ($def['def'] as $index => $field) {
                 $rendered = $this->getBetweenTags($field->build(), 'script');
-                if($field->permissions || $field->roles){
+                if ($field->permissions || $field->roles) {
                     $rendered = $this->checkMiddlewares($field, $rendered);
                 }
-                
+
                 $this->view->defs[$column]['rendered'][$index] = $rendered;
             }
         }
     }
-    
+
     /**
      * Run the middleware checks
      * Remove the complete code output of a field when the middleware fails
-     * 
+     *
      * @param object $field
      * @param string $rendered
      * @return string
@@ -281,21 +287,21 @@ class DataTable
     {
         $proceedRole = count($field->roles) > 0;
         $proceedPermission = count($field->permissions) > 0;
-        
-        foreach($field->roles as $roles){
-            $check = array_filter($roles, function($role){
+
+        foreach ($field->roles as $roles) {
+            $check = array_filter($roles, function ($role) {
                 return Request::user()->hasRole($role);
             });
             $proceedRole = count($roles) === count($check);
         }
 
-        foreach($field->permissions as $permissions){
-            $check = array_filter($permissions, function($permission){
+        foreach ($field->permissions as $permissions) {
+            $check = array_filter($permissions, function ($permission) {
                 return Request::user()->can($permission);
             });
             $proceedPermission = count($permissions) === count($check);
         }
-        if(!$proceedPermission && !$proceedRole){
+        if (!$proceedPermission && !$proceedRole) {
             return "return '';";
         }
 
@@ -309,7 +315,7 @@ class DataTable
      * @param string $tagname
      * @return string
      */
-    private function getBetweenTags(string $string, string $tagname) : string
+    private function getBetweenTags(string $string, string $tagname): string
     {
         $after = Str::after($string, "<$tagname>");
 
@@ -326,8 +332,8 @@ class DataTable
         $view = $this->view;
 
         return view("laravel-datatables::table")
-            ->with(compact('view'))
-            ->render();
+                ->with(compact('view'))
+                ->render();
     }
 
     /**
@@ -340,8 +346,8 @@ class DataTable
         $view = $this->view;
 
         return view("laravel-datatables::scripts")
-            ->with(compact('view'))
-            ->render();
+                ->with(compact('view'))
+                ->render();
     }
 
     /**
@@ -364,17 +370,16 @@ class DataTable
         return $this->generateScripts();
     }
 
-
     /**
      * Get the column path for example relation.name becomes relation
      *
      * @return string
      */
-    public function getPath(string $string = null) : string
+    public function getPath(string $string = null): string
     {
         $explode = explode('.', $string);
         array_pop($explode);
-        if(count($explode) === 0){
+        if (count($explode) === 0) {
             return "";
         }
         return implode('.', $explode);
@@ -385,11 +390,9 @@ class DataTable
      *
      * @return string
      */
-    public function getName(string $string) : string
+    public function getName(string $string): string
     {
         $explode = explode('.', $string);
         return array_pop($explode) ?? "";
     }
-
-
 }

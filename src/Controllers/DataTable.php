@@ -42,6 +42,28 @@ class DataTable extends ParentClass
     protected $searchable = [];
     
     /**
+     * The columns with searchable inputs
+     *
+     * @var array
+     */
+    protected $filterSearch = [];
+    
+    /**
+     * Has searchables for columns
+     * SearchFilter columns
+     * 
+     * @var bool
+     */
+    protected $hasSearch = false;
+    
+    /**
+     * Global search field
+     * 
+     * @var mixed 
+     */
+    protected $search;
+    
+    /**
      *
      * @param \Illuminate\Database\Eloquent\Model $model
      * @param TableModel $tableModel
@@ -49,10 +71,11 @@ class DataTable extends ParentClass
      */
     public function __construct($model, $tableModel)
     {
+        $this->getSearchableColumns();
         $this->model            = $model;
         $this->cacheName        = "datatables::{$tableModel->id}";
         
-        $this->originalModel    = cache()->rememberForever("{$this->cacheName}originalModel", function() use($model){
+        $this->originalModel    = cache()->rememberForever("{$this->cacheName}originalModel", function () use ($model) {
             return $model->get()->first();
         });
 
@@ -60,6 +83,24 @@ class DataTable extends ParentClass
         
         return $this->build();
     }
+    
+    /**
+     * Set the columns search fields.
+     * Is used to filter a single column
+     * 
+     */
+    private function getSearchableColumns()
+    {
+        $inputs = rtrim(Request::get('filtersearch', '|'), '|');
+        $searchables = explode('|', $inputs);
+        foreach($searchables as $searchable){
+            $keys = explode(';', $searchable);
+            if(count($keys) === 2){
+                $this->hasSearch = true;
+                $this->filterSearch[] = $keys;
+            }
+        }
+   }
 
     /**
      * Build the collection for the datatable
@@ -72,7 +113,7 @@ class DataTable extends ParentClass
         $this->draw   = Request::get('draw');
         $this->column = $this->filterColumns(Request::get('columns'));
 
-        foreach(Request::get('order') as $index => $order){
+        foreach (Request::get('order') as $index => $order) {
             $col = $this->column[$order['column']];
 
             $this->order[$index]  = [
@@ -99,12 +140,12 @@ class DataTable extends ParentClass
      */
     private function filterColumns(array $columns = null)
     {
-        if(!$columns){
+        if (!$columns) {
             return [];
         }
         $fields = [];
-        foreach($columns as $key => $column){
-            if( $column['data'] ||  $column['name']){
+        foreach ($columns as $key => $column) {
+            if ($column['data'] ||  $column['name']) {
                 $fields[] = $column;
             }
         }
@@ -119,11 +160,11 @@ class DataTable extends ParentClass
     private function searchable(array $searchkeys)
     {
         $last = [];
-        foreach($searchkeys as $key => $value){
+        foreach ($searchkeys as $key => $value) {
             $data = is_array($value) ? $value['data'] : $value;
-            if(str_contains($data, '.')){
+            if (str_contains($data, '.')) {
                 $last[] = $data;
-            }else{
+            } else {
                 $this->searchable[] = $data;
             }
         }
@@ -143,7 +184,7 @@ class DataTable extends ParentClass
 
         $response = response()->json($data);
 
-        foreach($response->headers->all() as $header => $value){
+        foreach ($response->headers->all() as $header => $value) {
             $set = implode($value, ',');
             header("$header: $set");
         }
@@ -161,7 +202,7 @@ class DataTable extends ParentClass
     {
         $count = $this->model ? $this->model->count() : 0;
 
-        if ($this->search) {
+        if ($this->search || $this->hasSearch) {
             $this->searchOnModel();
         }
 
@@ -169,7 +210,7 @@ class DataTable extends ParentClass
 
         $build = collect([]);
 
-        $model->each(function($item, $key) use ($build) {
+        $model->each(function ($item, $key) use ($build) {
             $build->put($key+$this->start, $item);
         });
 
@@ -187,17 +228,17 @@ class DataTable extends ParentClass
     
     /**
      * Run the middleware checks
-     * 
+     *
      * @param object $collection
      * @return object
      */
     private function runMiddleware(object $collection) : object
     {
-        $middlewares = array_filter($this->tableModel->fields, function($field){
+        $middlewares = array_filter($this->tableModel->fields, function ($field) {
             return is_object($field) && get_class($field) === 'SingleQuote\DataTables\Fields\Middleware';
         });
 
-        foreach($middlewares as $middleware){
+        foreach ($middlewares as $middleware) {
             $collection = $this->filterResultsOnMiddleware($middleware, $collection, $middleware->middleware);
         }
         
@@ -206,7 +247,7 @@ class DataTable extends ParentClass
     
     /**
      * Filter the results when a middleware has failed
-     * 
+     *
      * @param object $middleware
      * @param object $collection
      * @param array $restrictions
@@ -217,22 +258,22 @@ class DataTable extends ParentClass
         $proceedRole = !count($restrictions['roles']) > 0;
         $proceedPermission = !count($restrictions['permissions']) > 0;
 
-        foreach($restrictions['roles'] as $roles){
-            $check = array_filter($roles, function($role){
+        foreach ($restrictions['roles'] as $roles) {
+            $check = array_filter($roles, function ($role) {
                 return Request::user()->hasRole($role);
             });
             $proceedRole = count($roles) === count($check);
         }
 
-        foreach($restrictions['permissions'] as $permissions){
-            $check = array_filter($permissions, function($permission){
+        foreach ($restrictions['permissions'] as $permissions) {
+            $check = array_filter($permissions, function ($permission) {
                 return Request::user()->can($permission);
             });
             $proceedPermission = count($permissions) === count($check);
         }
         
-        if(!$proceedPermission && !$proceedRole){
-            $collection->each(function($model) use($middleware){
+        if (!$proceedPermission && !$proceedRole) {
+            $collection->each(function ($model) use ($middleware) {
                 $model->{$middleware->column} = null;
             });
         }
@@ -249,10 +290,8 @@ class DataTable extends ParentClass
     {
         $model = $this->model->skip($this->start)->take($this->length);
 
-        foreach($this->order as $order){
-
+        foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
-
         }
 
         return $model->get();
@@ -267,7 +306,7 @@ class DataTable extends ParentClass
      */
     private function runOrderBuild($model, array $order)
     {
-        if(str_contains($order['column'], '.')){
+        if (str_contains($order['column'], '.')) {
             $relation   = $this->getPath($this->findOriginalColumn($order['column']));
             $name       = $this->getName($this->findOriginalColumn($order['column']));
 
@@ -292,10 +331,19 @@ class DataTable extends ParentClass
      */
     private function searchOnModel()
     {
-        $this->model = $this->model->where(function($query){
-            foreach($this->searchable as $index => $column){
-                $this->searchOnRelation($column, $query);
-                $this->searchOnQuery($column, $query, $index);
+        $this->model = $this->model->where(function ($query) {
+            foreach($this->filterSearch as $index => $filterSearch){
+                $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
+                $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query, $index, 'whereRaw');
+            }
+            
+            if(!$this->search){
+                return;
+            }
+            
+            foreach ($this->searchable as $index => $column) {
+                $this->searchOnRelation($this->search['value'], $column, $query, 2);
+                $this->searchOnQuery($this->search['value'], $column, $query, $index);
             }
         });
     }
@@ -307,12 +355,12 @@ class DataTable extends ParentClass
      * @param \Illuminate\Database\Eloquent\Builder $query
      * @param int $index
      */
-    private function searchOnQuery(string $column, \Illuminate\Database\Eloquent\Builder $query, int $index)
+    private function searchOnQuery(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, int $index, $secondSearchType = 'orWhereRaw')
     {
-        if($index === 0 && !str_contains($column, '.')){
-            $query->whereRaw("lower($column) LIKE ?", "%{$this->search['value']}%");
-        }elseif($index > 0 && !str_contains($column, '.')){
-            $query->orWhereRaw("lower($column) LIKE ?", "%{$this->search['value']}%");
+        if ($index === 0 && !str_contains($column, '.')) {
+            $query->whereRaw("lower($column) LIKE ?", "%{$phrase}%");
+        } elseif ($index > 0 && !str_contains($column, '.')) {
+            $query->{$secondSearchType}("lower($column) LIKE ?", "%{$phrase}%");
         }
     }
 
@@ -322,17 +370,15 @@ class DataTable extends ParentClass
      * @param string $column
      * @param \Illuminate\Database\Eloquent\Builder $query
      */
-    public function searchOnRelation(string $column, \Illuminate\Database\Eloquent\Builder $query)
+    public function searchOnRelation(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, $searchType = 'orWhereHas')
     {
-        
-        if(str_contains($column, '.')){
-            
+        if (str_contains($column, '.')) {
             $original = $this->findOriginalColumn($column);
 
             $explode = explode('.', $original);
 
-            $query->orWhereHas($explode[0], function($query) use($explode){
-                $query->whereRaw("lower($explode[1]) LIKE ?", "%{$this->search['value']}%");
+            $query->{$searchType}($explode[0], function ($query) use ($explode, $phrase) {
+                $query->whereRaw("lower($explode[1]) LIKE ?", "%{$phrase}%");
             });
         }
     }
@@ -346,8 +392,8 @@ class DataTable extends ParentClass
      */
     private function findOriginalColumn(string $column) : string
     {
-        foreach($this->tableModel->columns as $view){
-            if($view['data'] === $column){
+        foreach ($this->tableModel->columns as $view) {
+            if ($view['data'] === $column) {
                 return $view['original'];
             }
         }
@@ -363,10 +409,10 @@ class DataTable extends ParentClass
      */
     protected function encryptKeys($data)
     {
-        foreach($data as $key => $value){
-            if(is_array($value)){
+        foreach ($data as $key => $value) {
+            if (is_array($value)) {
                 $data[$key] = $this->encryptKeys($value);
-            }else{
+            } else {
                 $data[$key] = $this->encryptValues($key, $value);
             }
         }
@@ -381,12 +427,12 @@ class DataTable extends ParentClass
      */
     private function encryptValues($key, $value)
     {
-        if(!is_array($this->tableModel->encrypt)){
+        if (!is_array($this->tableModel->encrypt)) {
             return $value;
         }
-        if(in_array($key, $this->tableModel->encrypt)){
+        if (in_array($key, $this->tableModel->encrypt)) {
             return encrypt($value);
-        }else{
+        } else {
             return $value;
         }
     }

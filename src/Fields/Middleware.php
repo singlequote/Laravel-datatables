@@ -40,7 +40,7 @@ class Middleware extends Field
     
     /**
      * Set the required roles
-     * 
+     *
      * @param string $required
      * @return $this
      */
@@ -49,7 +49,7 @@ class Middleware extends Field
         $role = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $required);
         $else = explode('|', $role);
 
-        foreach($else as $key => $item){
+        foreach ($else as $key => $item) {
             $this->middleware['roles'][] = explode(',', $item);
         }
         
@@ -59,7 +59,7 @@ class Middleware extends Field
     /**
      * Set the required permissions
      * Pass a model for policy restrictions
-     * 
+     *
      * @param string $required
      * @param mixed $model
      * @return $this
@@ -69,7 +69,7 @@ class Middleware extends Field
         $role = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $required);
         $else = explode('|', $role);
 
-        foreach($else as $key => $item){
+        foreach ($else as $key => $item) {
             $this->middleware['permissions'][] = explode(',', $item);
         }
         
@@ -78,13 +78,13 @@ class Middleware extends Field
     
     /**
      * Wrap the fields
-     * 
+     *
      * @param \Closure $closure
      * @return $this
      */
     public function wrap(\Closure $closure)
     {
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->fields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "path" => $this->column,
@@ -94,8 +94,4 @@ class Middleware extends Field
 
         return $this;
     }
-
-    
-    
-
 }

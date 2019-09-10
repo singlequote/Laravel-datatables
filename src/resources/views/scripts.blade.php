@@ -1,6 +1,8 @@
 <script type="text/javascript">
     dataTable{{ $view->tableId }}();
     
+    //create a parent function to prevent duplicate vars
+    //makes it stable to use multiple tables on the same page.
     function dataTable{{ $view->tableId }}()
     {
         /**
@@ -29,6 +31,7 @@
         let uri = location.href;
         let mark = uri.includes('?') ? '&' : '?';
         let filters = ``;
+        let filterSearch = ``;
         let table{{ $view->tableId }};
         //END CONFIGS
 
@@ -43,6 +46,19 @@
 
         @endforeach
         //END FILTERS
+        
+        //Set searchColumns        
+        $(document).on('input', '.search-filter', (e) => {
+            filterSearch = `&filtersearch=`;
+            let input = $(e.currenttarget);
+            $(`#{{ $view->tableId }} .search-filter`).each((i, input) => {
+                if($(input).val().length > 0){
+                    filterSearch += `${$(input).attr('name')};${$(input).val()}|`;
+                }
+            });
+            reloadTable();
+        });
+        //END searchColumns 
 
         /**
          * Trigger the filters
@@ -69,7 +85,8 @@
          */
         function reloadTable()
         {
-            table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}`).load();
+            console.log(filterSearch);
+            table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}&${filterSearch}`).load();
         }
 
         @if($view->autoReload)
@@ -83,15 +100,14 @@
         @else
             const locale = @json(__("datatables"));
         @endif
-
-
+        
         let Json{{ $view->tableId }} = {
             "language" : locale,
             "paging": true,
             "processing": true,
             "serverSide": true,
             "dom" : "{!! $view->dom !!}",
-            "ajax": `${uri}${mark}laravel-datatables=active&tableId={{ $view->tableId }}&id={{ $view->id }}${filters}`,
+            "ajax": `${uri}${mark}laravel-datatables=active&tableId={{ $view->tableId }}&id={{ $view->id }}${filters}${filterSearch}`,
             "pageLength" : {{ $view->pageLength }},
             "order" : [
                 @foreach($view->order as $order)
@@ -101,11 +117,7 @@
                 ],
                 @endforeach
             ],
-            "columns": [
-                @foreach($view->columns as $column)
-                @json($column),
-                @endforeach
-            ],
+            "columns": @json($view->columns),
             "columnDefs": [
                 @foreach($view->defs as $def)
                 {
@@ -183,12 +195,9 @@
          */
         $(document).ready(() => {
             @if($view->autoLoadScripts)
-            if(!$.fn.DataTable){
-
-            }else{
+            if($.fn.DataTable){
                 initDatatable{{ $view->tableId }}();
             }
-
             @else
             beforeInit();
 
@@ -209,6 +218,17 @@
             }
 
             @endif
+            
+            //Set searchColumns
+            @foreach($view->columns as $column)
+            @if($column['columnSearch'])
+                $('#{{ $view->tableId }}').find('thead th:nth-child({{ $loop->index + 1 }})').append(`
+                    <input type="text" name="{{ $column['data'] }}" class="search-filter" placeholder="${locale.columnSearchLabel}" />
+                `);
+            @endif
+            @endforeach            
+            //END searchColumns 
+            
         });
     };
     

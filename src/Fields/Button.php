@@ -115,11 +115,11 @@ class Button extends Field
     {
         $params = is_array($parameters) ? $parameters : [$parameters];
 
-        foreach($params as $index => $param){
-
-            $this->routeReplace["Q{$param}Q"] = $param;
-
-            $params[$index] = "Q{$param}Q";
+        foreach ($params as $index => $param) {
+            if(!is_int($param)){
+                $this->routeReplace["Q{$param}Q"] = $param;
+                $params[$index] = "Q{$param}Q";
+            }
         }
 
         $this->route = route($route, $params);
