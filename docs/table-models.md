@@ -26,11 +26,28 @@ Almost every table has buttons or date values that you want to format or add cla
 ## Methods and properties
 Below is a list of methods and properties
 
+### The columns
+Inside the `columns` property you define your table columns. By defaut the table fills the attributes.
+```php
+    public $columns = [
+        'name', //define the column. The package fills in the rest
+        'last_name as lastname', //you can change the data name by using `as`
+        [
+            'data' => "id", //this is the data attribute
+            'name' => "id", //this is the display attribute
+            "class" => "td-actions", //this is the td class
+            "searchable" => true, //set the column to be searchable
+            "orderable" => true //set the column to be orderable
+            "columnSearch" => false, //this creates a search input for the column
+        ]
+    ];
+```
+
 ### Remember paging property
 Whats more frustrating then hitting the refresh button and you can't remember which data page you were on. Enable the property `$rememberPage` so the datatable will remember wich page you were on.
 ```php
 /**
- * Remember which data page the user is
+ * Remember the data page of the user
  *
  * @var bool
  */
