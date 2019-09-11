@@ -3,7 +3,6 @@
 namespace SingleQuote\DataTables\Controllers;
 
 use SingleQuote\DataTables\DataTable as ParentClass;
-use Illuminate\Support\Str;
 use Request;
 
 /**
@@ -342,7 +341,7 @@ class DataTable extends ParentClass
             }
             
             foreach ($this->searchable as $index => $column) {
-                $this->searchOnRelation($this->search['value'], $column, $query, 2);
+                $this->searchOnRelation($this->search['value'], $column, $query);
                 $this->searchOnQuery($this->search['value'], $column, $query, $index);
             }
         });
