@@ -4,6 +4,18 @@ Almost every table has buttons or date values that you want to format or add cla
 <= [Go back](https://singlequote.github.io/Laravel-datatables/)
 -------------------------------------------------------------------
 
+## Using laravel policy permissions
+When using laravel policies you can pass the model as a second parameter. When passing `model` the middleware replaces the stirng with the actual resource. Checkout the docs of the [Middleware Field](https://singlequote.github.io/Laravel-datatables/fields/middleware)
+```php
+Middleware::make('id')->permission('edit', 'model')->role('admin')->wrap(function(){
+    //..
+});
+
+Middleware::make('id')->permission('create', 'App\User')->role('admin')->wrap(function(){
+    //..
+});
+```
+
 ## Field permissions
 To filter the table with permissions you can use the `permissions method`
 
