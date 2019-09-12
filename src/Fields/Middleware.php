@@ -10,6 +10,7 @@ use SingleQuote\DataTables\Controllers\Field;
  */
 class Middleware extends Field
 {
+
     /**
      * Set the middleware keys
      *
@@ -18,6 +19,14 @@ class Middleware extends Field
     public $middleware = [
         'roles' => [], 'permissions' => []
     ];
+
+    /**
+     * The model
+     *
+     * @var mixed
+     */
+    public $middlewareModel;
+
     /**
      * The date view
      *
@@ -37,7 +46,7 @@ class Middleware extends Field
         $class->column = $column;
         return $class;
     }
-    
+
     /**
      * Set the required roles
      *
@@ -46,16 +55,16 @@ class Middleware extends Field
      */
     public function role(string $required)
     {
-        $role = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $required);
+        $role = str_replace([', ', ' ,', ', ', ' | ', ' |', '| '], ',', $required);
         $else = explode('|', $role);
 
         foreach ($else as $key => $item) {
             $this->middleware['roles'][] = explode(',', $item);
         }
-        
+
         return $this;
     }
-    
+
     /**
      * Set the required permissions
      * Pass a model for policy restrictions
@@ -64,18 +73,20 @@ class Middleware extends Field
      * @param mixed $model
      * @return $this
      */
-    public function permission(string $required)
+    public function permission(string $required, string $model = null)
     {
-        $role = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $required);
+        $role = str_replace([', ', ' ,', ', ', ' | ', ' |', '| '], ',', $required);
         $else = explode('|', $role);
 
         foreach ($else as $key => $item) {
             $this->middleware['permissions'][] = explode(',', $item);
         }
-        
+
+        $this->middlewareModel = $model;
+
         return $this;
     }
-    
+
     /**
      * Wrap the fields
      *
