@@ -265,6 +265,7 @@ class DataTable extends ParentClass
         if ($middleware->middlewareModel) {
             $collection->each(function ($model) use ($middleware, $restrictions) {
                 $modelItem = $middleware->middlewareModel === 'model' ? $model : $middleware->middlewareModel;
+                $model->idem = $model->{$middleware->column};
                 $model->{$middleware->column} = $this->filterPermissions($restrictions, $modelItem) ? $model->{$middleware->column} : null;
             });
         }
