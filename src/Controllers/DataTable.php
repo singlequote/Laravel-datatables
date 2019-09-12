@@ -1,5 +1,4 @@
 <?php
-
 namespace SingleQuote\DataTables\Controllers;
 
 use SingleQuote\DataTables\DataTable as ParentClass;
@@ -12,6 +11,7 @@ use Request;
  */
 class DataTable extends ParentClass
 {
+
     /**
      * The collection model
      *
@@ -39,14 +39,14 @@ class DataTable extends ParentClass
      * @var array
      */
     protected $searchable = [];
-    
+
     /**
      * The columns with searchable inputs
      *
      * @var array
      */
     protected $filterSearch = [];
-    
+
     /**
      * Has searchables for columns
      * SearchFilter columns
@@ -54,14 +54,14 @@ class DataTable extends ParentClass
      * @var bool
      */
     protected $hasSearch = false;
-    
+
     /**
      * Global search field
      * 
      * @var mixed 
      */
     protected $search;
-    
+
     /**
      *
      * @param \Illuminate\Database\Eloquent\Model $model
@@ -71,18 +71,18 @@ class DataTable extends ParentClass
     public function __construct($model, $tableModel)
     {
         $this->getSearchableColumns();
-        $this->model            = $model;
-        $this->cacheName        = "datatables::{$tableModel->id}";
-        
-        $this->originalModel    = cache()->rememberForever("{$this->cacheName}originalModel", function () use ($model) {
+        $this->model = $model;
+        $this->cacheName = "datatables::{$tableModel->id}";
+
+        $this->originalModel = cache()->rememberForever("{$this->cacheName}originalModel", function () use ($model) {
             return $model->get()->first();
         });
 
-        $this->tableModel       = $tableModel;
-        
+        $this->tableModel = $tableModel;
+
         return $this->build();
     }
-    
+
     /**
      * Set the columns search fields.
      * Is used to filter a single column
@@ -92,14 +92,14 @@ class DataTable extends ParentClass
     {
         $inputs = rtrim(Request::get('filtersearch', '|'), '|');
         $searchables = explode('|', $inputs);
-        foreach($searchables as $searchable){
+        foreach ($searchables as $searchable) {
             $keys = explode(';', $searchable);
-            if(count($keys) === 2){
+            if (count($keys) === 2) {
                 $this->hasSearch = true;
                 $this->filterSearch[] = $keys;
             }
         }
-   }
+    }
 
     /**
      * Build the collection for the datatable
@@ -109,25 +109,25 @@ class DataTable extends ParentClass
      */
     public function build()
     {
-        $this->draw   = Request::get('draw');
+        $this->draw = Request::get('draw');
         $this->column = $this->filterColumns(Request::get('columns'));
 
         foreach (Request::get('order') as $index => $order) {
             $col = $this->column[$order['column']];
 
-            $this->order[$index]  = [
+            $this->order[$index] = [
                 'column' => $col['data'],
                 'dir' => $order['dir']
             ];
         }
 
-        $this->start        = Request::get('start');
-        $this->length       = Request::get('length');
-        $this->search       = Request::has('search') && Request::get('search')['value'] ? Request::get('search') : null;
-        $this->id           = Request::get('id');
-        
+        $this->start = Request::get('start');
+        $this->length = Request::get('length');
+        $this->search = Request::has('search') && Request::get('search')['value'] ? Request::get('search') : null;
+        $this->id = Request::get('id');
+
         $this->searchable($this->tableModel->searchable ?? $this->tableModel->columns);
-        
+
         return $this->get();
     }
 
@@ -144,7 +144,7 @@ class DataTable extends ParentClass
         }
         $fields = [];
         foreach ($columns as $key => $column) {
-            if ($column['data'] ||  $column['name']) {
+            if ($column['data'] || $column['name']) {
                 $fields[] = $column;
             }
         }
@@ -178,7 +178,7 @@ class DataTable extends ParentClass
     public function get()
     {
         $data = $this->execute();
-        
+
         $data['draw'] = $this->draw;
 
         $response = response()->json($data);
@@ -187,7 +187,7 @@ class DataTable extends ParentClass
             $set = implode($value, ',');
             header("$header: $set");
         }
-        
+
         echo $response->getContent();
         exit;
     }
@@ -210,40 +210,39 @@ class DataTable extends ParentClass
         $build = collect([]);
 
         $model->each(function ($item, $key) use ($build) {
-            $build->put($key+$this->start, $item);
+            $build->put($key + $this->start, $item);
         });
 
         $middlewared = Request::user() ? $this->runMiddleware($build) : $build;
-        
-        $collection  = $this->encryptKeys($middlewared->unique()->values()->toArray());
-       
-        
-        $data['recordsTotal']    = $count;
+
+        $collection = $this->encryptKeys($middlewared->unique()->values()->toArray());
+
+
+        $data['recordsTotal'] = $count;
         $data['recordsFiltered'] = $count;
-        $data['data']            = $collection ?? [];
+        $data['data'] = $collection ?? [];
 
         return $data;
     }
-    
+
     /**
      * Run the middleware checks
      *
      * @param object $collection
      * @return object
      */
-    private function runMiddleware(object $collection) : object
+    private function runMiddleware(object $collection): object
     {
         $middlewares = array_filter($this->tableModel->fields, function ($field) {
             return is_object($field) && get_class($field) === 'SingleQuote\DataTables\Fields\Middleware';
         });
-
         foreach ($middlewares as $middleware) {
             $collection = $this->filterResultsOnMiddleware($middleware, $collection, $middleware->middleware);
         }
-        
+
         return $collection;
     }
-    
+
     /**
      * Filter the results when a middleware has failed
      *
@@ -252,10 +251,36 @@ class DataTable extends ParentClass
      * @param array $restrictions
      * @return object
      */
-    private function filterResultsOnMiddleware(object $middleware, object $collection, array $restrictions) : object
+    private function filterResultsOnMiddleware(object $middleware, object $collection, array $restrictions): object
+    {
+        $proceedRole = $this->filterRoles($restrictions);
+        $proceedPermission = $middleware->middlewareModel ? true : $this->filterPermissions($restrictions);
+
+        if (!$proceedPermission && !$proceedRole) {
+            $collection->each(function ($model) use ($middleware) {
+                $model->{$middleware->column} = null;
+            });
+        }
+
+        if ($middleware->middlewareModel) {
+            $collection->each(function ($model) use ($middleware, $restrictions) {
+                $modelItem = $middleware->middlewareModel === 'model' ? $model : $middleware->middlewareModel;
+                $model->{$middleware->column} = $this->filterPermissions($restrictions, $modelItem) ? $model->{$middleware->column} : null;
+            });
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Filter the user roles
+     * 
+     * @param array $restrictions
+     * @return bool
+     */
+    private function filterRoles(array $restrictions): bool
     {
         $proceedRole = !count($restrictions['roles']) > 0;
-        $proceedPermission = !count($restrictions['permissions']) > 0;
 
         foreach ($restrictions['roles'] as $roles) {
             $check = array_filter($roles, function ($role) {
@@ -264,22 +289,29 @@ class DataTable extends ParentClass
             $proceedRole = count($roles) === count($check);
         }
 
+        return $proceedRole;
+    }
+
+    /**
+     * Filter the user permissions.
+     * 
+     * @param array $restrictions
+     * @param mixed $model
+     * @return bool
+     */
+    private function filterPermissions(array $restrictions, $model = null): bool
+    {
+        $proceedPermission = !count($restrictions['permissions']) > 0;
         foreach ($restrictions['permissions'] as $permissions) {
-            $check = array_filter($permissions, function ($permission) {
-                return Request::user()->can($permission);
+            $check = array_filter($permissions, function ($permission) use($model) {
+                return Request::user()->can($permission, $model);
             });
             $proceedPermission = count($permissions) === count($check);
         }
-        
-        if (!$proceedPermission && !$proceedRole) {
-            $collection->each(function ($model) use ($middleware) {
-                $model->{$middleware->column} = null;
-            });
-        }
-        
-        return $collection;
+
+        return $proceedPermission;
     }
-    
+
     /**
      * Order the model, check if it's a relation or not
      *
@@ -306,20 +338,19 @@ class DataTable extends ParentClass
     private function runOrderBuild($model, array $order)
     {
         if (str_contains($order['column'], '.')) {
-            $relation   = $this->getPath($this->findOriginalColumn($order['column']));
-            $name       = $this->getName($this->findOriginalColumn($order['column']));
+            $relation = $this->getPath($this->findOriginalColumn($order['column']));
+            $name = $this->getName($this->findOriginalColumn($order['column']));
 
-            $foreignName    = $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
-            $ownerName      = $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
-            $relationName   = $this->getPath($ownerName);
+            $foreignName = $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
+            $ownerName = $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+            $relationName = $this->getPath($ownerName);
 
             return $model->leftJoin($relationName, $foreignName, '=', $ownerName)
-                ->orderBy("$relationName.$name", $order['dir']);
+                    ->orderBy("$relationName.$name", $order['dir']);
         }
 
         return $model->orderBy($order['column'], $order['dir']);
     }
-
 
     /**
      * Search on the model
@@ -331,15 +362,15 @@ class DataTable extends ParentClass
     private function searchOnModel()
     {
         $this->model = $this->model->where(function ($query) {
-            foreach($this->filterSearch as $index => $filterSearch){
+            foreach ($this->filterSearch as $index => $filterSearch) {
                 $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
                 $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query, $index, 'whereRaw');
             }
-            
-            if(!$this->search){
+
+            if (!$this->search) {
                 return;
             }
-            
+
             foreach ($this->searchable as $index => $column) {
                 $this->searchOnRelation($this->search['value'], $column, $query);
                 $this->searchOnQuery($this->search['value'], $column, $query, $index);
@@ -389,7 +420,7 @@ class DataTable extends ParentClass
      * @param string $column
      * @return string
      */
-    private function findOriginalColumn(string $column) : string
+    private function findOriginalColumn(string $column): string
     {
         foreach ($this->tableModel->columns as $view) {
             if ($view['data'] === $column) {
