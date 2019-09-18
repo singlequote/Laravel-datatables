@@ -1,35 +1,43 @@
-# Eloquent datatables
+# Laravel Cacher
+A powerfull cacher based on laravels file cache driver
+[![Latest Version on Packagist](https://img.shields.io/packagist/v/singlequote/laravel-cacher.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-cacher)
+[![Total Downloads](https://img.shields.io/packagist/dt/singlequote/laravel-cacher.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-cacher)
 
-[![Latest Version on Packagist](https://img.shields.io/packagist/v/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
-[![Total Downloads](https://img.shields.io/packagist/dt/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
 
-This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination, permission check, role check, laravel policies and recursive searching in relations.
-
-## Note
-Users who want to use the older version of this package, go to the [early version repo](https://github.com/ACFBentveld/Laravel-datatables). The ACFBentveld group is transferd to a new group called SingleQuote.
-
-## Installation
-
-> The package is tested on laravel 5.8.*
-
-You can install the package via composer:
+### Installation
 ```bash
-composer require singlequote/laravel-datatables
+composer require singlequote/laravel-cacher
 ```
 
-## Whats new
-* In this version we introduce a cool new feature. In this version you can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
-* Also in this version we added column search fields. This makes it easy to search on a single column. Check it out here [here](https://singlequote.github.io/Laravel-datatables/table-models)
+## Usage
 
-## Let's start
-We wanted our code as clean as possible and use the same code more than once.
+### Model Caching
+Sometimes you just want to cache the model results. With model caching you can without making a mess in your code. Include the `cacher` trait within your model.
+```php
+namespace App;
 
-[See the Quick start docs here](https://singlequote.github.io/Laravel-datatables/)
+use Illuminate\Foundation\Auth\User as Authenticatable; //<= basic shizzle
+use Illuminate\Contracts\Auth\MustVerifyEmail; //<= basic shizzle
 
+use SingleQuote\Cacher\Traits\Cacher; //⇐ this one
 
-### Changelog
+class User extends Authenticatable implements MustVerifyEmail
+{
+	use Cacher; //<=  require the model to use the trait
+}
+```
 
-Please see [CHANGELOG](CHANGELOG.md) for more information what has changed recently.
+Now whenever you call your `App\User` model, you can use the caching trait
+
+```php
+use App\User;
+
+$users = User::whereEmail('foo@bar.world')->remember(); //<= default ttl is 7 days
+$users = User::whereEmail('foo@bar.world')->remember(3600); //<= 1 hour
+
+//or keep it forever by your side <3
+$users = User::whereEmail('foo@bar.world')->rememberForever();
+```
 
 ## Contributing
 
@@ -39,7 +47,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 You're free to use this package, but if it makes it to your production environment we highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
 
-Our address is: ACF Bentveld, Ecu 2 8305 BA, Emmeloord, Netherlands.
+Our address is: Quotec, Traktieweg 8c 8304 BA, Emmeloord, Netherlands.
 
 ## Credits
 
