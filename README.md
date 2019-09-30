@@ -10,7 +10,7 @@ Users who want to use the older version of this package, go to the [early versio
 
 ## Installation
 
-> The package is tested on laravel 5.8.*
+> The package is tested on laravel 5.8.* and 6.*
 
 You can install the package via composer:
 ```bash
