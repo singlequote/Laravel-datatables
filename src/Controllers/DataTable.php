@@ -71,6 +71,7 @@ class DataTable extends ParentClass
      */
     public function __construct($model, $tableModel)
     {
+        
         $this->getSearchableColumns();
         $this->model = $model;
         $this->cacheName = "datatables::{$tableModel->id}";
@@ -82,7 +83,7 @@ class DataTable extends ParentClass
         );
 
         $this->tableModel = $tableModel;
-
+        
         return $this->build();
     }
 
@@ -129,7 +130,7 @@ class DataTable extends ParentClass
         $this->id = Request::get('id');
 
         $this->searchable($this->tableModel->searchable ?? $this->tableModel->columns);
-
+        
         return $this->get();
     }
 
@@ -340,8 +341,9 @@ class DataTable extends ParentClass
         foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
         }
-
-        return $model->get();
+        
+        return $model->prefix($this->tableModel->elequentPrefix)
+            ->{$this->tableModel->elequentMethod}();
     }
 
     /**
