@@ -20,6 +20,27 @@ This command also has some options you can use to easily create a new table mode
 | --translations | Set a translations method | `php artisan make:table-model Name --translations` | 
 
 
+## Caching results
+It is possible to cache the results by using the elequent methods in your `tableModel` checkout the [Laravel Cacher](https://github.com/singlequote/laravel-cacher) package for the docs.
+
+```php
+    /**
+     * The method used by the elequent builder.
+     * For example : ->get() or if changed : ->rememberForever()
+     *
+     * @var string
+     */
+    public $elequentMethod = "rememberForever"; //remembers the data forever
+    
+    /**
+     * The prefix string used by the cacher.
+     * Default it generates an unique query string
+     *
+     * @var string
+     */
+    public $elequentPrefix = "users"; //the prefix for the cache file. remove or leave empty for unique generated string
+```
+
 ## Fields
 Almost every table has buttons or date values that you want to format or add classses to. With datatables you can use Field classes. The field classes create the buttons or format the date, currency etc. for you. See the full docs on how to use the Fields. [See docs for fields](https://singlequote.github.io/Laravel-datatables/fields)
 
