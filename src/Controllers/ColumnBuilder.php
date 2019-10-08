@@ -15,6 +15,22 @@ abstract class ColumnBuilder
     abstract protected function fields();
     
     /**
+     * The method used by the elequent builder.
+     * For example : ->get() or if changed : ->remember()
+     *
+     * @var string
+     */
+    public $elequentMethod = "get";
+    
+    /**
+     * The prefix string used by the cacher.
+     * Default it generates an unique query string
+     *
+     * @var string
+     */
+    public $elequentPrefix;
+    
+    /**
      * The filters parsed
      *
      * @var mixed
