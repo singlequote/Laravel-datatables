@@ -341,9 +341,11 @@ class DataTable extends ParentClass
         foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
         }
-        
-        return $model->prefix($this->tableModel->elequentPrefix)
-            ->{$this->tableModel->elequentMethod}();
+        try{
+            return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}();
+        } catch (\Exception $ex) {
+            return $model->get();
+        }
     }
 
     /**
