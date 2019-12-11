@@ -13,6 +13,12 @@ you can use the variables data, type and row
 
 
 <script>
+    
+    let dataAttributesMultiple = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributesMultiple += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
+    
     let output = "";
     
     @if($class->eachFields)
@@ -26,19 +32,18 @@ you can use the variables data, type and row
      @php
          $id = uniqid("eachFields");
      @endphp
-
      function {{ $id }}(data, type, row){
+         
          {!! $field["rendered"] !!}
      }
-
 
     $.each(row.{{ $field["path"] }}, (index, item) => {
 
         if(!values[index]){
             values[index] = [];
         }
-
-         values[index].push({{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }}));
+        console.log();
+        values[index].push({{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }}, type, item));
     });
      
 
@@ -64,6 +69,7 @@ you can use the variables data, type and row
     function {{ $fieldID }}(data, type, row){
         {!! $field["rendered"] !!}
     }
+    
     output += {{ $fieldID }}(row.{{$field['column']}}, type, row);
     @endforeach
     //SINGLE FIELDS==============================================================
@@ -98,5 +104,5 @@ you can use the variables data, type and row
     //IMPLODE FIELD==============================================================
     @endif
     
-    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label ${ dataAttributesMultiple } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>

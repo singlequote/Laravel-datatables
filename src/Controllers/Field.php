@@ -87,6 +87,13 @@ abstract class Field
     public $emptyCheck = true;
     
     /**
+     * The data attributes
+     *
+     * @var array
+     */
+    public $data = [];
+    
+    /**
      * Set the title and toggle
      *
      * @var array
@@ -106,7 +113,7 @@ abstract class Field
     /**
      * Set the required permissions
      *
-     * @param string $required
+     * @param string $permissions
      * @return $this
      */
     public function permission(string $permissions)
@@ -124,7 +131,7 @@ abstract class Field
     /**
      * Set the required permissions
      *
-     * @param string $required
+     * @param string $roles
      * @return $this
      */
     public function role(string $roles)
@@ -313,6 +320,19 @@ abstract class Field
             'title' => $title,
             'toggle' => $toggle
         ];
+        
+        return $this;
+    }
+    
+    /**
+     * Set data attributes
+     * 
+     * @param array $data
+     * @return $this
+     */
+    public function data(array $data)
+    {
+        $this->data = $data;
         
         return $this;
     }

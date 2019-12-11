@@ -3,7 +3,6 @@
 namespace SingleQuote\DataTables\Fields;
 
 use SingleQuote\DataTables\Controllers\Field;
-use Illuminate\Support\Str;
 
 /**
  * Description of Label

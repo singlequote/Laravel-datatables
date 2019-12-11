@@ -13,6 +13,11 @@ you can use the variables data, type and row
 
 
 <script>
+    let dataAttributes = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
+    
     let url = "#";
     @if($class->route)
     url = "{{ $class->route }}";
@@ -25,5 +30,5 @@ you can use the variables data, type and row
         let route = "{{ $class->src }}";
     @endif
 
-    return `{!! $class->before !!} <img title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${url}" /> {!! $class->after !!}`;
+    return `{!! $class->before !!} <img ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${url}" /> {!! $class->after !!}`;
 </script>

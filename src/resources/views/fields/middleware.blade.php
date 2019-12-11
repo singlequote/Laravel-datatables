@@ -13,6 +13,11 @@ you can use the variables data, type and row
 
 
 <script>
+    let dataAttributes = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
+    
     let output = "";
     
     @foreach($class->fields as $field)
@@ -30,5 +35,5 @@ you can use the variables data, type and row
      
     @endforeach
     
-    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>

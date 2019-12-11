@@ -14,6 +14,11 @@ you can use the variables data, type and row
 
 <script>
    
+    let dataAttributes = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
+   
     /**
      * Format item from 9 to 09
      *
@@ -42,5 +47,5 @@ you can use the variables data, type and row
     format = format.replace('H', hours);
     format = format.replace('i', minutes);
     format = format.replace('s', seconds);
-    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${format}</label> {!! $class->after !!}`;
+    return `{!! $class->before !!} <label ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${format}</label> {!! $class->after !!}`;
 </script>
