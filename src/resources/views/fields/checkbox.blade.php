@@ -12,6 +12,7 @@ you can use the variables data, type and row
 -->
 
 <script>
+    let id = uniqueId("button_");
     let dataAttributes = ``;
 
     @foreach($class->data as $key => $attribute)
@@ -32,10 +33,10 @@ you can use the variables data, type and row
     let template = `
             {{ $class->label }} 
             {!! $class->icon !!}
-            <input ${ dataAttributes } ${checked} title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="{{ $class->onClick }}" id="{{ $class->id }}" class="{{ $class->class }}" type="checkbox" name="{{ $class->name }}">
+            <input ${ dataAttributes } ${checked} title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" onclick="{{ $class->onClick }}" id="${id}" class="{{ $class->class }}" type="checkbox" name="{{ $class->name }}">
         `;
 
     
 
-    return `{!! $class->before !!} ${template} {!! $class->after !!}<label for="{{ $class->id }}"></label>`;
+    return `{!! $class->before !!} ${template} {!! $class->after !!}<label for="${id}"></label>`;
 </script>
