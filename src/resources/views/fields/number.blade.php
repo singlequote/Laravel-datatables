@@ -33,8 +33,15 @@ you can use the variables data, type and row inside the script tags
             @foreach($class->sumEach as $sum)
                 value += parseFloat(item.{{ $sum }});
             @endforeach
+            
+            @if($class->times)
+                value = value * item.{{ $class->times }};
+                console.log(value);
+            @endif
         });
     @endif
+    
+    
 
     @if($class->raw)
     return value;
