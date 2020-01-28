@@ -68,10 +68,11 @@ class Checkbox extends Field
      */
     public static function make(string $column)
     {
-        $class         = new self;
-        $class->column = $column;
-        $class->id     = uniqid('checkbox_');
-
+        $class              = new self;
+        $class->emptyCheck  = false;
+        $class->column      = $column;
+        $class->id          = uniqid('checkbox_');
+        
         return $class;
     }
 
