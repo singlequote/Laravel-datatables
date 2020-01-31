@@ -85,7 +85,6 @@
          */
         function reloadTable()
         {
-            console.log(filterSearch);
             table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}&${filterSearch}`).load();
         }
 

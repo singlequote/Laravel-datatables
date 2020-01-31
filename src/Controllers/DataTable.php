@@ -358,18 +358,63 @@ class DataTable extends ParentClass
     private function runOrderBuild($model, array $order)
     {
         if (Str::contains($order['column'], '.')) {
+            
+            if(substr_count($order['column'], '.') > 1){
+                return $model;
+            }
+            
             $relation = $this->getPath($this->findOriginalColumn($order['column']));
             $name = $this->getName($this->findOriginalColumn($order['column']));
+            $foreignName = $this->getForeignName($relation);
+            $ownerName = $this->getOwnerName($relation);
+            
+            $relationName = $this->getPath($foreignName);
+            $owner = $this->getPath($ownerName);
 
-            $foreignName = $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
-            $ownerName = $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
-            $relationName = $this->getPath($ownerName);
-
-            return $model->leftJoin($relationName, $foreignName, '=', $ownerName)
+            return $model->with($relation)->leftJoin($relationName, $foreignName, '=', $ownerName)
+                ->select("$owner.*")
                 ->orderBy("$relationName.$name", $order['dir']);
         }
 
         return $model->orderBy($order['column'], $order['dir']);
+    }
+    
+    /**
+     * Get the owner name by relation class
+     * 
+     * @param string $relation
+     * @return string
+     */
+    private function getForeignName(string $relation){
+        $type = get_class($this->originalModel->{$relation}());
+        $class = explode('\\', $type);
+        
+        switch(end($class)){
+            case "BelongsTo" : 
+                return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+            default : 
+                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
+        }        
+    }
+    
+    /**
+     * Get the owner name by relation class
+     * 
+     * @param string $relation
+     * @return string
+     */
+    private function getOwnerName(string $relation){
+        $type = get_class($this->originalModel->{$relation}());
+        $class = explode('\\', $type);
+        
+        switch(end($class)){
+            case "HasOne" : 
+                return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
+            case "BelongsTo" : 
+                return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
+            default : 
+                return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+        }        
     }
 
     /**

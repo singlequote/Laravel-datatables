@@ -36,7 +36,6 @@ you can use the variables data, type and row inside the script tags
             
             @if($class->times)
                 value = value * item.{{ $class->times }};
-                console.log(value);
             @endif
         });
     @endif
