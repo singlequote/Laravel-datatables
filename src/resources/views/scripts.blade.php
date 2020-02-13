@@ -183,7 +183,14 @@
             table{{ $view->tableId }} = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
             @if($view->rememberPage)
             $(document).on('click', '#{{ $view->tableId }}_wrapper .paginate_button', () => {
-               window.history.pushState('laravel-datatable', 'pagination', `${location.origin}${location.pathname}?datatables-page=${table{{ $view->tableId }}.page.info().page + 1}`);
+               
+               let url = location.href.split(`datatables-page=`)[0];
+               if(url.slice(-1) === '?' || url.slice(-1) === '&'){
+                   url = url.slice(0, -1);
+               }
+               let mark = url.includes('?') ? "&" : "?";
+               
+               window.history.pushState('laravel-datatable', 'pagination', `${url}${mark}datatables-page=${table{{ $view->tableId }}.page.info().page + 1}`);
             });
             @endif
         }
