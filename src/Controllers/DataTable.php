@@ -370,9 +370,10 @@ class DataTable extends ParentClass
             
             $relationName = $this->getPath($foreignName);
             $owner = $this->getPath($ownerName);
-
-            return $model->with($relation)->leftJoin($relationName, $foreignName, '=', $ownerName)
-                ->select("$owner.*")
+            
+            return $model->with($relation)
+                ->join($relationName, $foreignName, '=', $ownerName)
+                ->select("$owner.*", "$relationName.$name")
                 ->orderBy("$relationName.$name", $order['dir']);
         }
 
@@ -388,7 +389,7 @@ class DataTable extends ParentClass
     private function getForeignName(string $relation){
         $type = get_class($this->originalModel->{$relation}());
         $class = explode('\\', $type);
-        
+
         switch(end($class)){
             case "BelongsTo" : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
@@ -411,7 +412,7 @@ class DataTable extends ParentClass
             case "HasOne" : 
                 return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
             case "BelongsTo" : 
-                return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
+                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
         }        
