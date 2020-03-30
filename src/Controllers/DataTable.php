@@ -163,6 +163,11 @@ class DataTable extends ParentClass
     {
         $last = [];
         foreach ($searchkeys as $key => $value) {
+            
+            if(isset($value['searchable']) && !$value['searchable']){
+                continue;
+            }
+            
             $data = is_array($value) ? $value['data'] : $value;
             if (Str::contains($data, '.')) {
                 $last[] = $data;
@@ -337,7 +342,7 @@ class DataTable extends ParentClass
     private function sortModel()
     {
         $model = $this->model->skip($this->start)->take($this->length);
-
+        
         foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
         }
