@@ -12,7 +12,7 @@ you can use the variables data, type and row
 -->
 
 <script>
-    let id = uniqueId("button_");
+    let id = uniqueId("checkbox_");
     let dataAttributes = ``;
 
     @foreach($class->data as $key => $attribute)

@@ -228,7 +228,6 @@ class DataTable extends ParentClass
 
         $collection = $this->encryptKeys($middlewared->unique()->values()->toArray());
 
-
         $data['recordsTotal'] = $count;
         $data['recordsFiltered'] = $count;
         $data['data'] = $collection ?? [];
