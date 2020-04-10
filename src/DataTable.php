@@ -95,7 +95,7 @@ class DataTable
 
         $filters = [];
 
-        foreach ($explode as $index => $value) {
+        foreach ($explode as $value) {
             $name = Str::before($value, ';');
             $multiple = Str::contains($value, ';m*');
             $value = Str::after($value, '*');
@@ -252,7 +252,7 @@ class DataTable
 
     /**
      * Render the defs
-     * THe defs define the columns behaviour
+     * The defs define the columns behaviour like rendering Fields and parsing middlewares
      *
      */
     private function buildDef()

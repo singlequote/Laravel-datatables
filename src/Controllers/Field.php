@@ -121,7 +121,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $permissions);
         $else = explode('|', $required);
 
-        foreach ($else as $key => $item) {
+        foreach ($else as $item) {
             $this->permissions[] = explode(',', $item);
         }
         
@@ -139,7 +139,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $roles);
         $else = explode('|', $required);
 
-        foreach ($else as $key => $item) {
+        foreach ($else as $item) {
             $this->roles[] = explode(',', $item);
         }
         
@@ -169,7 +169,7 @@ abstract class Field
      */
     public function columnPath(string $string = null) : string
     {
-        $explode = explode('.', $this->overwrite ?? $this->column);
+        $explode = explode($this->overwrite ?? $this->column, '.');
         array_pop($explode);
         $add = $string ? ".$string": "";
         if (count($explode) === 0) {

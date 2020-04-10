@@ -59,7 +59,7 @@ Inside the `columns` property you define your table columns. By defaut the table
             "class" => "td-actions", //this is the td class
             "searchable" => true, //set the column to be searchable
             "orderable" => true //set the column to be orderable
-            "columnSearch" => false, //this creates a search input for the column
+            "columnSearch" => false, //this generates a search input below the column header
         ]
     ];
 ```

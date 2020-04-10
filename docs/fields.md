@@ -12,10 +12,11 @@ Field classes can be used to change the behaviour of the columns.
 - [Label](https://singlequote.github.io/Laravel-datatables/fields/label)
 - [Middleware](https://singlequote.github.io/Laravel-datatables/fields/middleware)
 - [Number](https://singlequote.github.io/Laravel-datatables/fields/number)
+- [Checkbox](https://singlequote.github.io/Laravel-datatables/fields/checkbox)
 
 
 ### Example
-Below is a simple example on how to use fields inside your [tableModel](https://singlequote.github.io/Laravel-datatables/table-models). 
+Below is a simple example on how to render fields for your table [tableModel](https://singlequote.github.io/Laravel-datatables/table-models). 
 
 In this example we are going to add an edit button and format a date string.
 Always add the field classes to the `fields` method inside your [tableModel](https://singlequote.github.io/Laravel-datatables/table-models).

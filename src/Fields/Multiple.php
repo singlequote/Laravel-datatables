@@ -119,7 +119,7 @@ class Multiple extends Field
     /**
      * Set the implode fields
      *
-     * @param string $column
+     * @param string $separate
      * @return $this
      */
     public function implode(string $separate = ", ")
