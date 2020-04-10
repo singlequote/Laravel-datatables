@@ -12,7 +12,7 @@ Checkbox::make('email_verified_at')
 The checkbox field can be extended with a lot of available methods. Such as classes and routes. 
 
 #### Class
-Add dom classes to the button
+Add dom classes to the checkbox
 
 ```php
 Checkbox::make('email_verified_at')->class('my-custom-checkbox')
@@ -20,7 +20,7 @@ Checkbox::make('email_verified_at')->class('my-custom-checkbox')
 ```
 
 #### Icon
-Add dom classes to the button
+Add an icon before the checkbox
 
 ```php
 Checkbox::make('email_verified_at')->icon('material-icons', optional 'edit'),
