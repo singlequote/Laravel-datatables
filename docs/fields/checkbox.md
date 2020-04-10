@@ -42,7 +42,7 @@ Checkbox::make('email_verified_at')->checked('deleted_at') //when value is null 
 
 
 ### Add onclick
-The onclick method can be used to overwrite the onlick attribute. 
+The onclick method can be used to trigger an event.
 
 ```php
 Checkbox::make('email_verified_at')->onclick("$('form').submit()"),
