@@ -186,7 +186,7 @@ abstract class Field
     public function columnName() : string
     {
         $explode = explode('.', $this->column);
-        return array_pop($explode) ?? "";
+        return str_replace('+', '.', array_pop($explode) ?? "");
     }
 
     /**
