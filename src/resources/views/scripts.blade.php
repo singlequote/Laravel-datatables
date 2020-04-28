@@ -130,6 +130,15 @@
                             @endphp
 
                             function {{$def['id']}}{{ $index }}(data, type, row) {
+                                
+                                @if($class->condition)
+                                let condition = row.{!! $class->condition !!};
+
+                                if(!condition){
+                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
+                                }
+                                @endif
+                                
                                 @if($class->overwrite)
                                     @if(strlen($class->columnPath())> 0)
                                     if(!row.{{ $class->columnPath() }}){
@@ -145,15 +154,6 @@
                                     return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
                                 }
                                 @endif
-
-                                @if($class->condition)
-                                let condition = row.{!! $class->condition !!};
-
-                                if(!condition){
-                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
-                                }
-                                @endif
-
 
                                 {!! $render !!}
                             };
