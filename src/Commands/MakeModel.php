@@ -126,7 +126,7 @@ class MakeModel extends Command
     public function translate() : array
     {
         return [
-            'name' => trans('Name'),
+            'name' => __('Name'),
         ];
     }
             ");
