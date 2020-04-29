@@ -149,7 +149,7 @@ public $columns = [
     'created_at'
 ];
 ```
-The above will output the columns we need but there isn't formatting anything. Next we format the `created_at` to a readable date format. 
+The above will output the columns we need but isn't formatting anything. Next we format the `created_at` to a readable date format. 
 
 On top of your `table model` include the [Date](https://singlequote.github.io/Laravel-datatables/fields/date) field.
 `use SingleQuote\DataTables\Fields\Date`
