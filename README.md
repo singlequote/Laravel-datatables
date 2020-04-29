@@ -20,6 +20,8 @@ composer require singlequote/laravel-datatables
 ## Let's start
 We wanted our code as clean as possible and use the same code more than once.
 
+[Tutorial](https://singlequote.github.io/Laravel-datatables/tutorial)
+
 [See the Quick start docs here](https://singlequote.github.io/Laravel-datatables/)
 
 
