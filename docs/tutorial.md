@@ -98,7 +98,7 @@ In your `index method` call the `DataTable` facade and pass the users `model` li
 ```
 
 ## Setting up the view
-We will create a view names `index.blade.php` in the directory `resources/views/users`
+We will create a view named `index.blade.php` in the directory `resources/views/users`
 Only 2 methods are available to display the table, the table content and the scripts.
 ```php
 @extends('layouts.app')
