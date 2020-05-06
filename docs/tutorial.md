@@ -143,9 +143,9 @@ public $tableClass = "table table-bordered"
 Next we will fill the columns. By default the command will add the `name` and `id` columns. We will add the columns `email` and `created_at` columns.
 ```php
 public $columns = [
-	'id',
+    'id',
     'name',
-    'email'
+    'email',
     'created_at'
 ];
 ```
@@ -166,7 +166,7 @@ Add the Date field to the `fields` method in your `table model`
     public function fields() : array
     {
         return [
-			Date::make('created_at')->format('d-m-Y') //dd-mm-YYYY
+	    Date::make('created_at')->format('d-m-Y') //dd-mm-YYYY
         ];
     }
 ```
@@ -184,10 +184,10 @@ Next in your `fields` method, we assign the button field to the `id` column and 
   public function fields() : array
   {
       return [
-		Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
+	Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
 		
-		Button::make('id')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
-		Button::make('id')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id')
+	Button::make('id')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
+	Button::make('id')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id')
       ];
   }
 ```
@@ -215,17 +215,17 @@ The buttons are assigned to the `id` column. But what if we want to show the `id
 
 ```php
 public $columns = [
-	'id',
+    'id',
     'name',
     'email',
     'created_at',
     [
-	    'name' => 'actions',
-	    'data' => 'id'
+    	'name' => 'actions',
+	'data' => 'id'
     ]
 ];
 ```
-As showen above, we added a new column `id` but named `actions`, Now the table can use the same resources or multiple columns. Next change the buttons assignment. 
+As shown above, we added a new column `id` but named `actions`, Now the table can use the same resources or multiple columns. Next change the buttons assignment. 
 ```php
   public function fields() : array
   {
