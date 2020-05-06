@@ -199,12 +199,12 @@ Add a new Button to the `fields` method, this time we add the `method` attribute
   public function fields() : array
   {
       return [
-		Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
-		
-		Button::make('id')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
-		Button::make('id')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id'),
-		
-		Button::make('id')->class('btn btn-danger')->icon('material-icons', 'trash')->route('users.destroy', 'id')->method('delete')
+	Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
+
+	Button::make('id')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
+	Button::make('id')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id'),
+
+	Button::make('id')->class('btn btn-danger')->icon('material-icons', 'trash')->route('users.destroy', 'id')->method('delete')
       ];
   }
 ```
@@ -230,12 +230,12 @@ As shown above, we added a new column `id` but named `actions`, Now the table ca
   public function fields() : array
   {
       return [
-		Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
-		
-		Button::make('actions')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
-		Button::make('actions')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id'),
-		
-		Button::make('actions')->class('btn btn-danger')->icon('material-icons', 'trash')->route('users.destroy', 'id')->method('delete')
+	Date::make('created_at')->format('d-m-Y'), //dd-mm-YYYY
+
+	Button::make('actions')->class('btn btn-primary')->icon('material-icons', 'account_circle')->route('users.show', 'id'),
+	Button::make('actions')->class('btn btn-warning')->icon('material-icons', 'edit')->route('users.edit', 'id'),
+
+	Button::make('actions')->class('btn btn-danger')->icon('material-icons', 'trash')->route('users.destroy', 'id')->method('delete')
       ];
   }
 ```
