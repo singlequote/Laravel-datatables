@@ -5,9 +5,6 @@
 
 This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination, permission check, role check, laravel policies and recursive searching in relations.
 
-## Note
-Users who want to use the older version of this package, go to the [early version repo](https://github.com/ACFBentveld/Laravel-datatables). The ACFBentveld group has transferred to a new group called SingleQuote.
-
 ## Installation
 
 > The package is tested on laravel 5.8.*, 6.* and 7.*
