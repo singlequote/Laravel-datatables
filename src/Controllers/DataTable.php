@@ -433,6 +433,7 @@ class DataTable extends ParentClass
     {
         $this->model = $this->model->where(
             function ($query) {
+            
                 foreach ($this->filterSearch as $index => $filterSearch) {
                     $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
                     $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query, $index, 'whereRaw');
@@ -459,10 +460,12 @@ class DataTable extends ParentClass
      */
     private function searchOnQuery(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, int $index, $secondSearchType = 'orWhereRaw')
     {
+        $table = $this->originalModel->getTable();
+        
         if ($index === 0 && !Str::contains($column, '.')) {
-            $query->whereRaw("lower($column) LIKE ?", "%{$phrase}%");
+            $query->whereRaw("lower($table.$column) LIKE ?", "%{$phrase}%");
         } elseif ($index > 0 && !Str::contains($column, '.')) {
-            $query->{$secondSearchType}("lower($column) LIKE ?", "%{$phrase}%");
+            $query->{$secondSearchType}("lower($table.$column) LIKE ?", "%{$phrase}%");
         }
     }
 
