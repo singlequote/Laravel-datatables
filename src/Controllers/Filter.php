@@ -175,7 +175,8 @@ abstract class Filter
             if (!$closure) {
                 $this->data[] = [
                     'value' => is_array($item) ? $item['id'] : $item->id,
-                    'label' => is_array($item) ? $item['name'] : $item->name
+                    'label' => is_array($item) ? $item['name'] : $item->name,
+                    'selected' => is_array($item) ? isset($item['selected']) && $item['selected'] : $item->selected,
                 ];
             } else {
                 $this->data[] = $closure($item);
