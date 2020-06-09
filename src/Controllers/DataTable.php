@@ -374,11 +374,11 @@ class DataTable extends ParentClass
             
             $relationName = $this->getPath($foreignName);
             $owner = $this->getPath($ownerName);
-            
+                        
             return $model->with($relation)
                 ->join($relationName, $foreignName, '=', $ownerName)
-                ->select("$owner.*", "$relationName.$name")
-                ->orderBy("$relationName.$name", $order['dir']);
+                ->select("$owner.*", "$relationName.$name as $relationName$name")
+                ->orderBy("$relationName$name", $order['dir']);
         }
 
         return $model->orderBy($order['column'], $order['dir']);
