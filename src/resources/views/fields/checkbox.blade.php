@@ -23,7 +23,7 @@ you can use the variables data, type and row
     let checked = "";
     
     @if(is_string($class->checked))
-        if(row.{{ $class->checked }}){
+        if(row.{!! $class->checked !!}){
             checked = 'checked';
         }
     @else
