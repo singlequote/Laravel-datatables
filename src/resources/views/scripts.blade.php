@@ -1,242 +1,343 @@
+<?php
+    $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __("datatables");
+?>
+
 <script type="text/javascript">
-    dataTable{{ $view->tableId }}();
-    
-    //create a parent function to prevent duplicate vars
-    //makes it stable to use multiple tables on the same page.
-    function dataTable{{ $view->tableId }}()
+window.classes = {};
+
+/**
+* Generate unique ID
+*
+* @param {String} prefix
+* @returns {String}
+*/
+function uniqueId(prefix = "_")
+{
+    return prefix + Math.random().toString(36).substr(2, 9);
+}
+
+
+classes[`{{ $view->tableId }}`] = new class
+{
+
+    /**
+     * Constructor {{ $view->tableId }} table
+     *
+     * @returns {void}
+     */
+    constructor()
     {
-        /**
-         * Get a parameter from the url
-         * 
-         * @param {type} param
-         * @returns {unresolved}
-         */
-        function getParameterFromUrl(param)
-        {
-            return new URLSearchParams(window.location.search).get(param);
+        
+    }
+
+    /**
+     * Init the Datatable
+     *
+     * @param {Object} view
+     * @returns {void}
+     */
+    init(view)
+    {
+        this.loadSearchableColumns(view);
+
+        this.loadFilters(view);
+
+        this.loadConfig(view);
+
+        this.build(view.tableId);
+
+        this.loadTriggers(view);
+    }
+
+    /**
+     * Build the table
+     *
+     * @param {String} id
+     * @returns {void}
+     */
+    build(id)
+    {
+        this.table = $(`#${id}`).DataTable(this.config);
+    }
+
+    /**
+     * Reload the table
+     *
+     * @param {Object} view
+     */
+    reload(view)
+    {
+        this.table.ajax.url(this.buildUrl(view)).load();
+    }
+
+    /**
+     * Load the table triggers
+     *
+     * @param {Object} view
+     * @returns {unresolved}
+     */
+    loadTriggers(view)
+    {
+        if(view.autoReload){
+            setInterval(() => {
+                reloadTable(view);
+            },10000);
         }
 
-        /**
-         * Generate unique ID
-         *
-         * @param {String} prefix
-         * @returns {String}
-         */
-        function uniqueId(prefix = "_")
-        {
-            return prefix + Math.random().toString(36).substr(2, 9);
+        $(document).on('input', '.search-filter', this.reload.bind(this, view));
+        $(document).on('click', `#${ view.tableId }_wrapper .paginate_button`, this.rememberPage.bind(this, view));
+    }
+
+    /**
+     * Remember the page on each trigger
+     *
+     * @returns {void}
+     */
+    rememberPage(view)
+    {
+        if(!view.rememberPage){
+            return false;
+        }
+        
+        let url = location.href.split(`datatables-page=`)[0];
+
+        if(url.slice(-1) === '?' || url.slice(-1) === '&'){
+            url = url.slice(0, -1);
         }
 
-        //CONFIGS
-        let uri = location.href;
-        let mark = uri.includes('?') ? '&' : '?';
-        let filters = ``;
-        let filterSearch = ``;
-        let table{{ $view->tableId }};
-        //END CONFIGS
+        let mark = url.includes('?') ? "&" : "?";
 
-        //FILTERS
-        @foreach($view->filters as $filter)
+        window.history.pushState('laravel-datatable', 'pagination', `${url}${mark}datatables-page=${this.table.page.info().page + 1}`);
+    }
 
-        $(`#{{ $view->tableId }}datatable-filters`).append(`{!! $filter->build !!}`);
+    /**
+     * Trigger searchable columns
+     *
+     * @param {Object} view
+     * @returns {void}
+     */
+    searchFilterInput(view)
+    {
+        let filterSearch = `&filtersearch=`;
 
-        $(document).on('{{ $filter->getTrigger() }}', `#{{ $filter->getID() }}`, () => {
-            triggerFilters({{ $filter->getMultiple() }});
+        $(`#${ view.tableId } .search-filter`).each((i, input) => {
+            if($(input).val().length > 0){
+                filterSearch += `${$(input).attr('name')};${$(input).val()}|`;
+            }
         });
 
-        @endforeach
-        //END FILTERS
-        
-        //Set searchColumns        
-        $(document).on('input', '.search-filter', (e) => {
-            filterSearch = `&filtersearch=`;
-            let input = $(e.currenttarget);
-            $(`#{{ $view->tableId }} .search-filter`).each((i, input) => {
-                if($(input).val().length > 0){
-                    filterSearch += `${$(input).attr('name')};${$(input).val()}|`;
-                }
-            });
-            reloadTable();
+        return filterSearch;
+    }
+
+    /**
+     * Set locale
+     *
+     * @param {Object} translations
+     * @returns {void}
+     */
+    locale(translations)
+    {
+        this.translations = translations;
+
+        return this;
+    }
+
+    /**
+     * Load the searchable columns
+     *
+     * @param {Object} view
+     */
+    loadSearchableColumns(view)
+    {
+        view.columns.forEach((column, index) => {
+            if(column.columnSearch){
+                $(`#${ view.tableId }`).find(`thead th:nth-child(${index +1})`).append(`
+                    <input type="text" name="${ column.data }" class="search-filter" placeholder="${this.translations.columnSearchLabel}" />
+                `);
+            }
         });
-        //END searchColumns 
+    }
 
-        /**
-         * Trigger the filters
-         * 
-         */
-        function triggerFilters(multiple = false)
-        {
-            filters = `&filter=`;
-            $(`.datatable-filter`).each((index, e) => {
-                if(!$(e).val() || $(e).val() === '**' || !$(e).attr('id')){
-                    return;
-                }
-                let type = multiple ? 'm' : 's';
+    /**
+     * Load the table filters
+     *
+     * @returns {void}
+     */
+    loadFilters(view)
+    {
+        view.filters.forEach((filter) => {
+            $(`#${ view.tableId }datatable-filters`).append(`${filter.build}`);
+            $(`#${filter.filterId}`).on(filter.filterTrigger, this.reload.bind(this, view));
+        });
+    }
 
-                filters += `${$(e).attr('name')};${type}*${$(e).val()}|`;
-            });
+    /**
+     * Build the filter string
+     *
+     * @returns {void}
+     */
+    filterChanged()
+    {
+        let filters = `&filter=`;
 
-            reloadTable();
-        }
+        $(`.datatable-filter`).each((index, e) => {
+            if(!$(e).val() || $(e).val() === '**' || !$(e).attr('id')){
+                return;
+            }
+            let type = $(e).attr('multiple') ? 'm' : 's';
 
-        /**
-         * Reload the table
-         * 
-         */
-        function reloadTable()
-        {
-            table{{ $view->tableId }}.ajax.url(`${uri}${mark}laravel-datatables=active&id={{ $view->id }}&${filters}&${filterSearch}`).load();
-        }
+            filters += `${$(e).attr('name')};${type}*${$(e).val()}|`;
+        });
 
-        @if($view->autoReload)
-        setInterval(() => {
-            table{{ $view->tableId }}.ajax.reload( null, false );
-        },10000);
-        @endif
+        return filters;
+    }
 
-        @if(__("datatables") === 'datatables')
-            const locale = @json(__("datatables::datatables"));
-        @else
-            const locale = @json(__("datatables"));
-        @endif
-        
-        let Json{{ $view->tableId }} = {
-            "language" : locale,
+    /**
+     * Load the configs
+     *
+     * @param {Object} view
+     * @returns {void}
+     */
+    loadConfig(view)
+    {
+      this.config = {
+            "language" : this.translations,
             "paging": true,
             "processing": true,
             "serverSide": true,
-            "dom" : "{!! $view->dom !!}",
-            "ajax": `${uri}${mark}laravel-datatables=active&tableId={{ $view->tableId }}&id={{ $view->id }}${filters}${filterSearch}`,
-            "pageLength" : {{ $view->pageLength }},
-            "order" : [
-                @foreach($view->order as $order)
-                [
-                    {{ $order[0] }},
-                    "{{ $order[1] }}"
-                ],
-                @endforeach
-            ],
-            "columns": @json($view->columns),
-            "columnDefs": [
-                @foreach($view->defs as $def)
-                {
-                    "class" : "{{ isset($def["class"]) ? $def["class"] : '' }}",
-                    "render": function ( data, type, row ) {
-                        let output = "";
-                        @foreach($def['rendered'] as $index => $render)
-
-                            @php
-                                $class = $def["def"][$index];
-                            @endphp
-
-                            function {{$def['id']}}{{ $index }}(data, type, row) {
-                                
-                                @if($class->condition)
-                                let condition = row.{!! $class->condition !!};
-
-                                if(!condition){
-                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
-                                }
-                                @endif
-                                
-                                @if($class->overwrite)
-                                    @if(strlen($class->columnPath())> 0)
-                                    if(!row.{{ $class->columnPath() }}){
-                                        return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
-                                    }
-                                    @endif
-                                    data = row.{{ $class->overwrite }};
-                                @endif
-                                //empty check
-                                @if($class->emptyCheck)
-
-                                if(!data @if(strlen($class->columnPath())> 0) || !row.{{ $class->columnPath() }} @endif){
-                                    return "{!! $class->before !!} {{ $class->returnWhenEmpty }} {!! $class->after !!}";
-                                }
-                                @endif
-
-                                {!! $render !!}
-                            };
-
-                            output += {{$def['id']}}{{ $index }}(data, type, row);
-                        @endforeach
-
-                        return output;
-                    },
-                    "targets": {{ $def["target"] }}
-                },
-                @endforeach
-            ]
+            "displayStart" : this.displayStart(view),
+            "dom" : view.dom,
+            "ajax": this.buildUrl(view),
+            "pageLength" : view.pageLength,
+            "order" : view.order,
+            "columns" : view.columns,
+            "columnDefs": this.buildColumnDefs(view.defs)
         };
-        @if($view->rememberPage)
-            if(getParameterFromUrl('datatables-page')){
-                Json{{ $view->tableId }}.displayStart = (getParameterFromUrl('datatables-page') -1) * Json{{ $view->tableId }}.pageLength;
-            }
-        @endif
+    }
 
-        /**
-         * Init the datatable
-         *
-         */
-        function initDatatable{{ $view->tableId }}()
-        {
-            table{{ $view->tableId }} = $('#{{ $view->tableId }}').DataTable(Json{{ $view->tableId }});
-            @if($view->rememberPage)
-            $(document).on('click', '#{{ $view->tableId }}_wrapper .paginate_button', () => {
-               
-               let url = location.href.split(`datatables-page=`)[0];
-               if(url.slice(-1) === '?' || url.slice(-1) === '&'){
-                   url = url.slice(0, -1);
-               }
-               let mark = url.includes('?') ? "&" : "?";
-               
-               window.history.pushState('laravel-datatable', 'pagination', `${url}${mark}datatables-page=${table{{ $view->tableId }}.page.info().page + 1}`);
-            });
-            @endif
+    /**
+     * Return the start page
+     *
+     * @param {Object} view
+     * @returns {Integer}
+     */
+    displayStart(view)
+    {
+        if(view.rememberPage && this.getParameterFromUrl('datatables-page')){
+            return (this.getParameterFromUrl('datatables-page') -1) * view.pageLength;
         }
 
-        /**
-         * On document ready
-         *
-         */
-        $(document).ready(() => {
-            @if($view->autoLoadScripts)
-            if($.fn.DataTable){
-                initDatatable{{ $view->tableId }}();
-            }
-            @else
-            beforeInit();
+        return 0;
+    }
 
-            function beforeInit(retry = 0)
-            {
-                if(!$.fn.DataTable){
-                    if(retry >= 10){
-                        return console.error('Laravel Datatable could not be loaded!');
+    /**
+     * Build the column defs
+     *
+     * @param {Object} defs
+     * @returns {void}
+     */
+    buildColumnDefs(defs)
+    {
+        const defsArray = [];
+
+        //loop the columns
+        for (const [key, def] of Object.entries(defs)) {
+                //push to the column defs array
+                defsArray.push({
+                "class" : def.class || '',
+                "render": ( data, type, row ) => {
+                    //the output returned after the render is completed
+                    let output = "";
+                    
+                    //loop the rendered views
+                    for (const [index, rendered] of Object.entries(def.rendered)) {
+                        //set the viewer
+                        let view = def.def[index];
+
+                        //overwrite the data key
+                        if(view.overwrite){
+                            data = this.overWriteData(view, row);
+                        }
+                        
+                        //check the conditions
+                        if(view.condition && !eval(`row.${view.condition}`)){
+                            continue;
+                        }
+
+                        //Empty check
+                        if(view.emptyCheck && (!data || (isNaN(data) && !data.length))){
+                            output += `${view.before || ''} ${view.returnWhenEmpty || ''} ${view.after || ''}`;
+                            continue;
+                        }
+
+                        //run the rendered eval
+                        eval(`
+                            function ${def.id}${def.index}(){
+                                ${rendered}
+                            }
+                            output += ${def.id}${def.index}();
+                        `);
                     }
-                    console.info('Laravel Datatable not loaded. Check again...');
-                    setTimeout(() => {
-                        beforeInit(retry + 1);
-                    },300);
-                }else{
-                    console.info('Laravel Datatable loaded. Init table...');
-                    initDatatable{{ $view->tableId }}();
-                }
-            }
 
-            @endif
-            
-            //Set searchColumns
-            @foreach($view->columns as $column)
-            @if($column['columnSearch'])
-                $('#{{ $view->tableId }}').find('thead th:nth-child({{ $loop->index + 1 }})').append(`
-                    <input type="text" name="{{ $column['data'] }}" class="search-filter" placeholder="${locale.columnSearchLabel}" />
-                `);
-            @endif
-            @endforeach            
-            //END searchColumns 
-            
+                    return output;
+                },
+                "targets": def.target
+            });
+        }
+        //return the columns
+        return defsArray;
+    }
+
+    /**
+     * Return the new data key
+     *
+     * @param {Object} view
+     * @param {Object} row
+     * @returns {void}
+     */
+    overWriteData(view, row)
+    {
+        let split = view.overwrite.split('.');
+
+        let newKey = false;
+
+        split.forEach((item) => {
+            newKey = newKey ? newKey[item] : row[item];
         });
-    };
-    
-    
+
+        return newKey;
+    }
+
+    /**
+     * Return the URL
+     *
+     * @param {Object} view
+     * @returns {String}
+     */
+    buildUrl(view)
+    {
+        let uri = location.href;
+        let mark = uri.includes('?') ? '&' : '?';
+        let filters = this.filterChanged();
+        let filterSearch = this.searchFilterInput(view);
+
+        return `${uri}${mark}laravel-datatables=active&tableId=${view.tableId}&id=${view.id}${filters}${filterSearch}`;
+    }
+
+    /**
+     * retutn the selected parameter
+     *
+     * @param {String} param
+     * @returns {String} string
+     */
+    getParameterFromUrl(param)
+    {
+        return new URLSearchParams(window.location.search).get(param);
+    }
+
+};
+
+
+classes[`{{ $view->tableId }}`].locale(@json($locale)).init(@json($view));
+
 </script>
