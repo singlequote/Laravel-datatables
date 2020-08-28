@@ -131,6 +131,9 @@ class DataTable
     {
         foreach ($this->view->filters as $index => $filter) {
             $this->view->filters[$index]->build = $filter->build();
+            $this->view->filters[$index]->filterTrigger = $filter->getTrigger();
+            $this->view->filters[$index]->filterId = $filter->getID();
+            $this->view->filters[$index]->multiple = $filter->getMultiple();
         }
     }
 
