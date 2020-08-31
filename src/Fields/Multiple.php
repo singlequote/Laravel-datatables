@@ -46,6 +46,27 @@ class Multiple extends Field
     public $implode;
 
     /**
+     * Decimals
+     *
+     * @var int
+     */
+    public $decimals;
+
+    /**
+     * Decimal point
+     *
+     * @var string
+     */
+    public $dec_point;
+
+    /**
+     * Thousand step
+     *
+     * @var string
+     */
+    public $thousands_sep;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -133,6 +154,23 @@ class Multiple extends Field
         $this->implode['path'] = implode('.', $explode);
 
         $this->implode['seperate'] = $separate;
+
+        return $this;
+    }
+
+    /**
+     * Format the outcome result
+     *
+     * @param int $decimals
+     * @param string $dec_point
+     * @param string $thousands_sep
+     * @return $this
+     */
+    public function format(int $decimals = 2, string $dec_point = ".", string $thousands_sep = ",")
+    {
+        $this->decimals = $decimals;
+        $this->dec_point = $dec_point;
+        $this->thousands_sep = $thousands_sep;
 
         return $this;
     }
