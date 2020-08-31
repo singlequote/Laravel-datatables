@@ -103,6 +103,14 @@ you can use the variables data, type and row
         }).join("{!! $class->implode['seperate'] !!}");
     //IMPLODE FIELD==============================================================
     @endif
+
+    @if($class->decimals)
+        let p = parseFloat(output).toFixed({{ $class->decimals }}).split(".");
+
+        output =  `${p[0].split("").reverse().reduce(function(acc, num, i, orig) {
+            return  num=="." ? acc : num + (i && !(i % 3) ? '{{ $class->thousands_sep }}' : "") + acc;
+        }, "") + '{{ $class->dec_point }}' + p[1]}`;
+    @endif
     
     return `{!! $class->before !!} <label ${ dataAttributesMultiple } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>
