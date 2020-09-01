@@ -253,15 +253,15 @@ classes[`{{ $view->tableId }}`] = new class
                     for (const [index, rendered] of Object.entries(def.rendered)) {
                         //set the viewer
                         let view = def.def[index];
-
-                        //overwrite the data key
-                        if(view.overwrite){
-                            data = this.overWriteData(view, row);
-                        }
                         
                         //check the conditions
                         if(view.condition && !eval(`row.${view.condition}`)){
                             continue;
+                        }
+                        
+                        //overwrite the data key
+                        if(view.overwrite){
+                            data = this.overWriteData(view, row);
                         }
 
                         //Empty check
