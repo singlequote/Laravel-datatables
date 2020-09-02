@@ -80,7 +80,7 @@ classes[`{{ $view->tableId }}`] = new class
     {
         if(view.autoReload){
             setInterval(() => {
-                reloadTable(view);
+                this.reload(view);
             },10000);
         }
 
