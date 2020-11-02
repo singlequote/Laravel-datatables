@@ -217,15 +217,15 @@ class DataTable extends ParentClass
         $model = $this->sortModel();
 
         $build = collect([]);
-
+        
         $model->each(
             function ($item, $key) use ($build) {
                 $build->put($key + $this->start, $item);
             }
         );
-
+        
         $middlewared = Request::user() ? $this->runMiddleware($build) : $build;
-
+        
         $collection = $this->encryptKeys($middlewared->unique()->values()->toArray());
 
         $data['recordsTotal'] = $count;
@@ -345,6 +345,7 @@ class DataTable extends ParentClass
         foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
         }
+        
         try{
             return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}();
         } catch (\Exception $ex) {
@@ -397,6 +398,8 @@ class DataTable extends ParentClass
         switch(end($class)){
             case "BelongsTo" : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+//            case "HasMany" : 
+//                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
         }        
@@ -411,11 +414,15 @@ class DataTable extends ParentClass
     private function getOwnerName(string $relation){
         $type = get_class($this->originalModel->{$relation}());
         $class = explode('\\', $type);
-        
+
         switch(end($class)){
             case "HasOne" : 
                 return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
+            case "HasMany" : 
+                return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
             case "BelongsTo" : 
+                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
+            case "BelongsToMany" : 
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
