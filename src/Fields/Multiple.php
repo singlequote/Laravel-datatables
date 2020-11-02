@@ -67,6 +67,13 @@ class Multiple extends Field
     public $thousands_sep;
 
     /**
+     * length
+     *
+     * @var string
+     */
+    public $length;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -155,6 +162,20 @@ class Multiple extends Field
 
         $this->implode['seperate'] = $separate;
 
+        return $this;
+    }
+    
+    /**
+     * Set the column the be counted
+     * 
+     * @param string $column
+     * @return $this
+     */
+    public function length(string $column = null)
+    {
+        $this->emptyCheck = false;
+        $this->length = $column ?? $this->column;
+        
         return $this;
     }
 
