@@ -104,6 +104,13 @@ you can use the variables data, type and row
     //IMPLODE FIELD==============================================================
     @endif
 
+
+    @if($class->length)
+    //LENGTH FIELD
+        output = row.{{ $class->length }} ? row.{{ $class->length }}.length : 0;
+    //LENGTH FIELD==============================================================
+    @endif
+    
     @if($class->decimals)
         let p = parseFloat(output).toFixed({{ $class->decimals }}).split(".");
 
