@@ -1,5 +1,5 @@
 <?php
-namespace SingleQuote\DataTables\Filter;
+namespace SingleQuote\DataTables\Filters;
 
 use SingleQuote\DataTables\Controllers\Filter;
 
