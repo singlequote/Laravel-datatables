@@ -112,6 +112,17 @@ public $searchable = [
 ];
 ```
 
+### Autoreloading the table
+The table will reload the content every few seconds. Set the `autoReload` to false to disable the function 
+```php
+/**
+ * When set to true.
+ * The package will auto reload the content of the current table page
+ * @var bool
+ */
+public $autoReload = false;
+```
+
 ### Encrypt property
 It is possible to encryt values from your data response. By default none values are encrypted. Return an array with the `data` name of the column.
 ```php
