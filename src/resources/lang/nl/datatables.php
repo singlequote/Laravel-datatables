@@ -13,6 +13,7 @@ return [
     "sEmptyTable" => "Geen resultaten aanwezig in de tabel",
     "sInfoThousands" => ".",
     "sLoadingRecords" => "Een moment geduld aub - bezig met laden...",
+    "columnSearchLabel" => "Zoeken",
     "oPaginate" => [
         "sFirst" => "Eerste",
         "sLast" => "Laatste",

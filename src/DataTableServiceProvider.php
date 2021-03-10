@@ -35,6 +35,12 @@ class DataTableServiceProvider extends ServiceProvider
 
         //where the views are
         $this->loadViewsFrom(__DIR__.'/resources/views', 'laravel-datatables');
+        
+        //config
+        $this->mergeConfigFrom(
+            __DIR__.'/../config/laravel-datatables.php',
+            'laravel-datatables'
+        );
 
         //register the commands
         $this->commands($this->commands);

@@ -20,17 +20,55 @@ This command also has some options you can use to easily create a new table mode
 | --translations | Set a translations method | `php artisan make:table-model Name --translations` | 
 
 
+## Caching results
+It is possible to cache the results by using the elequent methods in your `tableModel` checkout the [Laravel Cacher](https://github.com/singlequote/laravel-cacher) package for the docs.
+
+```php
+    /**
+     * The method used by the elequent builder.
+     * For example : ->get() or if changed : ->rememberForever()
+     *
+     * @var string
+     */
+    public $elequentMethod = "rememberForever"; //remembers the data forever
+    
+    /**
+     * The prefix string used by the cacher.
+     * Default it generates an unique query string
+     *
+     * @var string
+     */
+    public $elequentPrefix = "users"; //the prefix for the cache file. remove or leave empty for unique generated string
+```
+
 ## Fields
 Almost every table has buttons or date values that you want to format or add classses to. With datatables you can use Field classes. The field classes create the buttons or format the date, currency etc. for you. See the full docs on how to use the Fields. [See docs for fields](https://singlequote.github.io/Laravel-datatables/fields)
 
 ## Methods and properties
 Below is a list of methods and properties
 
+### The columns
+Inside the `columns` property you define your table columns. By defaut the table fills the attributes.
+```php
+    public $columns = [
+        'name', //define the column. The package fills in the rest
+        'last_name as lastname', //you can change the data name by using `as`
+        [
+            'data' => "id", //this is the data attribute
+            'name' => "id", //this is the display attribute
+            "class" => "td-actions", //this is the td class
+            "searchable" => true, //set the column to be searchable
+            "orderable" => true //set the column to be orderable
+            "columnSearch" => false, //this generates a search input below the column header
+        ]
+    ];
+```
+
 ### Remember paging property
 Whats more frustrating then hitting the refresh button and you can't remember which data page you were on. Enable the property `$rememberPage` so the datatable will remember wich page you were on.
 ```php
 /**
- * Remember which data page the user is
+ * Remember the data page of the user
  *
  * @var bool
  */
@@ -72,6 +110,17 @@ It is possible to add a filter to the searchable headers. By default the columns
 public $searchable = [
     //
 ];
+```
+
+### Autoreloading the table
+The table will reload the content every few seconds. Set the `autoReload` to false to disable the function 
+```php
+/**
+ * When set to true.
+ * The package will auto reload the content of the current table page
+ * @var bool
+ */
+public $autoReload = false;
 ```
 
 ### Encrypt property

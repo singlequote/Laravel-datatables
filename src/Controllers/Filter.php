@@ -15,7 +15,7 @@ abstract class Filter
      * This is needed to call the classes
      *
      */
-    public static abstract function make(string $column);
+    abstract public static function make(string $column);
     
     /**
      * The columns
@@ -62,7 +62,7 @@ abstract class Filter
     
     /**
      * The dom attributes
-     * 
+     *
      * @var array
      */
     protected $string = '';
@@ -74,12 +74,12 @@ abstract class Filter
      */
     protected $trigger = 'change';
         
-   /**
-    * Set the size for the parent element
-    * 
-    * @param string $size
-    * @return $this
-    */
+    /**
+     * Set the size for the parent element
+     *
+     * @param string $size
+     * @return $this
+     */
     public function size(string $size)
     {
         $this->size = $size;
@@ -88,7 +88,7 @@ abstract class Filter
     }
     /**
      * Return the size for the filter element
-     * 
+     *
      * @return string
      */
     public function getSize() : string
@@ -98,7 +98,7 @@ abstract class Filter
         
     /**
      * Return the name for the filter element
-     * 
+     *
      * @return string
      */
     public function getName() : string
@@ -108,7 +108,7 @@ abstract class Filter
     
     /**
      * Set the trigger for the element
-     * 
+     *
      * @param string $trigger
      * @return $this
      */
@@ -121,7 +121,7 @@ abstract class Filter
     
     /**
      * Return the trigger for the filter element
-     * 
+     *
      * @return string
      */
     public function getTrigger() : string
@@ -131,7 +131,7 @@ abstract class Filter
     
     /**
      * Set the label for the element
-     * 
+     *
      * @param string $label
      * @return $this
      */
@@ -144,7 +144,7 @@ abstract class Filter
     
     /**
      * Return the label for the filter element
-     * 
+     *
      * @return string
      */
     public function getLabel() : string
@@ -154,7 +154,7 @@ abstract class Filter
     
     /**
      * Return true if the element is multiple
-     * 
+     *
      * @return bool
      */
     public function getMultiple() : bool
@@ -164,20 +164,21 @@ abstract class Filter
     
     /**
      * Set the data items for the filter
-     * 
+     *
      * @param mixed $data
      * @param \Closure $closure
      * @return $this
      */
     public function data($data, \Closure $closure = null)
     {
-        foreach($data as $key => $item){
-            if(!$closure){
+        foreach ($data as $item) {
+            if (!$closure) {
                 $this->data[] = [
-                    'value' => $item->id,
-                    'label' => $item->name
+                    'value' => is_array($item) ? $item['id'] : $item->id,
+                    'label' => is_array($item) ? $item['name'] : $item->name,
+                    'selected' => is_array($item) ? isset($item['selected']) && $item['selected'] : $item->selected,
                 ];
-            }else{
+            } else {
                 $this->data[] = $closure($item);
             }
         }
@@ -187,7 +188,7 @@ abstract class Filter
     
     /**
      * Returnt he data for the filter
-     * 
+     *
      * @return array
      */
     public function getData() : array
@@ -197,7 +198,7 @@ abstract class Filter
         
     /**
      * Set the filter class
-     * 
+     *
      * @param string $class
      * @return $this
      */
@@ -210,7 +211,7 @@ abstract class Filter
     
     /**
      * Return the filter class
-     * 
+     *
      * @return string
      */
     public function getClass() : string
@@ -220,7 +221,7 @@ abstract class Filter
        
     /**
      * Set the filter id
-     * 
+     *
      * @param string $class
      * @return $this
      */
@@ -234,7 +235,7 @@ abstract class Filter
     /**
      * Return the filter ID
      * Generate ne wone if no id is set
-     * 
+     *
      * @return string
      */
     public function getID() : string
@@ -244,19 +245,19 @@ abstract class Filter
     
     /**
      * Set dom attributes
-     * 
+     *
      * @param array $attributes
      * @return $this
      */
     public function attributes(... $attributes)
-    {       
-        foreach($attributes as $attribute){
-            if(!is_array($attribute)){
+    {
+        foreach ($attributes as $attribute) {
+            if (!is_array($attribute)) {
                 $this->string .= "$attribute ";
                 continue;
             }
             
-            foreach($attribute as $key => $value){
+            foreach ($attribute as $key => $value) {
                 $this->string .= "$key=$value ";
             }
         }
@@ -266,7 +267,7 @@ abstract class Filter
         
     /**
      * Return the attributes as string
-     * 
+     *
      * @return string
      */
     public function getString() : string
@@ -310,7 +311,7 @@ abstract class Filter
      */
     private function getView()
     {
-        if(view()->exists("$this->view")){
+        if (view()->exists("$this->view")) {
             return $this->view;
         }
         return "laravel-datatables::filters.$this->view";

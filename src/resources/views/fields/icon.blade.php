@@ -14,24 +14,29 @@ you can use the variables data, type and row
 
 <script>
     let icon;
+    
+    let dataAttributes = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
 
     @if($class->feather)
-        icon = `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" data-feather="{{ $class->feather }}"></i>`;
+        icon = `<i ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" data-feather="{{ $class->feather }}"></i>`;
         $(document).ready(() => {
            feather.replace();
         });
     @endif
 
     @if($class->material)
-        icon = `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="material-icons {{ $class->class }}">{{ $class->material }}</i>`;
+        icon = `<i ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="material-icons {{ $class->class }}">{{ $class->material }}</i>`;
     @endif
 
     @if($class->fa)
-        icon =  `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="fa fa-{{ $class->fa }}"></i>`;
+        icon =  `<i ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="fa fa-{{ $class->fa }}"></i>`;
     @endif
 
     @if($class->custom)
-        icon =  `<i title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->custom }}">{{ $class->customName }}</i>`;
+        icon =  `<i ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->custom }}">{{ $class->customName }}</i>`;
     @endif
 
     return `{!! $class->before !!} ${icon} {!! $class->after !!}`;

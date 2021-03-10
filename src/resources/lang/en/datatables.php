@@ -13,6 +13,7 @@ return [
     "sProcessing" => "Processing...",
     "sSearch" => "Search:",
     "sZeroRecords" => "No matching records found",
+    "columnSearchLabel" => "Search",
     "oPaginate" => [
         "sFirst" => "First",
         "sLast" => "Last",

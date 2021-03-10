@@ -15,6 +15,22 @@ abstract class ColumnBuilder
     abstract protected function fields();
     
     /**
+     * The method used by the elequent builder.
+     * For example : ->get() or if changed : ->remember()
+     *
+     * @var string
+     */
+    public $elequentMethod = "get";
+    
+    /**
+     * The prefix string used by the cacher.
+     * Default it generates an unique query string
+     *
+     * @var string
+     */
+    public $elequentPrefix;
+    
+    /**
      * The filters parsed
      *
      * @var mixed
@@ -71,7 +87,7 @@ abstract class ColumnBuilder
     public $rememberPage = true;
 
     /**
-     * When set to true. 
+     * When set to true.
      * The package will load the required files when datatables is not loaded.
      *
      * @var bool
@@ -79,7 +95,7 @@ abstract class ColumnBuilder
     public $autoLoadScripts = false;
     
     /**
-     * When set to true. 
+     * When set to true.
      * The package will auto reload the content of the current table page
      * @var bool
      */
@@ -146,7 +162,7 @@ abstract class ColumnBuilder
         $this->query        = call_user_func_array([$this, 'query'], $params);
         $this->order        = $this->order ?? [[ 0, "asc" ]];
 
-        foreach($this->translate() as $index => $translate){
+        foreach ($this->translate() as $index => $translate) {
             $this->translate[$this->toLower($index)] = $translate;
         }
 
@@ -168,19 +184,19 @@ abstract class ColumnBuilder
     /**
      * Find filter by name
      * Returns null when not found
-     * 
+     *
      * @param string $name
      * @return mixed
      */
     public function getFilter(string $name)
     {
-        if(!isset($this->filtered[$name])){
+        if (!isset($this->filtered[$name])) {
             return null;
         }
         
         $filter = $this->filtered[$name];
         
-        if($filter->multiple){
+        if ($filter->multiple) {
             return explode(',', $filter->value);
         }
         

@@ -13,6 +13,12 @@ you can use the variables data, type and row
 
 
 <script>
+    
+    let dataAttributesMultiple = ``;
+    @foreach($class->data as $key => $attribute)
+        dataAttributesMultiple += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+    @endforeach
+    
     let output = "";
     
     @if($class->eachFields)
@@ -26,19 +32,18 @@ you can use the variables data, type and row
      @php
          $id = uniqid("eachFields");
      @endphp
-
      function {{ $id }}(data, type, row){
+         
          {!! $field["rendered"] !!}
      }
-
 
     $.each(row.{{ $field["path"] }}, (index, item) => {
 
         if(!values[index]){
             values[index] = [];
         }
-
-         values[index].push({{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }}));
+        console.log();
+        values[index].push({{ $id }}(item{{ strlen($field["column"]) > 0 ? ".".$field['column'] : '' }}, type, item));
     });
      
 
@@ -64,6 +69,7 @@ you can use the variables data, type and row
     function {{ $fieldID }}(data, type, row){
         {!! $field["rendered"] !!}
     }
+    
     output += {{ $fieldID }}(row.{{$field['column']}}, type, row);
     @endforeach
     //SINGLE FIELDS==============================================================
@@ -97,6 +103,21 @@ you can use the variables data, type and row
         }).join("{!! $class->implode['seperate'] !!}");
     //IMPLODE FIELD==============================================================
     @endif
+
+
+    @if($class->length)
+    //LENGTH FIELD
+        output = row.{{ $class->length }} ? row.{{ $class->length }}.length : 0;
+    //LENGTH FIELD==============================================================
+    @endif
     
-    return `{!! $class->before !!} <label title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
+    @if($class->decimals)
+        let p = parseFloat(output).toFixed({{ $class->decimals }}).split(".");
+
+        output =  `${p[0].split("").reverse().reduce(function(acc, num, i, orig) {
+            return  num=="." ? acc : num + (i && !(i % 3) ? '{{ $class->thousands_sep }}' : "") + acc;
+        }, "") + '{{ $class->dec_point }}' + p[1]}`;
+    @endif
+    
+    return `{!! $class->before !!} <label ${ dataAttributesMultiple } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${output}</label> {!! $class->after !!}`;
 </script>

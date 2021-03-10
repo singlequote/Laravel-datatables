@@ -117,6 +117,4 @@ class Icon extends Field
 
         return $this;
     }
-    
-
 }

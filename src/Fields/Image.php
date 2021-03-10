@@ -55,12 +55,11 @@ class Image extends Field
     {
         $params = is_array($parameters) ? $parameters : [$parameters];
 
-        foreach($params as $index => $param){
-            if(is_int($param)){
-                continue;
+        foreach ($params as $index => $param) {
+            if(!is_int($param)){
+                $this->routeReplace["Q{$param}Q"] = $param;
+                $params[$index] = "Q{$param}Q";
             }
-            $this->routeReplace["*$param*"] = $this->columnPath($param);
-            $params[$index] = "*$param*";
         }
 
         $this->route = route($route, $params);
@@ -80,5 +79,4 @@ class Image extends Field
 
         return $this;
     }
-
 }

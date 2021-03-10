@@ -89,6 +89,12 @@ class Number extends Field
      * @var mixed
      */
     public $startAt;
+    
+    /**
+     *
+     * @var mixed
+     */
+    public $times;
 
     /**
      * Init the fields class
@@ -147,6 +153,19 @@ class Number extends Field
 
         return $this;
     }
+    
+    /**
+     * The amount x $times
+     * 
+     * @param mixed $times
+     * @return $this
+     */
+    public function times($times)
+    {
+        $this->times = $times;
+        
+        return $this;
+    }
 
     /**
      * Return value as raw count
@@ -188,7 +207,4 @@ class Number extends Field
 
         return $this;
     }
-
-    
-
 }

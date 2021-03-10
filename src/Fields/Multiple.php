@@ -46,6 +46,34 @@ class Multiple extends Field
     public $implode;
 
     /**
+     * Decimals
+     *
+     * @var int
+     */
+    public $decimals;
+
+    /**
+     * Decimal point
+     *
+     * @var string
+     */
+    public $dec_point;
+
+    /**
+     * Thousand step
+     *
+     * @var string
+     */
+    public $thousands_sep;
+
+    /**
+     * length
+     *
+     * @var string
+     */
+    public $length;
+
+    /**
      * Init the fields class
      *
      * @param string $column
@@ -67,7 +95,7 @@ class Multiple extends Field
      */
     public function each(string $column, \Closure $closure)
     {
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->eachFields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "path" => $column,
@@ -80,13 +108,13 @@ class Multiple extends Field
     
     /**
      * Loop closre fields and render output
-     * 
+     *
      * @param \Closure $closure
      */
     public function fields(\Closure $closure)
     {
         $this->emptyCheck = false;
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->fields[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "column" => $field->columnPath($field->columnName())
@@ -106,7 +134,7 @@ class Multiple extends Field
      */
     public function count(\Closure $closure)
     {
-        foreach($closure() as $field){
+        foreach ($closure() as $field) {
             $this->count[] = [
                 "rendered" => $this->getBetweenTags($field->build(), 'script'),
                 "column" => $field->columnPath($field->columnName())
@@ -119,7 +147,7 @@ class Multiple extends Field
     /**
      * Set the implode fields
      *
-     * @param string $column
+     * @param string $separate
      * @return $this
      */
     public function implode(string $separate = ", ")
@@ -135,6 +163,36 @@ class Multiple extends Field
         $this->implode['seperate'] = $separate;
 
         return $this;
-    }  
+    }
+    
+    /**
+     * Set the column the be counted
+     * 
+     * @param string $column
+     * @return $this
+     */
+    public function length(string $column = null)
+    {
+        $this->emptyCheck = false;
+        $this->length = $column ?? $this->column;
+        
+        return $this;
+    }
 
+    /**
+     * Format the outcome result
+     *
+     * @param int $decimals
+     * @param string $dec_point
+     * @param string $thousands_sep
+     * @return $this
+     */
+    public function format(int $decimals = 2, string $dec_point = ".", string $thousands_sep = ",")
+    {
+        $this->decimals = $decimals;
+        $this->dec_point = $dec_point;
+        $this->thousands_sep = $thousands_sep;
+
+        return $this;
+    }
 }

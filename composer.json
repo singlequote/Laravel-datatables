@@ -9,17 +9,18 @@
     ],
     "homepage": "https://github.com/singlequote/Laravel-datatables",
     "license": "MIT",
-    "version": "3.0.20",
+    "version": "3.1.12",
     "authors": [
         {
             "name": "Wim Pruiksma",
             "email": "wim@quotec.nl",
             "homepage": "https://www.quotec.nl/",
-            "role": "CEO"
+            "role": "Software Architect"
         }
     ],
     "require": {
-        "php": "^7.1"
+        "php": "^7.4",
+        "singlequote/laravel-cacher": "^0.0"
     },
     "require-dev": {
         

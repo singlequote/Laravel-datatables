@@ -71,17 +71,17 @@ class MakeField extends Command
     {
         $make = true;
 
-        if(!File::isDirectory(app_path($this->path))){
+        if (!File::isDirectory(app_path($this->path))) {
             File::makeDirectory(app_path($this->path));
         }
-        if(!File::isDirectory(resource_path("views/vendor/laravel-datatables/fields/"))){
+        if (!File::isDirectory(resource_path("views/vendor/laravel-datatables/fields/"))) {
             File::makeDirectory(resource_path("views/vendor/laravel-datatables/fields/"), 493, true);
         }
-        if(File::exists(app_path("$this->path/{$this->argument('name')}.php"))){
+        if (File::exists(app_path("$this->path/{$this->argument('name')}.php"))) {
             $make = $this->confirm("The table field {$this->argument('name')} already exists. Do you want to replace it?");
         }
 
-        if($make){
+        if ($make) {
             File::put(app_path("$this->path/{$this->argument('name')}.php"), $this->stub);
             File::put(resource_path("views/vendor/laravel-datatables/fields/".strtolower($this->argument('name')).".blade.php"), $this->view);
             $this->info("TableModel created inside the folder ".app_path($this->path));
@@ -96,8 +96,6 @@ class MakeField extends Command
     {
         $this->replaceValues('name', $this->argument('name'));
         $this->replaceValues('view', strtolower($this->argument('name')));
-
-        
     }
 
     /**
@@ -107,7 +105,7 @@ class MakeField extends Command
      */
     private function cleanUpStub()
     {
-        $this->stub = preg_replace('#<stub[^>]*>.*?</stub>#si', '',  $this->stub);
+        $this->stub = preg_replace('#<stub[^>]*>.*?</stub>#si', '', $this->stub);
     }
 
     /**
@@ -118,7 +116,7 @@ class MakeField extends Command
      */
     private function replaceValues(string $find, string $replace, $if = true)
     {
-        if($if){
+        if ($if) {
             $this->stub = str_replace("<stub>$find</stub>", $replace, $this->stub);
         }
     }

@@ -61,7 +61,7 @@ abstract class Field
     /**
      *The name to oevrwrite the column name
      *
-     * @var string 
+     * @var string
      */
     public $overwrite;
 
@@ -87,6 +87,13 @@ abstract class Field
     public $emptyCheck = true;
     
     /**
+     * The data attributes
+     *
+     * @var array
+     */
+    public $data = [];
+    
+    /**
      * Set the title and toggle
      *
      * @var array
@@ -101,12 +108,12 @@ abstract class Field
      * This is needed to call the classes
      *
      */
-    public static abstract function make(string $column);
+    abstract public static function make(string $column);
 
     /**
      * Set the required permissions
-     * 
-     * @param string $required
+     *
+     * @param string $permissions
      * @return $this
      */
     public function permission(string $permissions)
@@ -114,7 +121,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $permissions);
         $else = explode('|', $required);
 
-        foreach($else as $key => $item){
+        foreach ($else as $item) {
             $this->permissions[] = explode(',', $item);
         }
         
@@ -123,8 +130,8 @@ abstract class Field
 
     /**
      * Set the required permissions
-     * 
-     * @param string $required
+     *
+     * @param string $roles
      * @return $this
      */
     public function role(string $roles)
@@ -132,7 +139,7 @@ abstract class Field
         $required = str_replace([', ', ' ,', ', ' , ' | ', ' |', '| '], ',', $roles);
         $else = explode('|', $required);
 
-        foreach($else as $key => $item){
+        foreach ($else as $item) {
             $this->roles[] = explode(',', $item);
         }
         
@@ -162,10 +169,10 @@ abstract class Field
      */
     public function columnPath(string $string = null) : string
     {
-        $explode = explode('.', $this->overwrite ?? $this->column);
+        $explode = explode($this->overwrite ?? $this->column, '.');
         array_pop($explode);
         $add = $string ? ".$string": "";
-        if(count($explode) === 0){
+        if (count($explode) === 0) {
             return $string ?? "";
         }
         return implode('.', $explode).$add;
@@ -179,7 +186,7 @@ abstract class Field
     public function columnName() : string
     {
         $explode = explode('.', $this->column);
-        return array_pop($explode) ?? "";
+        return str_replace('+', '.', array_pop($explode) ?? "");
     }
 
     /**
@@ -229,7 +236,7 @@ abstract class Field
      */
     private function getView()
     {
-        if(view()->exists("$this->view")){
+        if (view()->exists("$this->view")) {
             return $this->view;
         }
         return "laravel-datatables::fields.$this->view";
@@ -302,7 +309,7 @@ abstract class Field
     /**
      * Set a dom element title title="..."
      * Use the toggle property to set data-toggle="..."
-     * 
+     *
      * @param string $title
      * @param string $toggle
      * @return $this
@@ -317,4 +324,16 @@ abstract class Field
         return $this;
     }
     
+    /**
+     * Set data attributes
+     * 
+     * @param array $data
+     * @return $this
+     */
+    public function data(array $data)
+    {
+        $this->data = $data;
+        
+        return $this;
+    }
 }

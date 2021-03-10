@@ -1,5 +1,5 @@
 <?php
-namespace SingleQuote\DataTables\Filter;
+namespace SingleQuote\DataTables\Filters;
 
 use SingleQuote\DataTables\Controllers\Filter;
 
@@ -29,6 +29,4 @@ class Dropdown extends Filter
         $class->column = $column;
         return $class;
     }
-    
-
 }

@@ -3,29 +3,28 @@
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
 [![Total Downloads](https://img.shields.io/packagist/dt/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
 
-This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination and recursive searching in relations.
-
-## Note
-Users who want to use the older version of this package, go to the [early version repo](https://github.com/ACFBentveld/Laravel-datatables). The ACFBentveld group is transferd to a new group called SingleQuote.
+This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination, permission check, role check, laravel policies and recursive searching in relations.
 
 ## Installation
 
-> The package is tested on laravel 5.8.*
+> The package is tested on laravel 5.8.*, 6.* and 7.*
 
 You can install the package via composer:
 ```bash
 composer require singlequote/laravel-datatables
 ```
 
-## Whats new
-Yes, we live in a time where everything is automated. So in this version we introduce some very cool features.
-In this version the html and the script is created for you. Also this version is based on how laravel nova works.
-
 ## Let's start
 We wanted our code as clean as possible and use the same code more than once.
 
+[Tutorial](https://singlequote.github.io/Laravel-datatables/tutorial)
+
 [See the Quick start docs here](https://singlequote.github.io/Laravel-datatables/)
 
+
+## Whats new
+* You can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
+* Column search fields. This makes it easy to search on a single column. Check it out here [here](https://singlequote.github.io/Laravel-datatables/table-models)
 
 ### Changelog
 
@@ -39,7 +38,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 You're free to use this package, but if it makes it to your production environment we highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using.
 
-Our address is: ACF Bentveld, Ecu 2 8305 BA, Emmeloord, Netherlands.
+Our address is: Quotec, Traktieweg 8c 8304 BA, Emmeloord, Netherlands.
 
 ## Credits
 

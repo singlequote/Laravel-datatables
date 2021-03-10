@@ -30,6 +30,18 @@ Middleware::make('id')->permission('edit users')->wrap(function(){
 ```
 [Visit the middleware page for all the options](https://singlequote.github.io/Laravel-datatables/middleware)
 
+### Using laravel policy permissions
+When using laravel policies you can pass the model as a second parameter. When passing `model` the middleware replaces the stirng with the actual resource.
+```php
+Middleware::make('id')->permission('edit', 'model')->role('admin')->wrap(function(){
+    //..
+});
+
+Middleware::make('id')->permission('create', 'App\User')->role('admin')->wrap(function(){
+    //..
+});
+```
+
 ### Using both
 
 ```php
