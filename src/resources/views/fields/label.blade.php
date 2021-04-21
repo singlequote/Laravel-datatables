@@ -15,7 +15,7 @@ you can use the variables data, type and row
 <script>
     let dataAttributes = ``;
     @foreach($class->data as $key => $attribute)
-        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} || `{{ $attribute }}` }" `;
     @endforeach
     
     return `{!! $class->before !!} <label ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}">${data}</label> {!! $class->after !!}`;
