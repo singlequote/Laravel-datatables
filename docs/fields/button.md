@@ -40,6 +40,13 @@ Button::make('id')->route('users.edit', optional 'id'),
 Button::make('id')->route('users.edit', ['id', 'status' => 'status_id']), //arrays can also be passed
 // <button data-route="https://www.example.com/users/1/edit?status_id=2"> </button>
 ```
+By default the package handles the routes passed to the `route` method. In some cases you want to prevent the click on the buttons.
+In that case you can add the class 'prevent' tot the field. The package will ignore all `get` clicks.
+
+```php
+Button::make('id')->class('prevent')->route('users.delete', 'id'), //will ignore the clicks on the button
+```
+
 
 #### Post or delete resource
 The method can be used to post,put or delete a resource. It depends on the route method.
