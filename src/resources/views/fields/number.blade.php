@@ -16,7 +16,7 @@ you can use the variables data, type and row inside the script tags
     
     let dataAttributes = ``;
     @foreach($class->data as $key => $attribute)
-        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} || `{{ $attribute }}` }" `;
     @endforeach
     
     let value = {{ !is_null($class->startAt) ? "parseFloat($class->startAt)" : 'data' }};
