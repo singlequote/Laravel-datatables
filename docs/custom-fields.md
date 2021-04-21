@@ -61,7 +61,7 @@ class MyField extends Field
 #### Step 3 - the blade
 The field does need a blade file to parse your data. Because the package is serverside, the code is written in javascript.
 
-Create a new blade file for example in  `resources/views/fields.my-field.blade.php`
+Create a new blade file for example in  `resources/views/fields/my-field.blade.php`
 Edit your Field class `view` method and change it `fields.my-field`. The blade requires some tags that are needed for the package.
 
 Use the code below and paste it into your blade.
