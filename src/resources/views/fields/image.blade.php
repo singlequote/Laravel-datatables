@@ -15,7 +15,7 @@ you can use the variables data, type and row
 <script>
     let dataAttributes = ``;
     @foreach($class->data as $key => $attribute)
-        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} || `{{ $attribute }}` }" `;
     @endforeach
     
     let url = "#";
