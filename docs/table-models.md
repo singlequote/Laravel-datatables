@@ -158,6 +158,17 @@ When using bootstrap, you probably want to use the `table` class on your tables.
 public $tableClass = "class1 class2 class3";
 ```
 
+### Table Head classes property
+When using bootstrap, you probably want to use the `thead-dark` class on your table headers. Call the `tableHeadClass` property to add classes
+```php
+/**
+ * Set the table head classes
+ *
+ * @var string
+ */
+public $tableHeadClass = "class1 class2 class3";
+```
+
 ### Translations method
 When you have header names like `roles.name` or `permissions.name` you probably want to change this. Use the method `translate` to translate your headers
 ```php
