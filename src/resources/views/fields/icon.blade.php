@@ -17,7 +17,7 @@ you can use the variables data, type and row
     
     let dataAttributes = ``;
     @foreach($class->data as $key => $attribute)
-        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} || `{{ $attribute }}` }" `;
     @endforeach
 
     @if($class->feather)
