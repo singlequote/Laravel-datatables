@@ -30,7 +30,7 @@ you can use the variables data, type and row
     @endif
 
     @if($class->method === 'GET')
-    $(document).on('click', `#${id}`,  (e) => {
+    $(document).on('click', `#${id}:not(.prevent)`,  (e) => {
 
         @if($class->target === 'blank')
             window.open($(e.currentTarget).data('route'), '_blank');
