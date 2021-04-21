@@ -4,6 +4,7 @@
 * [Filters](https://singlequote.github.io/Laravel-datatables/filters)
 * [Translations](https://singlequote.github.io/Laravel-datatables/translations)
 * [Middleware, permissions and roles](https://singlequote.github.io/Laravel-datatables/middleware)
+* [Writing custom fields](https://singlequote.github.io/Laravel-datatables/custom-fields)
 
 # Quick start
 In the demo below we will render a table for the users. 
