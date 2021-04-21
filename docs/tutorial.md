@@ -90,8 +90,8 @@ In your `index method` call the `DataTable` facade and pass the users `model` li
      */
     public function index()
     {
-        $datatable = \DataTable::model(\App\User::class)
-	        ->tableModel(\App\TableModels\Users::class);
+        $datatable = \DataTable::model(\App\Models\User::class)
+	        ->tableModel(\App\TableModels\UsersTable::class);
         
         return view('users.index')->with(compact('datatable')); //⇐ pass the variable to the view
     }
