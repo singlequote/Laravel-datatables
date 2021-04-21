@@ -16,7 +16,7 @@ you can use the variables data, type and row
     
     let dataAttributesMultiple = ``;
     @foreach($class->data as $key => $attribute)
-        dataAttributesMultiple += `data-{{ $key }}="${ row.{{ $attribute }} }" `;
+        dataAttributes += `data-{{ $key }}="${ row.{{ $attribute }} || `{{ $attribute }}` }" `;
     @endforeach
     
     let output = "";
