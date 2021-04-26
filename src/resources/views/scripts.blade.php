@@ -209,6 +209,7 @@ classes[`{{ $view->tableId }}`] = new class
             "dom" : view.dom,
             "ajax": this.buildUrl(view),
             "pageLength" : view.pageLength,
+            "createdRow" : {!!$view->createdRow ?? 'function(){}' !!},
             "order" : view.order,
             "columns" : view.columns,
             "columnDefs": this.buildColumnDefs(view.defs)
