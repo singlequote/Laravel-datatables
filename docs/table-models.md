@@ -111,6 +111,25 @@ public $searchable = [
     //
 ];
 ```
+### Row created function
+This callback is executed when a TR element is created (and all TD child elements have been inserted), allowing manipulation of the TR element.
+
+This is particularly useful when using deferred rendering (deferRender) or server-side processing (serverSide) so you can add events, class name information or otherwise format the row when it is created.
+```php
+/**
+ * define the function as string
+ *
+ * @var string
+ */
+ public $createdRow = "function(row, data, dataIndex ) {
+    $(row).data('id', data.id);
+    if(data.status_id == 6){
+        $(row).data('deleted', true);
+        $(row).addClass('table-danger');
+    }
+}";
+
+
 
 ### Autoreloading the table
 The table will reload the content every few seconds. Set the `autoReload` to false to disable the function 
