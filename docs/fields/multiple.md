@@ -18,9 +18,9 @@ Multiple::make('...')->fields(function(){
 
 ### Each multiple results
 Can be used to loop through relations or multiple results. For example to display the role names connected to the user.
-
+make sure that the $columns definition is using the singular name for example ```roles``` not "roles.name"
 ```php
-Multiple::make('...')->each('roles', function(){
+Multiple::make('roles')->each('roles', function(){
 	return [
 		Label::make('name')->after(',')
 	];
