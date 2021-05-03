@@ -77,6 +77,12 @@ Button::make('id')->label('edit user'),
 
 // <button>edit user</button>
 ```
+The label also accepts column data. For example when you want to show the users name inside a button.
+```php
+Button::make('id')->label('name'),
+
+// <button>John Doe</button>
+```
 
 ### Add onclick
 The onclick method can be used to overwrite the onlick attribute. 

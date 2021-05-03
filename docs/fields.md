@@ -13,6 +13,7 @@ Field classes can be used to change the behaviour of the columns.
 - [Middleware](https://singlequote.github.io/Laravel-datatables/fields/middleware)
 - [Number](https://singlequote.github.io/Laravel-datatables/fields/number)
 - [Checkbox](https://singlequote.github.io/Laravel-datatables/fields/checkbox)
+- [Link](https://singlequote.github.io/Laravel-datatables/fields/link)
 
 
 ### Example

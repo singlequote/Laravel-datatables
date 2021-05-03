@@ -30,6 +30,12 @@ you can use the variables data, type and row
 
     let label = !`{{ $class->label }}`.length ? data : `{{ $class->label }}`;
     
+    @if($class->label)
+    if(row.{{ $class->label }}){
+        label = row.{{ $class->label }};
+    }
+    @endif
+    
     let template = `
         <a ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" ${route} id="${id}" class="{{ $class->class }}">${label} {!! $class->icon !!}</a>
     `;
