@@ -23,6 +23,9 @@ We wanted our code as clean as possible and use the same code more than once.
 
 
 ## Whats new
+* Added table triggers (events). [Check it here](https://singlequote.github.io/Laravel-datatables/table-models#table-triggers)
+* Added a new field class called `Link`. It generates an html `a` tag [Check it here](https://singlequote.github.io/Laravel-datatables/fields/link)
+* We upgraded the label method on the `Button` and `Link` class. You can use data columns now for showing server side data. [Check it here](https://singlequote.github.io/Laravel-datatables/fields/link#add-label)
 * Writing your own custom field. Check it [here](https://singlequote.github.io/Laravel-datatables/custom-fields)
 * You can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
 * Column search fields. This makes it easy to search on a single column. Check it out here [here](https://singlequote.github.io/Laravel-datatables/table-models)
