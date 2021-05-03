@@ -23,6 +23,7 @@ We wanted our code as clean as possible and use the same code more than once.
 
 
 ## Whats new
+* Writing your own custom field. Check it [here](https://singlequote.github.io/Laravel-datatables/custom-fields)
 * You can use filters to add directly to your tableModel. Check it out [here](https://singlequote.github.io/Laravel-datatables/filters)
 * Column search fields. This makes it easy to search on a single column. Check it out here [here](https://singlequote.github.io/Laravel-datatables/table-models)
 
