@@ -7,7 +7,7 @@ This repo contains a Datatable that can render a filterable and sortable table. 
 
 ## Installation
 
-> The package is tested on laravel 5.8.*, 6.* and 7.*
+> The package is tested on laravel 5.8.*, 6.*, 7.* and 8.*
 
 You can install the package via composer:
 ```bash
