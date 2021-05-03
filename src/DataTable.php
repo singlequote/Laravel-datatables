@@ -372,6 +372,16 @@ class DataTable
     {
         return $this->generateScripts();
     }
+    
+    /**
+     * Return the table ID
+     * 
+     * @return string
+     */
+    public function getId() : string
+    {
+        return $this->view->tableId;
+    }
 
     /**
      * Get the column path for example relation.name becomes relation

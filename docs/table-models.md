@@ -1,3 +1,4 @@
+
 # Table Models
 Table models are the controllers for your tables. Inside this file you can configure the behaviour of the tables
 
@@ -198,4 +199,47 @@ public function query($query)
 {
     return $query->where('name', 'Like', "%John Doe%")->with('roles', 'permissions');
 }
+```
+
+### Table triggers
+The table triggers an event everytime something is processed. Below is a list of triggers available
+
+| event | trigger | target |
+|--|--|--|
+| render| dtrow:render | document |
+| click | dtrow:click | document |
+| mouseenter | dtrow:mouseenter| document |
+| mouseleave | dtrow:mouseleave | document |
+
+
+for example get all the odd rows when a row is clicked
+
+```javascript
+$(document).on('dtrow:click', (event, row, data, table) => {
+    console.log(table.rows('.odd').data().length +' row(s) are odd' );
+});
+```
+
+All the triggers are listed below :
+
+```javascript
+//when a row is rendered
+ $(document).on('dtrow:render', (event, row, data, table) => {
+    //do something
+});
+
+//when a row is clicked after being rendered
+$(document).on('dtrow:click', (event, row, data, table) => {
+	//do something
+});
+
+//triggered when hovering the row
+$(document).on('dtrow:mouseleave', (event, row, data, table) => {
+    //do something
+});
+
+//triggered when leaving the row after hovering it
+$(document).on('dtrow:mouseenter', (event, row, data, table) => {
+    //do something
+});
 ```

@@ -17,7 +17,7 @@ function uniqueId(prefix = "_")
 }
 
 
-classes[`{{ $view->tableId }}`] = new class
+classes["{{ $view->tableId }}"] = new class
 {
 
     /**
@@ -91,6 +91,7 @@ classes[`{{ $view->tableId }}`] = new class
     /**
      * Remember the page on each trigger
      *
+     * @param {Object} view
      * @returns {void}
      */
     rememberPage(view)
@@ -146,6 +147,7 @@ classes[`{{ $view->tableId }}`] = new class
      * Load the searchable columns
      *
      * @param {Object} view
+     * @returns {void}
      */
     loadSearchableColumns(view)
     {
@@ -161,6 +163,7 @@ classes[`{{ $view->tableId }}`] = new class
     /**
      * Load the table filters
      *
+     * @param {Object} view
      * @returns {void}
      */
     loadFilters(view)
@@ -200,7 +203,7 @@ classes[`{{ $view->tableId }}`] = new class
      */
     loadConfig(view)
     {
-      this.config = {
+        this.config = {
             "language" : this.translations,
             "paging": true,
             "processing": true,
@@ -211,7 +214,23 @@ classes[`{{ $view->tableId }}`] = new class
             "pageLength" : view.pageLength,
             "order" : view.order,
             "columns" : view.columns,
-            "columnDefs": this.buildColumnDefs(view.defs)
+            "columnDefs": this.buildColumnDefs(view.defs),
+            "createdRow": ( row, data, index ) => {
+
+                $(row).on('click', (el) => {
+                    $(`#{{ $view->tableId }}`).trigger(`dtrow:click`, [row, data, this.table]);
+                });
+                
+                $(row).on('mouseenter', (el) => {
+                    $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseenter`, [row, data, this.table]);
+                });
+                
+                $(row).on('mouseleave', (el) => {
+                    $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseleave`, [row, data, this.table]);
+                });
+                
+                $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table]);
+            }
         };
     }
 
@@ -278,7 +297,7 @@ classes[`{{ $view->tableId }}`] = new class
                             output += ${def.id}${def.index}();
                         `);
                     }
-
+                                                            
                     return output;
                 },
                 "targets": def.target
@@ -338,6 +357,6 @@ classes[`{{ $view->tableId }}`] = new class
 };
 
 
-classes[`{{ $view->tableId }}`].locale(@json($locale)).init(@json($view));
+classes["{{ $view->tableId }}"].locale(@json($locale)).init(@json($view));
 
 </script>
