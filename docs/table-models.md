@@ -65,7 +65,7 @@ Inside the `columns` property you define your table columns. By defaut the table
 ```
 
 ### Remember paging property
-Whats more frustrating then hitting the refresh button and you can't remember which data page you were on. Enable the property `$rememberPage` so the datatable will remember wich page you were on.
+Whats more frustrating then hitting the refresh button and you can't remember which data page you were on. Enable the property `$rememberPage` so the datatable will remember which page you were on.
 ```php
 /**
  * Remember the data page of the user
