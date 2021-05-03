@@ -30,11 +30,11 @@ you can use the variables data, type and row
     @endif
     
     let label = !`{{ $class->label }}`.length ? '' : `{{ $class->label }}`;
-        
+    
     @if($class->label)
-    if(row.{{ $class->label }}){
-        label = row.{{ $class->label }};
-    }
+        if(row.{{ str_replace(" ", "_", preg_replace('/[^A-Za-z0-9. -]/', '', $class->label)) }}){
+            label = row.{{ str_replace(" ", "_", preg_replace('/[^A-Za-z0-9. -]/', '', $class->label)) }};
+        }
     @endif
 
     @if($class->method === 'GET')
