@@ -1,0 +1,35 @@
+<?php
+namespace App\TableModels\Fields;
+
+use SingleQuote\DataTables\Controllers\Field;
+
+/**
+ * Description of Label
+ *
+ * @author Wim Pruiksma <wim.pruiksma@nugtr.nl>
+ */
+class <stub>name</stub> extends Field
+{
+    /**
+     * The date view
+     *
+     * @var string
+     */
+    protected $view = "<stub>view</stub>";
+
+    /**
+     * Init the fields class
+     *
+     * @param string $column
+     * @return $this
+     */
+    public static function make(string $column)
+    {
+        $class = new <stub>name</stub>;
+        $class->column = $column;
+        return $class;
+    }
+
+
+
+}
