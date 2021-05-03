@@ -1,0 +1,56 @@
+{
+    "name": "singlequote/laravel-datatables",
+    "description": "This repo contains a Datatable that can render a filterable and sortable table. It aims to be very lightweight and easy to use. It has support for retrieving data asynchronously, pagination and recursive searching in relations",
+    "keywords": [
+        "Datatables",
+        "Laravel",
+		"Pagination",
+		"Models"
+    ],
+    "homepage": "https://github.com/singlequote/Laravel-datatables",
+    "license": "MIT",
+    "version": "3.1.13",
+    "authors": [
+        {
+            "name": "Wim Pruiksma",
+            "email": "wim@quotec.nl",
+            "homepage": "https://www.quotec.nl/",
+            "role": "Software Architect"
+        }
+    ],
+    "require": {
+        "php": "^7.4",
+        "singlequote/laravel-cacher": "^0.0"
+    },
+    "require-dev": {
+        
+    },
+    "autoload": {
+        "psr-4": {
+            "SingleQuote\\DataTables\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SingleQuote\\DataTables\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "SingleQuote\\DataTables\\DataTableServiceProvider"
+            ],
+            "aliases": {
+                "DataTable": "SingleQuote\\DataTables\\DataTableFacade"
+            }
+        }
+    }
+}
