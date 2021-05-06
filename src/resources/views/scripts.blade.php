@@ -284,7 +284,7 @@ classes["{{ $view->tableId }}"] = new class
                         }
 
                         //Empty check
-                        if(view.emptyCheck && (!data || (isNaN(data) && !data.length))){
+                        if(view.emptyCheck && (!data || (isNaN(data) && !data.length && !this.isJson(data)))){
                             output += `${view.before || ''} ${view.returnWhenEmpty || ''} ${view.after || ''}`;
                             continue;
                         }
@@ -305,6 +305,31 @@ classes["{{ $view->tableId }}"] = new class
         }
         //return the columns
         return defsArray;
+    }
+    
+    /**
+     * Check if parameter is a json string
+     * 
+     * @param {String} item
+     * @type Arguments
+     */
+    isJson(item) 
+    {
+        item = typeof item !== "string"
+            ? JSON.stringify(item)
+            : item;
+
+        try {
+            item = JSON.parse(item);
+        } catch (e) {
+            return false;
+        }
+
+        if (typeof item === "object" && item !== null) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
