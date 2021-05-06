@@ -230,6 +230,9 @@ classes["{{ $view->tableId }}"] = new class
                 });
                 
                 $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table]);
+            },
+            "drawCallback" : (settings ) => {
+                $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table]);
             }
         };
     }
