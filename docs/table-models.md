@@ -206,6 +206,7 @@ The table triggers an event everytime something is processed. Below is a list of
 
 | event | trigger | target |
 |--|--|--|
+| render | dttable:render | document |
 | render| dtrow:render | document |
 | click | dtrow:click | document |
 | mouseenter | dtrow:mouseenter| document |
@@ -223,6 +224,11 @@ $(document).on('dtrow:click', (event, row, data, table) => {
 All the triggers are listed below :
 
 ```javascript
+//when the whole table is rendered
+ $(document).on('dttable:render', (event, settings, data, table) => {
+    //do something
+});
+
 //when a row is rendered
  $(document).on('dtrow:render', (event, row, data, table) => {
     //do something
