@@ -23,7 +23,11 @@ you can use the variables data, type and row
     @if($class->route)
     let url = "{{ $class->route }}";
     @foreach($class->routeReplace as $key => $replace)
-    url = url.replace("{{ $key }}", row.{{ $replace }});
+    if("{{ $replace }}" in row){
+        url = url.replace("{{ $key }}", row.{{ $replace }}).replace("{{ $key }}", row.{{ $replace }}).replace("{{ $key }}", row.{{ $replace }});
+    }else{
+        url = url.replace("{{ $key }}", `{{ $replace }}`).replace("{{ $key }}", `{{ $replace }}`).replace("{{ $key }}", `{{ $replace }}`);
+    }
     @endforeach
     route = `href="${url}"`;
     @endif
