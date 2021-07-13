@@ -9,7 +9,7 @@
     ],
     "homepage": "https://github.com/singlequote/Laravel-datatables",
     "license": "MIT",
-    "version": "3.1.19",
+    "version": "4.0.0",
     "authors": [
         {
             "name": "Wim Pruiksma",
@@ -19,8 +19,8 @@
         }
     ],
     "require": {
-        "php": "^7.4",
-        "singlequote/laravel-cacher": "^0.0"
+        "php": "^8.0",
+        "singlequote/laravel-cacher": "^1.0"
     },
     "require-dev": {
         
