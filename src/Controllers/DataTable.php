@@ -376,8 +376,8 @@ class DataTable extends ParentClass
             
             $relationName = $this->getPath($foreignName);
             $owner = $this->getPath($ownerName);
-                        
-            foreach($model->getQuery()->columns as $col){
+
+            foreach($model->getQuery()->columns ?? ["*"] as $col){
                 $select[] = "$owner.$col";
             }
             
