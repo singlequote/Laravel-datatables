@@ -165,7 +165,7 @@ class DataTable
                 array_pop($explode);
                 
                 if(!array_key_exists(implode('.', $explode), $eager)){
-                    $this->view->query = $this->view->query->with();
+                    $this->view->query = $this->view->query->with(implode('.', $explode));
                 }
             }
             
