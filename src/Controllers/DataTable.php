@@ -341,11 +341,11 @@ class DataTable extends ParentClass
     private function sortModel()
     {
         $model = $this->model->skip($this->start)->take($this->length);
-        
+
         foreach ($this->order as $order) {
             $model = $this->runOrderBuild($model, $order);
         }
-        
+
         try{
             return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}();
         } catch (\Exception $ex) {
@@ -358,9 +358,10 @@ class DataTable extends ParentClass
      *
      * @param  Builder $model
      * @param  array   $order
+     * @param  array   $select
      * @return Builder
      */
-    private function runOrderBuild($model, array $order)
+    private function runOrderBuild($model, array $order, array $select = [])
     {
         if (Str::contains($order['column'], '.')) {
             
@@ -376,9 +377,15 @@ class DataTable extends ParentClass
             $relationName = $this->getPath($foreignName);
             $owner = $this->getPath($ownerName);
                         
+            foreach($model->getQuery()->columns as $col){
+                $select[] = "$owner.$col";
+            }
+            
+            $select[] = "$relationName.$name as $relationName$name";
+
             return $model->with($relation)
                 ->join($relationName, $foreignName, '=', $ownerName)
-                ->select("$owner.*", "$relationName.$name as $relationName$name")
+                ->select($select)
                 ->orderBy("$relationName$name", $order['dir']);
         }
 
