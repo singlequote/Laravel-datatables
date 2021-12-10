@@ -144,6 +144,9 @@ class DataTable
      */
     private function checkColumns()
     {
+        
+        $eager = $this->view->query->getEagerLoads();
+        
         foreach ($this->view->columns as $index => $column) {
             $data = is_array($column) ? isset($column['data']) ? $column['data'] : null : $column;
             $original = $data;
@@ -157,18 +160,21 @@ class DataTable
                 $name = $name ?? Str::after($data, ' as ');
                 $data = Str::before($data, ' as ');
             }
-
             if (Str::contains($data, '.')) {
                 $explode = explode('.', $data);
                 array_pop($explode);
-                $this->view->query = $this->view->query->with(implode('.', $explode));
+                
+                if(!array_key_exists(implode('.', $explode), $eager)){
+                    $this->view->query = $this->view->query->with();
+                }
             }
-
+            
             $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class, $columnSearch);
 
             $this->columns[] = $name ?? $data;
 
             $this->buildColumnsDef($index, $name ?? $data, $class);
+            
         }
     }
 
