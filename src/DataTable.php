@@ -40,7 +40,7 @@ class DataTable
      */
     public function model($model)
     {
-        if ($model instanceof \Illuminate\Database\Eloquent\Model || is_string($model)) {
+        if ($model instanceof \Illuminate\Database\Eloquent\Model || is_string($model) || $model instanceof \Illuminate\Database\Eloquent\Builder) {
             if (is_string($model)) {
                 $model = new $model;
             }
