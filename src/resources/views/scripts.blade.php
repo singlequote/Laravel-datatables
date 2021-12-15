@@ -261,21 +261,21 @@ classes["{{ $view->tableId }}"] = new class
     buildColumnDefs(defs)
     {
         const defsArray = [];
-
         //loop the columns
+        
         for (const [key, def] of Object.entries(defs)) {
-                //push to the column defs array
-                defsArray.push({
+            //push to the column defs array
+            defsArray.push({
                 "class" : def.class || '',
                 "render": ( data, type, row ) => {
                     //the output returned after the render is completed
                     let output = "";
-                    
                     //loop the rendered views
-                    for (const [index, rendered] of Object.entries(def.rendered)) {
+                    for (let [index, rendered] of Object.entries(def.rendered)) {
                         //set the viewer
-                        let view = def.def[index];
                         
+                        let view = def.def[index];
+                                                                                                                                             
                         //check the conditions
                         if(view.condition && !eval(`row.${view.condition}`)){
                             continue;
@@ -297,8 +297,10 @@ classes["{{ $view->tableId }}"] = new class
                             function ${def.id}${def.index}(){
                                 ${rendered}
                             }
-                            output += ${def.id}${def.index}();
+                            output += this.parseKeyView(row, ${def.id}${def.index}());
                         `);
+                                
+                        output = this.parseKeyView(row, output);
                     }
                                                             
                     return output;
@@ -306,9 +308,42 @@ classes["{{ $view->tableId }}"] = new class
                 "targets": def.target
             });
         }
+
         //return the columns
         return defsArray;
     }
+    
+    /**
+     * @param {Object} parent
+     * @param {Object} row
+     * @param {String} output
+     * @returns {String}
+     */
+    parseKeyView(row, hashed)
+    {
+        if(!hashed.includes('#')){
+            return hashed;
+        }
+        
+        let sub = hashed.substr(hashed.indexOf('#')+1);
+        
+        let key = sub.substr(0,sub.indexOf(' '));
+        
+        let value = eval(`row.${key}`);
+        
+        if(value){
+            hashed = hashed.replace(`#${key}`, value);
+        }else{
+            hashed = hashed.replace(`#${key}`, `$${key}`);
+        }
+                
+        if(hashed.includes('#')){
+            return this.parseKeyView(row, hashed);
+        }
+        
+        return hashed;
+    }
+
     
     /**
      * Check if parameter is a json string
