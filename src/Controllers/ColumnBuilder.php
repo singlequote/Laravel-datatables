@@ -99,14 +99,14 @@ abstract class ColumnBuilder
      * The package will auto reload the content of the current table page
      * @var bool
      */
-    public $autoReload = true;
+    public $autoReload = false;
 
     /**
      * The default pagelength
      *
      * @var int
      */
-    public $pageLength = 10;
+    public $pageLength = 25;
 
     /**
      * Set order
@@ -132,6 +132,9 @@ abstract class ColumnBuilder
         return [];
     }
     
+    /**
+     * @return array
+     */
     public function filter() : array
     {
         return [];
