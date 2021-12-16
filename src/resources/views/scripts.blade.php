@@ -319,7 +319,7 @@ classes["{{ $view->tableId }}"] = new class
      * @param {String} output
      * @returns {String}
      */
-    parseKeyView(row, hashed)
+    parseKeyView(row, hashed, space = ' ')
     {
         if(!hashed.includes('#')){
             return hashed;
@@ -327,9 +327,15 @@ classes["{{ $view->tableId }}"] = new class
         
         let sub = hashed.substr(hashed.indexOf('#')+1);
         
-        let key = sub.substr(0,sub.indexOf(' '));
+        let key = sub.substr(0,sub.indexOf(space));        
         
-        let value = eval(`row.${key}`);
+        let value = false;
+        
+        try{
+            value = eval(`row.${key}`);
+        }catch(err){
+            return this.parseKeyView(row, hashed, space = '"');
+        }
         
         if(value){
             hashed = hashed.replace(`#${key}`, value);
