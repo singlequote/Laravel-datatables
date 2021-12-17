@@ -333,7 +333,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
             try {
                 value = eval(`row.${key}`);
             } catch (err) {
-                return this.parseKeyView(row, hashed, space = '"');
+                return this.parseKeyView(row, hashed.replace(`#${key}`, `$${key}`), space = '"');
             }
 
             if (value) {
