@@ -14,20 +14,6 @@ class DataTable extends ParentClass
 {
 
     /**
-     * The collection model
-     *
-     * @var mixed
-     */
-    protected $model;
-
-    /**
-     * The collection table model
-     *
-     * @var mixed
-     */
-    protected $tableModel;
-
-    /**
      * The original collection model
      *
      * @var mixed
@@ -64,26 +50,17 @@ class DataTable extends ParentClass
     protected $search;
 
     /**
-     *
-     * @param  \Illuminate\Database\Eloquent\Model $model
-     * @param  TableModel                          $tableModel
+     * 
+     * @param Elequent $model
+     * @param Elequent $tableModel
      * @return mixed
      */
-    public function __construct($model, $tableModel)
+    public function __construct(protected $model, protected $tableModel)
     {
-        
         $this->getSearchableColumns();
-        $this->model = $model;
-        $this->cacheName = "datatables::{$tableModel->id}";
 
-        $this->originalModel = cache()->rememberForever(
-            "{$this->cacheName}originalModel", function () use ($model) {
-                return $model->get()->first();
-            }
-        );
-
-        $this->tableModel = $tableModel;
-        
+        $this->originalModel = $this->model->getModel();
+                        
         return $this->build();
     }
 
@@ -361,35 +338,68 @@ class DataTable extends ParentClass
      * @param  array   $select
      * @return Builder
      */
-    private function runOrderBuild($model, array $order, array $select = [])
-    {
+    private function runOrderBuild($model, array $order)
+    {        
+        $column = $this->extractColumnFromTable($order['column']);
+        
+        if($column['json']){
+            $order['column'] = str_replace('.', '->', $order['column']);
+        }
+
         if (Str::contains($order['column'], '.')) {
             
             if(substr_count($order['column'], '.') > 1){
                 return $model;
             }
             
-            $relation = $this->getPath($this->findOriginalColumn($order['column']));
-            $name = $this->getName($this->findOriginalColumn($order['column']));
-            $foreignName = $this->getForeignName($relation);
-            $ownerName = $this->getOwnerName($relation);
-            
-            $relationName = $this->getPath($foreignName);
-            $owner = $this->getPath($ownerName);
-
-            foreach($model->getQuery()->columns ?? ["*"] as $col){
-                $select[] = "$owner.$col";
-            }
-            
-            $select[] = "$relationName.$name as $relationName$name";
-
-            return $model->with($relation)
-                ->join($relationName, $foreignName, '=', $ownerName)
-                ->select($select)
-                ->orderBy("$relationName$name", $order['dir']);
+            return $this->orderRelation($model, $order);
         }
 
         return $model->orderBy($order['column'], $order['dir']);
+    }
+    
+    /**
+     * @param mixed $model
+     * @param array $order
+     * @param array $select
+     * @return mixed
+     */
+    private function orderRelation(mixed $model, array $order, array $select = []) : mixed
+    {
+        $relation = $this->getPath($this->findOriginalColumn($order['column']));
+        $name = $this->getName($this->findOriginalColumn($order['column']));
+
+        $foreignName = $this->getForeignName($relation);
+        $ownerName = $this->getOwnerName($relation);
+
+        $relationName = $this->getPath($foreignName);
+        $owner = $this->getPath($ownerName);
+
+        foreach($model->getQuery()->columns ?? ["*"] as $col){
+            $select[] = "$owner.$col";
+        }
+
+        $as = str_replace('.', '_', "$relationName$name");
+
+        $select[] = "$relationName.$name as $as";
+
+        return $model->with($relation)
+            ->join($relationName, $foreignName, '=', $ownerName)
+            ->select($select)
+            ->orderBy("$as", $order['dir']);
+    }
+    
+    /**
+     * @param string $data
+     * @return array|null
+     */
+    private function extractColumnFromTable(string $data) : ?array
+    {
+        foreach($this->tableModel->columns as $column){
+            if($column['data'] === $data){
+                return $column;
+            }
+        }
     }
     
     /**
@@ -405,8 +415,6 @@ class DataTable extends ParentClass
         switch(end($class)){
             case "BelongsTo" : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
-//            case "HasMany" : 
-//                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
         }        
@@ -491,7 +499,13 @@ class DataTable extends ParentClass
      */
     public function searchOnRelation(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, $searchType = 'orWhereHas')
     {
-        if (Str::contains($column, '.')) {
+        $view = $this->extractColumnFromTable($column);
+
+//        if($view['json']){
+//            $column = str_replace('.', '->', $column);
+//        }
+        
+        if (Str::contains($column, '.') && !$view['json']) {
             $original = $this->findOriginalColumn($column);
 
             $explode = explode('.', $original);

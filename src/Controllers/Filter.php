@@ -53,12 +53,18 @@ abstract class Filter
     protected $class = '';
     
     /**
-     * The data items for the filter
+     * The data attribute is used for dropdowns or select inputs
      *
      * @var array
      */
     protected $data = [];
     
+    /**
+     * THe value attribute is used for inputs
+     *
+     * @var array
+     */
+    protected $value = '';
     
     /**
      * The dom attributes
@@ -194,6 +200,25 @@ abstract class Filter
     public function getData() : array
     {
         return $this->data;
+    }
+    
+    /**
+     * @param int|string $value
+     * @return $this
+     */
+    public function value(int|string $value)
+    {
+        $this->value = $value;
+        
+        return $this;
+    }
+    
+    /**
+     * @return int|string
+     */
+    public function getValue() : int|string
+    {
+        return $this->value;
     }
         
     /**

@@ -126,8 +126,9 @@ class DataTable
     /**
      * Build the filters
      *
+     * @return void
      */
-    private function checkFilters()
+    private function checkFilters() : void
     {
         foreach ($this->view->filters as $index => $filter) {
             $this->view->filters[$index]->build = $filter->build();
@@ -141,77 +142,177 @@ class DataTable
      * Check the columns and fill the defs
      * Fill the defs and set the targets for every column
      *
+     * @return void
      */
-    private function checkColumns()
+    private function checkColumns() : void
     {
-        
-        $eager = $this->view->query->getEagerLoads();
-        
         foreach ($this->view->columns as $index => $column) {
-            $data = is_array($column) ? isset($column['data']) ? $column['data'] : null : $column;
-            $original = $data;
-            $name = is_array($column) ? isset($column['name']) ? $column['name'] : null : null;
-            $searchable = is_array($column) ? isset($column['searchable']) ? $column['searchable'] : true : true;
-            $columnSearch = is_array($column) ? isset($column['columnSearch']) ? $column['columnSearch'] : false : false;
-            $orderable = is_array($column) ? isset($column['orderable']) ? $column['orderable'] : true : true;
-            $class = is_array($column) ? isset($column['class']) ? $column['class'] : null : null;
+            $this->view->columns[$index] = [
+                'data' => $this->toLower($this->parseDataColumn($column)),
+                'name' => $this->toLower($this->parseNameColumn($column)),
+                'original' => $this->parseOriginalColumn($column),
+                'searchable' => $this->parseSearchableColumn($column),
+                'orderable' => $this->parseOrderableColumn($column),
+                'class' => $this->parseClassColumn($column),
+                'columnSearch' => $this->parseColumnSearchColumn($column),
+                'json' => $this->parseJsonColumn($column)
+            ];
+            
 
-            if (Str::contains($data, ' as ')) {
-                $name = $name ?? Str::after($data, ' as ');
-                $data = Str::before($data, ' as ');
-            }
-            if (Str::contains($data, '.')) {
-                $explode = explode('.', $data);
-                array_pop($explode);
+            $this->addEagerLoading($column);
+            
+            $this->columns[] = $this->parseNameColumn($column);
+
+            $this->buildColumnsDef($index, $column);
+        }
+        
+//        dd($this);
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseJsonColumn(string|array $column) : bool
+    {      
+        if(is_array($column)){
+            return isset($column['json']) ? $column['json'] : false;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseColumnSearchColumn(string|array $column) : bool
+    {      
+        if(is_array($column)){
+            return isset($column['columnSearch']) ? $column['columnSearch'] : false;
+        }
+        
+        return false;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseClassColumn(string|array $column) : ?string
+    {       
+        if(is_array($column)){
+            return isset($column['class']) ? $column['class'] : null;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseOrderableColumn(string|array $column) : bool
+    {       
+        if(is_array($column)){
+            return isset($column['orderable']) ? $column['orderable'] : true;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseSearchableColumn(string|array $column) : bool
+    {       
+        if(is_array($column)){
+            return isset($column['searchable']) ? $column['searchable'] : true;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return string|null
+     */
+    private function parseOriginalColumn(string|array $column) : ?string
+    {
+        if(is_array($column)){
+            return isset($column['data']) ? $column['data'] : null;
+        }
+        
+        return $column;
+    }
+
+    /**
+     * @param array|string $column
+     * @return string
+     */
+    private function parseDataColumn(array|string $column) : string
+    {
+        $data = is_array($column) ? isset($column['data']) ? $column['data'] : null : $column;
+        
+        if (Str::contains($data, ' as ')) {
+            $data = Str::before($data, ' as ');
+        }
+        
+        return $data;
+    }
+    
+    /**
+     * @param array|string $column
+     * @return string
+     */
+    private function parseNameColumn(array|string $column) : string
+    {
+        $data = $this->parseDataColumn($column);
+        $name = is_array($column) ? isset($column['name']) ? $column['name'] : null : null;
+        
+        if (Str::contains($data, ' as ')) {
+            $name = $name ?? Str::after($data, ' as ');
+        }
+        
+        return $name ?? $data;
+    }
+    
+    /**
+     * @param string|array $column
+     * @return void
+     */
+    private function addEagerLoading(string|array $column) : void
+    {        
+        
+        $data = $this->parseDataColumn($column);
+        $json = $this->parseJsonColumn($column);
                 
-                if(!array_key_exists(implode('.', $explode), $eager)){
-                    $this->view->query = $this->view->query->with(implode('.', $explode));
-                }
+        if (Str::contains($data, '.') && !$json) {
+            
+            $eager = $this->view->query->getEagerLoads();
+            
+            $explode = explode('.', $data);
+            array_pop($explode);
+            $fillables = $this->view->query->getModel()->getFillable();
+                        
+            if(!array_key_exists(implode('.', $explode), $eager) && !in_array(implode('.', $explode), $fillables)){
+                $this->view->query = $this->view->query->with(implode('.', $explode));
             }
-            
-            $this->buildColumns($index, $data, $name ?? $data, $original, $searchable, $orderable, $class, $columnSearch);
-
-            $this->columns[] = $name ?? $data;
-
-            $this->buildColumnsDef($index, $name ?? $data, $class);
-            
         }
     }
 
     /**
-     * BUild the columns list
-     *
-     * @param int $index
-     * @param string $data
-     * @param string $name
-     * @param bool $searchable
-     * @param bool $orderable
-     * @param string $class
-     */
-    private function buildColumns(int $index, string $data, string $name, string $original, bool $searchable, bool $orderable, string $class = null, bool $columnSearch = false)
-    {
-        $this->view->columns[$index] = [
-            'data' => $this->toLower($data),
-            'name' => $this->toLower($name),
-            'original' => $original,
-            'searchable' => $searchable,
-            'orderable' => $orderable ?? true,
-            'class' => $class,
-            'columnSearch' => $columnSearch
-        ];
-    }
-
-    /**
      * Build the columns def
-     *
+     * 
      * @param int $index
-     * @param string $data
-     * @param string $class
+     * @param string|array $column
+     * @return void
      */
-    private function buildColumnsDef(int $index, string $data, string $class = null)
+    private function buildColumnsDef(int $index, string|array $column) : void
     {
-        $this->view->defs[$data] = [
-            'class' => $class,
+        $this->view->defs[$this->parseNameColumn($column)] = [
+            'class' => $this->parseClassColumn($column),
             'id' => uniqid('column'),
             'target' => $index,
             'def' => []
