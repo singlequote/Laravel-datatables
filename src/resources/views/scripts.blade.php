@@ -299,7 +299,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                             output += this.parseKeyView(row, ${def.id}${def.index}());
                         `);
 
-                            output = this.parseKeyView(row, output);
+                            output = this.revertHashed(this.parseKeyView(row, output));
                         }
 
                         return output;
@@ -313,9 +313,9 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
         }
 
         /**
-         * @param {Object} parent
          * @param {Object} row
-         * @param {String} output
+         * @param {String} hashed
+         * @param {String} space
          * @returns {String}
          */
         parseKeyView(row, hashed, space = ' ')
@@ -333,13 +333,13 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
             try {
                 value = eval(`row.${key}`);
             } catch (err) {
-                return this.parseKeyView(row, hashed.replace(`#${key}`, `$${key}`), space = '"');
+                return this.parseKeyView(row, hashed.replace(`#${key}`, `@$${key}`), space = '"');
             }
 
             if (value) {
                 hashed = hashed.replace(`#${key}`, value);
             } else {
-                hashed = hashed.replace(`#${key}`, `$${key}`);
+                hashed = hashed.replace(`#${key}`, `@$${key}`);
             }
 
             if (hashed.includes('#')) {
@@ -347,6 +347,19 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
             }
 
             return hashed;
+        }
+
+        /**
+         * @param {String} hashed
+         * @returns {String}
+         */
+        revertHashed(hashed)
+        {
+            if (!hashed.includes('@$')) {
+                return hashed;
+            }
+            
+            return this.revertHashed(hashed.replace('@$', '#'));
         }
 
         /**
