@@ -1,8 +1,12 @@
 <?php
 namespace SingleQuote\DataTables\Controllers;
 
-use SingleQuote\DataTables\DataTable as ParentClass;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Request;
+use SebastianBergmann\CodeCoverage\Node\Builder as Builder2;
+use SingleQuote\DataTables\DataTable as ParentClass;
 use Str;
 
 /**
@@ -313,7 +317,7 @@ class DataTable extends ParentClass
     /**
      * Order the model, check if it's a relation or not
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     private function sortModel()
     {
@@ -325,7 +329,7 @@ class DataTable extends ParentClass
 
         try{
             return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}();
-        } catch (\Exception $ex) {
+        } catch (Exception $ex) {
             return $model->get();
         }
     }
@@ -333,10 +337,10 @@ class DataTable extends ParentClass
     /**
      * Run the builder for the order method
      *
-     * @param  Builder $model
+     * @param  Builder2 $model
      * @param  array   $order
      * @param  array   $select
-     * @return Builder
+     * @return Builder2
      */
     private function runOrderBuild($model, array $order)
     {        
@@ -447,47 +451,72 @@ class DataTable extends ParentClass
     /**
      * Search on the model
      *
-     * @param  \Illuminate\Database\Eloquent\Collection $collection
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @param  Collection $collection
+     * @return Collection
      * @author Wim Pruiksma
      */
     private function searchOnModel()
     {
-        $this->model = $this->model->where(
-            function ($query) {
-            
-                foreach ($this->filterSearch as $index => $filterSearch) {
-                    $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
-                    $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query, $index, 'whereRaw');
-                }
-
-                if (!$this->search) {
-                    return;
-                }
-
-                foreach ($this->searchable as $index => $column) {
-                    $this->searchOnRelation($this->search['value'], $column, $query);
-                    $this->searchOnQuery($this->search['value'], $column, $query, $index);
-                }
+        
+        foreach ($this->filterSearch as $filterSearch) {
+            $this->model = $this->model->where(function ($query) use($filterSearch) {
+                $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
+                $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query);
+            });
+        }
+        
+        if (!$this->search) {
+            return;
+        }
+        
+        $this->model = $this->model->where(function ($query) {
+            foreach ($this->searchable as $column) {
+                $this->searchOnRelation($this->search['value'], $column, $query);
+                $this->searchOnQuery($this->search['value'], $column, $query);
             }
-        );
+        });
     }
 
     /**
-     * Execute the search queries
-     *
-     * @param string                                $column
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int                                   $index
+     * @param string $phrase
+     * @param string $column
+     * @param Builder $query
+     * @param int $index
+     * @param string $secondSearchType
      */
-    private function searchOnQuery(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, int $index, $secondSearchType = 'orWhereRaw')
+    private function searchOnQuery(string $phrase, string $column, Builder $query) : Builder
     {
         $table = $this->originalModel->getTable();
+        $view = $this->extractColumnFromTable($column);
         
-        if ($index === 0 && !Str::contains($column, '.')) {
-            $query->whereRaw("lower($table.$column) LIKE ?", "%{$phrase}%");
-        } elseif ($index > 0 && !Str::contains($column, '.')) {
-            $query->{$secondSearchType}("lower($table.$column) LIKE ?", "%{$phrase}%");
+        if($view['json']){
+            $jsonColumn = $this->parseJsonColumnName($column);
+            $parent = Str::before($column, '.');
+            return $query->orWhereRaw("lower(json_unquote(json_extract(`$parent`, $jsonColumn))) LIKE ?", "{$phrase}%");
+        }
+        
+        return $query->orWhereRaw("lower($table.$column) LIKE ?", "{$phrase}%");
+    }
+    
+    /**
+     * @param string $column
+     * @return string
+     */
+    private function parseJsonColumnName(string $column) : string
+    {
+        $fields = explode(".", $column);
+
+        $parsed = "'$.";
+        
+        foreach($fields as $index => $field){
+            if($index === 0){
+                continue;
+            }
+            if(count($fields)  -1 === $index){
+                return $parsed."\"$field\"'";
+            }
+            
+            $parsed .= "\"$field\".";
         }
     }
 
@@ -495,16 +524,12 @@ class DataTable extends ParentClass
      * Search on relation
      *
      * @param string                                $column
-     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param Builder $query
      */
-    public function searchOnRelation(string $phrase, string $column, \Illuminate\Database\Eloquent\Builder $query, $searchType = 'orWhereHas')
+    public function searchOnRelation(string $phrase, string $column, Builder $query, $searchType = 'orWhereHas')
     {
         $view = $this->extractColumnFromTable($column);
 
-//        if($view['json']){
-//            $column = str_replace('.', '->', $column);
-//        }
-        
         if (Str::contains($column, '.') && !$view['json']) {
             $original = $this->findOriginalColumn($column);
 

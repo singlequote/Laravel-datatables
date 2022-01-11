@@ -204,18 +204,18 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
         loadConfig(view)
         {
             this.config = {
-                "language": this.translations,
-                "paging": true,
-                "processing": true,
-                "serverSide": true,
-                "displayStart": this.displayStart(view),
-                "dom": view.dom,
-                "ajax": this.buildUrl(view),
-                "pageLength": view.pageLength,
-                "order": view.order,
-                "columns": view.columns,
-                "columnDefs": this.buildColumnDefs(view.defs),
-                "createdRow": (row, data, index) => {
+                language: this.translations,
+                paging: true,
+                processing: true,
+                serverSide: true,
+                displayStart: this.displayStart(view),
+                dom: view.dom,
+                ajax: this.buildUrl(view),
+                pageLength: view.pageLength,
+                order: view.order,
+                columns: view.columns,
+                columnDefs: this.buildColumnDefs(view.defs),
+                createdRow: (row, data, index) => {
 
                     $(row).on('click', (el) => {
                         $(`#{{ $view->tableId }}`).trigger(`dtrow:click`, [row, data, this.table]);
@@ -231,7 +231,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
 
                     $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table]);
                 },
-                "drawCallback": (settings) => {
+                drawCallback: (settings) => {
                     $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table]);
                 }
             };
