@@ -404,6 +404,8 @@ class DataTable extends ParentClass
                 return $column;
             }
         }
+        
+        throw new \Exception;
     }
     
     /**
@@ -460,7 +462,7 @@ class DataTable extends ParentClass
         
         foreach ($this->filterSearch as $filterSearch) {
             $this->model = $this->model->where(function ($query) use($filterSearch) {
-                $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query, 'whereHas');
+                $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query);
                 $this->searchOnQuery($filterSearch[1], $filterSearch[0], $query);
             });
         }
@@ -495,7 +497,11 @@ class DataTable extends ParentClass
             return $query->orWhereRaw("lower(json_unquote(json_extract(`$parent`, $jsonColumn))) LIKE ?", "{$phrase}%");
         }
         
-        return $query->orWhereRaw("lower($table.$column) LIKE ?", "{$phrase}%");
+        if(!Str::contains($column, '.')){
+            return $query->orWhereRaw("lower($table.$column) LIKE ?", "{$phrase}%");
+        }
+        
+        return $query;
     }
     
     /**
@@ -526,7 +532,7 @@ class DataTable extends ParentClass
      * @param string                                $column
      * @param Builder $query
      */
-    public function searchOnRelation(string $phrase, string $column, Builder $query, $searchType = 'orWhereHas')
+    public function searchOnRelation(string $phrase, string $column, Builder $query)
     {
         $view = $this->extractColumnFromTable($column);
 
@@ -534,12 +540,10 @@ class DataTable extends ParentClass
             $original = $this->findOriginalColumn($column);
 
             $explode = explode('.', $original);
-
-            $query->{$searchType}(
-                $explode[0], function ($query) use ($explode, $phrase) {
-                    $query->whereRaw("lower($explode[1]) LIKE ?", "%{$phrase}%");
-                }
-            );
+            
+            $query->whereHas($explode[0], function ($query) use ($explode, $phrase) {
+                $query->whereRaw("lower($explode[1]) LIKE ?", "{$phrase}%");
+            });
         }
     }
 
