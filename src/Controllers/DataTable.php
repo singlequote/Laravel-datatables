@@ -493,11 +493,11 @@ class DataTable extends ParentClass
         if($view['json']){
             $jsonColumn = $this->parseJsonColumnName($column);
             $parent = Str::before($column, '.');
-            return $query->orWhereRaw("lower(json_unquote(json_extract(`$parent`, $jsonColumn))) LIKE ?", "{$phrase}%");
+            return $query->orWhereRaw("lower(json_unquote(json_extract(`$parent`, $jsonColumn))) LIKE ?", "%{$phrase}%");
         }
         
         if(!Str::contains($column, '.')){
-            return $query->orWhereRaw("lower($table.$column) LIKE ?", "{$phrase}%");
+            return $query->orWhereRaw("lower($table.$column) LIKE ?", "%{$phrase}%");
         }
         
         return $query;
@@ -541,7 +541,7 @@ class DataTable extends ParentClass
             $explode = explode('.', $original);
             
             $query->orWhereHas($explode[0], function ($query) use ($explode, $phrase) {
-                $query->whereRaw("lower($explode[1]) LIKE ?", "{$phrase}%");
+                $query->whereRaw("lower($explode[1]) LIKE ?", "%{$phrase}%");
             });
         }
     }
