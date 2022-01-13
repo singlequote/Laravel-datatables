@@ -459,7 +459,6 @@ class DataTable extends ParentClass
      */
     private function searchOnModel()
     {
-        
         foreach ($this->filterSearch as $filterSearch) {
             $this->model = $this->model->where(function ($query) use($filterSearch) {
                 $this->searchOnRelation($filterSearch[1], $filterSearch[0], $query);
@@ -470,7 +469,7 @@ class DataTable extends ParentClass
         if (!$this->search) {
             return;
         }
-        
+
         $this->model = $this->model->where(function ($query) {
             foreach ($this->searchable as $column) {
                 $this->searchOnRelation($this->search['value'], $column, $query);
@@ -535,13 +534,13 @@ class DataTable extends ParentClass
     public function searchOnRelation(string $phrase, string $column, Builder $query)
     {
         $view = $this->extractColumnFromTable($column);
-
+        
         if (Str::contains($column, '.') && !$view['json']) {
             $original = $this->findOriginalColumn($column);
 
             $explode = explode('.', $original);
             
-            $query->whereHas($explode[0], function ($query) use ($explode, $phrase) {
+            $query->orWhereHas($explode[0], function ($query) use ($explode, $phrase) {
                 $query->whereRaw("lower($explode[1]) LIKE ?", "{$phrase}%");
             });
         }
