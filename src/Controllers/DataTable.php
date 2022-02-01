@@ -379,18 +379,59 @@ class DataTable extends ParentClass
         $relationName = $this->getPath($foreignName);
         $owner = $this->getPath($ownerName);
 
-        foreach($model->getQuery()->columns ?? ["*"] as $col){
-            $select[] = "$owner.$col";
-        }
+        $select = $this->queryColumns($model, $owner, $relationName);
 
         $as = str_replace('.', '_', "$relationName$name");
-
+        
         $select[] = "$relationName.$name as $as";
-
+                
         return $model->with($relation)
             ->join($relationName, $foreignName, '=', $ownerName)
             ->select($select)
-            ->orderBy("$as", $order['dir']);
+            ->orderBy("$as", $order['dir'])
+            ->dd();
+    }
+    
+    /**
+     * @param mixed $model
+     * @param string $owner
+     * @param string $relationName
+     * @return array
+     */
+    private function queryColumns(mixed $model, string $owner, string $relationName) : array
+    {
+        $select = [];
+        
+        foreach($model->getQuery()->columns ?? ["*"] as $col){
+            if(Str::contains($col, 'CONCAT')){
+                $select[] = \DB::raw((string) $col);
+            }else{
+                $select[] = "$owner.$col";
+            }
+        }
+
+        return $select;
+    }
+    
+    /**
+     * @param string $string
+     * @param string $start
+     * @param string $end
+     * @return string
+     */
+    private function stringBetween(string $string, string $start, string $end) : string
+    {
+        $string = ' ' . $string;
+        $ini = strpos($string, $start);
+        
+        if ($ini == 0){
+            return '';
+        }
+            
+        $ini += strlen($start);
+        $len = strpos($string, $end, $ini) - $ini;
+        
+        return substr($string, $ini, $len);
     }
     
     /**
