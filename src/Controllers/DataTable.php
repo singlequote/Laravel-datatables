@@ -388,8 +388,7 @@ class DataTable extends ParentClass
         return $model->with($relation)
             ->join($relationName, $foreignName, '=', $ownerName)
             ->select($select)
-            ->orderBy("$as", $order['dir'])
-            ->dd();
+            ->orderBy("$as", $order['dir']);
     }
     
     /**
