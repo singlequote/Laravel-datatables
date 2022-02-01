@@ -315,34 +315,33 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
         /**
          * @param {Object} row
          * @param {String} hashed
-         * @param {String} space
          * @returns {String}
          */
-        parseKeyView(row, hashed, space = ' ')
+        parseKeyView(row, hashed)
         {
-            if (!hashed.includes('#')) {
+            if (!hashed.includes('{') || !hashed.includes('}')) {
                 return hashed;
             }
 
-            let sub = hashed.substr(hashed.indexOf('#') + 1);
+            let sub = hashed.substr(hashed.indexOf('{') + 1);
 
-            let key = sub.substr(0, sub.indexOf(space));
+            let key = sub.substr(0, sub.indexOf('}'));
 
             let value = false;
-
+            
             try {
                 value = eval(`row.${key}`);
             } catch (err) {
-                return this.parseKeyView(row, hashed.replace(`#${key}`, `@$${key}`), space = '"');
+                return this.parseKeyView(row, hashed.replace(`{${key}}`, `${key}`));
             }
-
+                                    
             if (value) {
-                hashed = hashed.replace(`#${key}`, value);
+                hashed = hashed.replace(`{${key}}`, value);
             } else {
-                hashed = hashed.replace(`#${key}`, `@$${key}`);
+                hashed = hashed.replace(`{${key}}`, `${key}`);
             }
 
-            if (hashed.includes('#')) {
+            if (hashed.includes('{') && hashed.includes('}')) {
                 return this.parseKeyView(row, hashed);
             }
 
