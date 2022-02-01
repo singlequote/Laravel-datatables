@@ -15,6 +15,14 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
     {
         return prefix + Math.random().toString(36).substr(2, 9);
     }
+    
+    /**
+     * Reload the datatable
+     */
+    function dataTableReload()
+    {
+        classes["{{ $view->tableId }}"].reload(@json($view));
+    }
 
 
     classes["{{ $view->tableId }}"] = new class
@@ -67,7 +75,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          */
         reload(view)
         {
-            this.table.ajax.url(this.buildUrl(view)).load();
+             this.table.ajax.reload( null, false );
         }
 
         /**
