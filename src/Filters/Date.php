@@ -16,6 +16,13 @@ class Date extends Filter
      * @var string
      */
     protected $view = "date";
+    
+    /**
+     * The date view
+     *
+     * @var string
+     */
+    public $inputType = "date";
 
     /**
      * Init the fields class
@@ -28,5 +35,16 @@ class Date extends Filter
         $class = new self;
         $class->column = $column;
         return $class;
+    }
+    
+    /**
+     * @param string $type
+     * @return $this
+     */
+    public function inputType(string $type)
+    {
+        $this->inputType = $type;
+        
+        return $this;
     }
 }
