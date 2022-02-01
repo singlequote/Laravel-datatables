@@ -444,8 +444,11 @@ class DataTable extends ParentClass
                 return $column;
             }
         }
-        
-        throw new \Exception;
+
+        return [
+            "data" => $data,
+            "json" => false
+        ];
     }
     
     /**
