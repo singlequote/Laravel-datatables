@@ -21,7 +21,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
      */
     function dataTableReload()
     {
-        classes["{{ $view->tableId }}"].reload(@json($view));
+        classes["{{ $view->tableId }}"].refresh(@json($view));
     }
 
 
@@ -75,7 +75,15 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          */
         reload(view)
         {
-             this.table.ajax.reload( null, false );
+            this.table.ajax.url(this.buildUrl(view)).load();
+        }
+        
+        /**
+         * Refresh the table content
+         */
+        refresh()
+        {
+            this.table.ajax.reload( null, false );
         }
 
         /**
