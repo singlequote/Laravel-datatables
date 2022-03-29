@@ -371,20 +371,38 @@ class DataTable extends ParentClass
     private function orderRelation(mixed $model, array $order, array $select = []) : mixed
     {
         $relation = $this->getPath($this->findOriginalColumn($order['column']));
+        
+        switch($this->getClassName($relation)){
+            
+            case "BelongsToMany":
+                return $this->orderOnBelongsToMany($model, $order);
+            default : 
+                return $this->orderOnDefaultRelation($model, $order);
+        }
+    }
+    
+    /**
+     * @param mixed $model
+     * @param array $order
+     * @return Builder
+     */
+    private function orderOnDefaultRelation(mixed $model, array $order) : Builder
+    {
+        $relation = $this->getPath($this->findOriginalColumn($order['column']));
         $name = $this->getName($this->findOriginalColumn($order['column']));
 
         $foreignName = $this->getForeignName($relation);
         $ownerName = $this->getOwnerName($relation);
-
-        $relationName = $this->getPath($foreignName);
+        
         $owner = $this->getPath($ownerName);
-
-        $select = $this->queryColumns($model, $owner, $relationName);
-
+        $relationName = $this->getPath($foreignName);
+        
+        $select = $this->queryColumns($model, $owner);
+        
         $as = str_replace('.', '_', "$relationName$name");
         
         $select[] = "$relationName.$name as $as";
-                
+
         return $model->with($relation)
             ->join($relationName, $foreignName, '=', $ownerName)
             ->select($select)
@@ -393,11 +411,40 @@ class DataTable extends ParentClass
     
     /**
      * @param mixed $model
+     * @param array $order
+     * @return Builder
+     */
+    private function orderOnBelongsToMany(mixed $model, array $order) : Builder
+    {
+        $name = $this->getName($this->findOriginalColumn($order['column']));
+        $relation = $this->getPath($this->findOriginalColumn($order['column']));
+        
+        $foreignName = $this->getForeignName($relation);
+        
+        $relationName = $this->getPath($foreignName);
+        $ownerName = $this->getOwnerName($relation);
+
+        $parentOwner = $this->originalModel->{$relation}()->getParentKeyName();
+        $relatedOwner = $this->originalModel->{$relation}()->getRelatedKeyName();
+        
+        $select = $this->queryColumns($model, $model->getModel()->getTable());
+                
+        $select[] = "{$order['column']} as {$relation}_{$name}";
+                
+        return $model
+            ->leftJoin($relationName, \Illuminate\Support\Str::after($foreignName, '.'), $parentOwner)
+            ->leftJoin($relation, $ownerName, "$relation.$relatedOwner")
+            ->select($select)
+            ->orderBy("{$relation}_{$name}", $order['dir']);
+    }
+    
+    /**
+     * @param mixed $model
      * @param string $owner
      * @param string $relationName
      * @return array
      */
-    private function queryColumns(mixed $model, string $owner, string $relationName) : array
+    private function queryColumns(mixed $model, string $owner) : array
     {
         $select = [];
         
@@ -452,18 +499,32 @@ class DataTable extends ParentClass
     }
     
     /**
+     * Return className of relation
+     * 
+     * @param string $relation
+     * @return string
+     */
+    private function getClassName(string $relation) : string
+    {
+        $type = get_class($this->originalModel->{$relation}());
+        $class = explode('\\', $type);
+        
+        return end($class);
+    }
+    
+    /**
      * Get the owner name by relation class
      * 
      * @param string $relation
      * @return string
      */
-    private function getForeignName(string $relation){
-        $type = get_class($this->originalModel->{$relation}());
-        $class = explode('\\', $type);
-
-        switch(end($class)){
+    private function getForeignName(string $relation)
+    {
+        switch($this->getClassName($relation)){
             case "BelongsTo" : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
+            case "BelongsToMany" : 
+                return $this->originalModel->{$relation}()->getQualifiedForeignPivotKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
         }        
@@ -475,11 +536,9 @@ class DataTable extends ParentClass
      * @param string $relation
      * @return string
      */
-    private function getOwnerName(string $relation){
-        $type = get_class($this->originalModel->{$relation}());
-        $class = explode('\\', $type);
-
-        switch(end($class)){
+    private function getOwnerName(string $relation)
+    {
+        switch($this->getClassName($relation)){
             case "HasOne" : 
                 return $this->originalModel->{$relation}()->getQualifiedParentKeyName();
             case "HasMany" : 
@@ -487,7 +546,7 @@ class DataTable extends ParentClass
             case "BelongsTo" : 
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             case "BelongsToMany" : 
-                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
+                return $this->originalModel->{$relation}()->getQualifiedRelatedPivotKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
         }        
