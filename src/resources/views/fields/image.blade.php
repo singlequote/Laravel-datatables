@@ -31,7 +31,7 @@ you can use the variables data, type and row
     @endif
 
     @if($class->src)
-        let route = "{{ $class->src }}";
+        url = "{{ $class->src }}";
     @endif
 
     return `{!! $class->before !!} <img ${ dataAttributes } title="{{ $class->title['title'] }}" data-toggle="{{ $class->title['toggle'] }}" class="{{ $class->class }}" src="${url}" /> {!! $class->after !!}`;
