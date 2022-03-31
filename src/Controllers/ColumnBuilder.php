@@ -191,10 +191,10 @@ abstract class ColumnBuilder
      * @param string $name
      * @return mixed
      */
-    public function getFilter(string $name)
+    public function getFilter(string $name, mixed $default = null)
     {
         if (!isset($this->filtered[$name])) {
-            return null;
+            return $default;
         }
         
         $filter = $this->filtered[$name];
