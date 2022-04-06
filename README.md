@@ -7,7 +7,7 @@ This repo contains a Serverside Datatable that can render a filterable and sorta
 
 ## Installation
 
-> The package is tested on laravel 5,6,7 and 8
+> The package is tested on laravel 5,6,7,8 and 9
 
 You can install the package via composer:
 ```bash
