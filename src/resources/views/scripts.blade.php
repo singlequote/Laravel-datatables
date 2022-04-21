@@ -245,10 +245,10 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                         $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseleave`, [row, data, this.table, el]);
                     });
 
-                    $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table, el]);
+                    $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table]);
                 },
                 drawCallback: (settings) => {
-                    $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table, el]);
+                    $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table]);
                 }
             };
         }
