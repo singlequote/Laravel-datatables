@@ -234,21 +234,21 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                 createdRow: (row, data, index) => {
 
                     $(row).on('click', (el) => {
-                        $(`#{{ $view->tableId }}`).trigger(`dtrow:click`, [row, data, this.table]);
+                        $(`#{{ $view->tableId }}`).trigger(`dtrow:click`, [row, data, this.table, el]);
                     });
 
                     $(row).on('mouseenter', (el) => {
-                        $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseenter`, [row, data, this.table]);
+                        $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseenter`, [row, data, this.table, el]);
                     });
 
                     $(row).on('mouseleave', (el) => {
-                        $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseleave`, [row, data, this.table]);
+                        $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseleave`, [row, data, this.table, el]);
                     });
 
-                    $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table]);
+                    $(`#{{ $view->tableId }}`).trigger(`dtrow:render`, [row, data, this.table, el]);
                 },
                 drawCallback: (settings) => {
-                    $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table]);
+                    $(`#{{ $view->tableId }}`).trigger(`dttable:render`, [settings, this.table.data(), this.table, el]);
                 }
             };
         }
