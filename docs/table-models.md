@@ -87,6 +87,15 @@ By default the pagelength for your table is `10` you can change this to whatever
 public $pageLength = 10;
 ```
 
+### Page length menu
+By default the page length menu is 10, 25, 50, 100. YOu can change this by adding your own menu.
+```php
+/**
+ * @var array
+ */
+public $pageMenu = [100, 500, 1000];
+```
+
 ### Page order property
 By default the first column in your table is used to order the table. You can edit this with the `$order` property. You can also use multiple sorting on your columns. 
 ```php
