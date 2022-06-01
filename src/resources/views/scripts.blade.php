@@ -219,7 +219,6 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          */
         loadConfig(view)
         {
-              console.log(view);          
             this.config = {
                 language: this.translations,
                 paging: true,
