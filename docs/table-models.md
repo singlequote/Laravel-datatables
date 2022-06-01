@@ -88,7 +88,7 @@ public $pageLength = 10;
 ```
 
 ### Page length menu
-By default the page length menu is 10, 25, 50, 100. YOu can change this by adding your own menu.
+By default the page length menu is 10, 25, 50, 100. You can change this by adding your own menu.
 ```php
 /**
  * @var array
