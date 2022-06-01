@@ -219,6 +219,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          */
         loadConfig(view)
         {
+              console.log(view);          
             this.config = {
                 language: this.translations,
                 paging: true,
@@ -228,6 +229,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                 dom: view.dom,
                 ajax: this.buildUrl(view),
                 pageLength: view.pageLength,
+                lengthMenu: view.pageMenu,
                 order: view.order,
                 columns: view.columns,
                 columnDefs: this.buildColumnDefs(view.defs),
