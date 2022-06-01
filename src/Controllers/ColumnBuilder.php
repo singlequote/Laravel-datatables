@@ -109,6 +109,13 @@ abstract class ColumnBuilder
     public $pageLength = 25;
 
     /**
+     * The default pagelength
+     *
+     * @var int
+     */
+    public $pageMenu = [10, 25, 50, 100];
+
+    /**
      * Set order
      *
      * @var mixed
