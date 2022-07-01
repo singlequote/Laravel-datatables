@@ -237,6 +237,10 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                     $(row).on('click', (el) => {
                         $(`#{{ $view->tableId }}`).trigger(`dtrow:click`, [row, data, this.table, el]);
                     });
+                    
+                    $(row).on('dblclick', (el) => {
+                        $(`#{{ $view->tableId }}`).trigger(`dtrow:dblclick`, [row, data, this.table, el]);
+                    });
 
                     $(row).on('mouseenter', (el) => {
                         $(`#{{ $view->tableId }}`).trigger(`dtrow:mouseenter`, [row, data, this.table, el]);
