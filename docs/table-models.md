@@ -255,12 +255,12 @@ $(document).on('dtrow:dblclick', (event, row, data, table) => {
 });
 
 //triggered when hovering the row
-$(document).on('dtrow:mouseleave', (event, row, data, table) => {
+$(document).on('dtrow:mouseenter', (event, row, data, table) => {
     //do something
 });
 
 //triggered when leaving the row after hovering it
-$(document).on('dtrow:mouseenter', (event, row, data, table) => {
+$(document).on('dtrow:mouseleave', (event, row, data, table) => {
     //do something
 });
 ```
