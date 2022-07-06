@@ -218,6 +218,7 @@ The table triggers an event everytime something is processed. Below is a list of
 | render | dttable:render | document |
 | render| dtrow:render | document |
 | click | dtrow:click | document |
+| dblclick | dtrow:dblclick | document |
 | mouseenter | dtrow:mouseenter| document |
 | mouseleave | dtrow:mouseleave | document |
 
@@ -245,7 +246,12 @@ All the triggers are listed below :
 
 //when a row is clicked after being rendered
 $(document).on('dtrow:click', (event, row, data, table) => {
-	//do something
+    //do something
+});
+
+//when a row is double clicked after being rendered
+$(document).on('dtrow:dblclick', (event, row, data, table) => {
+    //do something
 });
 
 //triggered when hovering the row
