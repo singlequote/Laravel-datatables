@@ -3,7 +3,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
 
 ?>
 
-<script type="text/javascript">
+<script type="text/javascript">   
     window.classes = {};
     /**
      * Generate unique ID
@@ -46,15 +46,33 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          */
         init(view)
         {
-            this.loadSearchableColumns(view);
+            this.preCheck(() => {
+                this.loadSearchableColumns(view);
 
-            this.loadFilters(view);
+                this.loadFilters(view);
 
-            this.loadConfig(view);
+                this.loadConfig(view);
 
-            this.build(view.tableId);
+                this.build(view.tableId);
 
-            this.loadTriggers(view);
+                this.loadTriggers(view);
+            });            
+        }
+        
+        /**
+         * Pre flight check
+         * 
+         * @param {Closure} callback
+         */
+        preCheck(callback)
+        {
+            if(typeof $ === "undefined"){
+                return setTimeout(() => {
+                    this.preCheck(callback);
+                }, 200)
+            }
+            
+            callback();
         }
 
         /**
@@ -64,7 +82,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
          * @returns {void}
          */
         build(id)
-        {
+        {            
             this.table = $(`#${id}`).DataTable(this.config);
         }
 
@@ -289,13 +307,13 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                 //push to the column defs array
                 defsArray.push({
                     "class": def.class || '',
-                    "render": (data, type, row) => {
+                    "render": (processData, type, row) => {
                         //the output returned after the render is completed
                         let output = "";
                         //loop the rendered views
                         for (let [index, rendered] of Object.entries(def.rendered)) {
                             //set the viewer
-
+                            let data = processData;
                             let view = def.def[index];
                             //check the conditions
                             if (view.condition && !eval(`row.${view.condition}`)) {
@@ -456,8 +474,6 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
         }
 
     };
-
-
+        
     classes["{{ $view->tableId }}"].locale(@json($locale)).init(@json($view));
-
 </script>
