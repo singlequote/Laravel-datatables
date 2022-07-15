@@ -209,6 +209,33 @@ public function query($query)
     return $query->where('name', 'Like', "%John Doe%")->with('roles', 'permissions');
 }
 ```
+### Buttons
+You can specify Table based buttons for available options view Datatables https://datatables.net/reference/button/
+Note: you must use php array not JSON for example
+```public $buttons =  [
+        [
+            'extend' =>  'print',
+            'text'=> 'Print',
+            'exportOptions'=> [
+                'columns'=> [0, ':visible'],
+            ], 
+        ],
+        [
+            'extend' => 'csv',
+            'text'=> 'Excel',
+            'exportOptions'=> [
+                'columns'=> [0, '=>visible'],
+            ],            
+            'filename'=> 'CustomFileName',
+        ],
+        'copy',
+        [
+            'extend'=> 'colvis',
+            'className'=> 'btn btn-dark'
+        ]
+    ];
+```
+
 
 ### Table triggers
 The table triggers an event everytime something is processed. Below is a list of triggers available
