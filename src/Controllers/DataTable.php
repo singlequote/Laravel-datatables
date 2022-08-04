@@ -328,9 +328,9 @@ class DataTable extends ParentClass
         }
 
         try{
-            return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}();
+            return $model->prefix($this->tableModel->elequentPrefix)->{$this->tableModel->elequentMethod}()->unique('id');
         } catch (Exception $ex) {
-            return $model->get();
+            return $model->get()->unique('id');
         }
     }
 
@@ -371,11 +371,13 @@ class DataTable extends ParentClass
     private function orderRelation(mixed $model, array $order, array $select = []) : mixed
     {
         $relation = $this->getPath($this->findOriginalColumn($order['column']));
-        
+
         switch($this->getClassName($relation)){
             
             case "BelongsToMany":
                 return $this->orderOnBelongsToMany($model, $order);
+            case "HasOneThrough":
+                return $this->orderOnHasOneThrough($model, $order);
             default : 
                 return $this->orderOnDefaultRelation($model, $order);
         }
@@ -402,9 +404,9 @@ class DataTable extends ParentClass
         $as = str_replace('.', '_', "$relationName$name");
         
         $select[] = "$relationName.$name as $as";
-
+                
         return $model->with($relation)
-            ->join($relationName, $foreignName, '=', $ownerName)
+            ->leftJoin($relationName, $foreignName, '=', $ownerName)
             ->select($select)
             ->orderBy("$as", $order['dir']);
     }
@@ -432,8 +434,34 @@ class DataTable extends ParentClass
         $select[] = "{$order['column']} as {$relation}_{$name}";
                 
         return $model
-            ->leftJoin($relationName, \Illuminate\Support\Str::after($foreignName, '.'), $parentOwner)
+            ->leftJoin($relationName, str($foreignName)->afterLast('.'), $parentOwner)
             ->leftJoin($relation, $ownerName, "$relation.$relatedOwner")
+            ->select($select)
+            ->orderBy("{$relation}_{$name}", $order['dir']);
+    }
+    
+    /**
+     * @param mixed $model
+     * @param array $order
+     * @return Builder
+     */
+    private function orderOnHasOneThrough(mixed $model, array $order) : Builder
+    {
+        $name = $this->getName($this->findOriginalColumn($order['column']));
+        $relation = $this->getPath($this->findOriginalColumn($order['column']));
+
+        $foreignKeyName = $this->originalModel->{$relation}()->getQualifiedForeignKeyName(); 
+        $firstKeyName = $this->originalModel->{$relation}()->getQualifiedForeignKeyName(); 
+        $localKeyName = $this->originalModel->{$relation}()->getQualifiedLocalKeyName(); 
+        $parentKeyName = $this->originalModel->{$relation}()->getQualifiedParentKeyName(); 
+        
+        $select = $this->queryColumns($model, $model->getModel()->getTable());
+                
+        $select[] = str($foreignKeyName)->beforeLast('.').".$name as {$relation}_{$name}";
+               
+        return $model
+            ->leftJoin(str($parentKeyName)->beforeLast('.'), $localKeyName, '=', $parentKeyName)
+            ->leftJoin(str($foreignKeyName)->beforeLast('.'), $firstKeyName, '=', $foreignKeyName)
             ->select($select)
             ->orderBy("{$relation}_{$name}", $order['dir']);
     }
@@ -457,27 +485,6 @@ class DataTable extends ParentClass
         }
 
         return $select;
-    }
-    
-    /**
-     * @param string $string
-     * @param string $start
-     * @param string $end
-     * @return string
-     */
-    private function stringBetween(string $string, string $start, string $end) : string
-    {
-        $string = ' ' . $string;
-        $ini = strpos($string, $start);
-        
-        if ($ini == 0){
-            return '';
-        }
-            
-        $ini += strlen($start);
-        $len = strpos($string, $end, $ini) - $ini;
-        
-        return substr($string, $ini, $len);
     }
     
     /**
@@ -547,6 +554,8 @@ class DataTable extends ParentClass
                 return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             case "BelongsToMany" : 
                 return $this->originalModel->{$relation}()->getQualifiedRelatedPivotKeyName();
+            case "HasOneThrough" : 
+                return $this->originalModel->{$relation}()->getQualifiedForeignKeyName();
             default : 
                 return $this->originalModel->{$relation}()->getQualifiedOwnerKeyName();
         }        
