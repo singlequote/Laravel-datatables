@@ -97,8 +97,8 @@ you can use the variables data, type and row
 
 
     @if($class->implode)
-    //IMPLODE FIELD
-        output = row.{{ $class->implode['path'] }} ? row.{{ $class->implode['path'] }}.map((elem) => {
+    //IMPLODE FIELD        
+        output = row.{{ str($class->implode['path'])->snake() }} ? row.{{ str($class->implode['path'])->snake() }}.map((elem) => {
             return elem.{{ $class->implode['name'] }};
         }).join("{!! $class->implode['seperate'] !!}") : '';
     //IMPLODE FIELD==============================================================
