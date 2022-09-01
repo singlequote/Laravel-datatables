@@ -67,7 +67,7 @@ Dropdown::make('filter')->label("Filter deleted")->data($filter),
 ```
 
 ### Model | collections
-By default you the method uses the `id` as value and the `name` as label.
+By default the method uses the `id` as value and the `name` as label.
 ```php
 $data = Status::all(); // {id : 1, name : 'invited', etc...}
 
