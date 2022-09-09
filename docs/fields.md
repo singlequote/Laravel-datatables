@@ -56,7 +56,7 @@ Date::make('...')->class('class1 class2')
 Extends element with classes
 
 ```php
-Label::make()->class('class1 class2 class3')
+Label::make('...')->class('class1 class2 class3')
 
 //<label class="class1 class2 class3">...</label>
 ```
