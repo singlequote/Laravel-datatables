@@ -250,6 +250,7 @@ $locale = __("datatables") === 'datatables' ? __("datatables::datatables") : __(
                 order: view.order,
                 columns: view.columns,
                 columnDefs: this.buildColumnDefs(view.defs),
+                buttons: {!! json_encode($view->buttons()) ?? [] !!},
                 createdRow: (row, data, index) => {
 
                     $(row).on('click', (el) => {
