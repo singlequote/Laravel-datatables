@@ -263,4 +263,37 @@ $(document).on('dtrow:mouseenter', (event, row, data, table) => {
 $(document).on('dtrow:mouseleave', (event, row, data, table) => {
     //do something
 });
+
+### Buttons
+You can specify Table based buttons for available options view Datatables https://datatables.net/reference/button/
+Note: you must use php array not JSON for example
 ```
+    /**
+     * define the Table buttons array
+     *
+     * @return array
+     */
+    public function buttons(): array
+    {
+        return [
+            [
+                'extend'        => 'print',
+                'text'          => 'Print',
+                'exportOptions' => [
+                    'columns' => [0, ':visible'],
+                ],
+            ],
+            [
+                'extend'        => 'csv',
+                'text'          => 'Excel',
+                'exportOptions' => [
+                    'columns' => [0, ':visible'],
+                ],
+            ],
+            'copy',
+            [
+                'extend' => 'colvis',
+                'className' => 'btn btn-info'
+            ]
+        ];
+    }
