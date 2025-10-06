@@ -1,4 +1,13 @@
-# Eloquent datatables
+### deprecation notice
+
+Please note that this package (`singlequote/Laravel-datatables`) is no longer actively maintained.
+
+For a more modern and improved solution, please use the new package: **[singlequote/laravel-api-resource](https://github.com/singlequote/laravel-api-resource)**.
+
+We strongly recommend migrating to the new package to receive the latest features and updates.
+
+
+## Eloquent datatables
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
 [![Total Downloads](https://img.shields.io/packagist/dt/singlequote/laravel-datatables.svg?style=flat-square)](https://packagist.org/packages/singlequote/laravel-datatables)
